@@ -1,8 +1,10 @@
-package com.sugo.smart_city.common.config;
+package com.sugo.smart_city.api.config;
 
 
 import com.sugo.smart_city.common.aspect.resolver.ParsePageHandlerMethodArgumentResolver;
 import com.sugo.smart_city.common.aspect.resolver.RequestSingleParamHandlerMethodArgumentResolver;
+import com.sugo.smart_city.security.aspect.ParseUserHandlerMethodArgumentResolver;
+import com.sugo.smart_city.service.UserService;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -16,6 +18,9 @@ import java.util.List;
  */
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
+
+    @Resource
+    private UserService userService;
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
@@ -31,5 +36,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
         WebMvcConfigurer.super.addArgumentResolvers(resolvers);
         resolvers.add(new RequestSingleParamHandlerMethodArgumentResolver());
         resolvers.add(new ParsePageHandlerMethodArgumentResolver());
+        resolvers.add(new ParseUserHandlerMethodArgumentResolver(userService));
     }
 }
