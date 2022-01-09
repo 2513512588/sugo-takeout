@@ -6,8 +6,8 @@ import com.sugo.smart_city.bean.model.TakeoutCoupon;
 import com.sugo.smart_city.bean.model.TakeoutGoods;
 import com.sugo.smart_city.bean.model.TakeoutGoodsCategory;
 import com.sugo.smart_city.bean.model.TakeoutSeller;
-import com.sugo.smart_city.bean.vo.TakeoutGoodsVo;
-import com.sugo.smart_city.bean.vo.TakeoutSellerUpdateVo;
+import com.sugo.smart_city.bean.param.TakeoutGoodsParam;
+import com.sugo.smart_city.bean.param.TakeoutSellerUpdateParam;
 import com.sugo.smart_city.common.util.Result;
 import com.sugo.smart_city.common.valid.Groups;
 import com.sugo.smart_city.security.annotation.ParseUser;
@@ -46,7 +46,7 @@ public class TakeoutAuthSellerController {
     @ApiOperation("卖家发布商品")
     @PostMapping("/goods/add")
     public Result settledApply(@ParseUser(Role.ROLE_TAKEOUT_SELLER) Integer sellerId,
-                               @RequestBody @Validated(Groups.Add.class) TakeoutGoodsVo takeoutGoodsVo){
+                               @RequestBody @Validated(Groups.Add.class) TakeoutGoodsParam takeoutGoodsVo){
          TakeoutGoods takeoutGoods = new TakeoutGoods();
          BeanUtils.copyProperties(takeoutGoodsVo, takeoutGoods);
          takeoutGoods.setSellerId(sellerId);
@@ -57,7 +57,7 @@ public class TakeoutAuthSellerController {
     @ApiOperation("卖家完善资料")
     @PostMapping("/info/edit")
     public Result editInfo(@ParseUser(Role.ROLE_TAKEOUT_SELLER) Integer sellerId,
-                           @RequestBody TakeoutSellerUpdateVo takeoutSellerUpdateVo){
+                           @RequestBody TakeoutSellerUpdateParam takeoutSellerUpdateVo){
         TakeoutSeller takeoutSeller = new TakeoutSeller();
         BeanUtils.copyProperties(takeoutSellerUpdateVo, takeoutSeller);
         takeoutSeller.setId(sellerId);

@@ -21,17 +21,17 @@ import javax.annotation.Resource;
 @Slf4j
 @RestController
 @Api(tags = "外卖购物车接口")
-@RequestMapping("/api/takeout/scart")
+@RequestMapping("/api/takeout/basket")
 public class TakeoutBasketController {
 
     @Resource
-    private TakeoutBasketService takeoutScartService;
+    private TakeoutBasketService takeoutBasketService;
 
     @ApiOperation("根据用户查询购物车")
     @GetMapping("/list")
     public Result list(@ParseUser Integer userId,
-                       @ParsePage Page<TakeoutBasketDto> scartPage){
-       return (Result) takeoutScartService.selectPage(scartPage, userId);
+                       @ParsePage Page<TakeoutBasketDto> basketPage){
+       return (Result) takeoutBasketService.selectPage(basketPage, userId);
     }
 
 

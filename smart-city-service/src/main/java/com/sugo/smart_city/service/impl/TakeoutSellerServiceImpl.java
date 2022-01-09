@@ -26,9 +26,7 @@ public class TakeoutSellerServiceImpl extends ServiceImpl<TakeoutSellerMapper, T
         queryWrap.setCity(takeoutSeller.getCity());
         queryWrap.setName(takeoutSeller.getName());
         queryWrap.setTypeId(takeoutSeller.getTypeId());
-        List<TakeoutSellerDto> takeoutSellerDtos = baseMapper.selectDtoPage(takeoutSellerPage, queryWrap);
-        takeoutSellerPage.setRecords(takeoutSellerDtos);
-        return takeoutSellerPage;
+        return baseMapper.selectDtoPage(takeoutSellerPage, queryWrap);
     }
 }
 

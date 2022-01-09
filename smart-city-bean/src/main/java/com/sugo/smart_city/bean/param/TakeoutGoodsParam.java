@@ -1,4 +1,4 @@
-package com.sugo.smart_city.bean.vo;
+package com.sugo.smart_city.bean.param;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -12,7 +12,7 @@ import java.math.BigDecimal;
  */
 @TableName(value ="takeout_goods")
 @Data
-public class TakeoutGoodsVo implements Serializable {
+public class TakeoutGoodsParam implements Serializable {
 
     /**
      * 商品名称

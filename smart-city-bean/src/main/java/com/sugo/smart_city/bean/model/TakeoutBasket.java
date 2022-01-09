@@ -13,7 +13,7 @@ import java.io.Serializable;
 
 /**
  * 外卖用户购物车表
- * @TableName takeout_scart
+ * @TableName takeout_basket
  */
 @TableName(value ="takeout_basket")
 @Data

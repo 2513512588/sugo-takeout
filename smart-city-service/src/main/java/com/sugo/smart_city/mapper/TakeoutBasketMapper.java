@@ -9,11 +9,11 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 /**
- * @Entity com.smart_city.smartcity.entity.TakeoutScart
+ * @Entity com.smart_city.smartcity.entity.TakeoutBasket
  */
 public interface TakeoutBasketMapper extends BaseMapper<TakeoutBasket> {
 
-    List<TakeoutBasketDto> selectScartListByUser(IPage<?> page, @Param("userId") Integer userId);
+    IPage<TakeoutBasketDto> selectBasketListByUser(IPage<?> page, @Param("userId") Integer userId);
 
 }
 

@@ -7,7 +7,7 @@ import com.sugo.smart_city.bean.enums.TakeoutSellerStatus;
 import com.sugo.smart_city.bean.model.TakeoutGoodsCategory;
 import com.sugo.smart_city.bean.model.TakeoutSeller;
 import com.sugo.smart_city.bean.model.User;
-import com.sugo.smart_city.bean.vo.TakeoutSellerAddVo;
+import com.sugo.smart_city.bean.param.TakeoutSellerAddParam;
 import com.sugo.smart_city.common.aspect.annotation.ParsePage;
 import com.sugo.smart_city.common.exception.SysException;
 import com.sugo.smart_city.common.util.Result;
@@ -48,7 +48,7 @@ public class TakeoutSellerController {
 
     @ApiOperation("申请注册商家")
     @PostMapping("/settled/apply")
-    public Result settledApply(@ParseUser Integer userId, @RequestBody @Validated(Groups.Add.class) TakeoutSellerAddVo takeoutSellerAddVo){
+    public Result settledApply(@ParseUser Integer userId, @RequestBody @Validated(Groups.Add.class) TakeoutSellerAddParam takeoutSellerAddVo){
         TakeoutSeller isExists = takeoutSellerService.getOne(new QueryWrapper<>(TakeoutSeller.builder().userId(userId).build()));
         //判断是否提交过申请
         if (isExists != null){

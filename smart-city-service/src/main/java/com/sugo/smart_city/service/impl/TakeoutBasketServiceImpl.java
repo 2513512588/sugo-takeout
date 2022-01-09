@@ -21,9 +21,8 @@ public class TakeoutBasketServiceImpl extends ServiceImpl<TakeoutBasketMapper, T
 
     @StartPage
     @Override
-    public Object selectPage(Page<TakeoutBasketDto> scartPage, Integer userId) {
-        baseMapper.selectScartListByUser(scartPage, userId);
-        return scartPage;
+    public Object selectPage(Page<TakeoutBasketDto> basketPage, Integer userId) {
+        return baseMapper.selectBasketListByUser(basketPage, userId);
     }
 }
 

@@ -16,10 +16,10 @@
         id,seller_id,goods_id,
         quantity,user_id
     </sql>
-    <select id="selectScartListByUser" resultType="com.sugo.smart_city.bean.dto.TakeoutBasketDto">
-        select takeout_scart.id, quantity
-              , goods_id as goodsId , name, description, cover, score, sales_volume salesVolume, price from takeout_scart
-        left join takeout_goods on takeout_scart.goods_id = takeout_goods.id
+    <select id="selectBasketListByUser" resultType="com.sugo.smart_city.bean.dto.TakeoutBasketDto">
+        select takeout_basket.id, quantity
+              , goods_id as goodsId , name, description, cover, score, sales_volume salesVolume, price from takeout_basket
+        left join takeout_goods on takeout_basket.goods_id = takeout_goods.id
         where user_id = #{userId}
     </select>
 </mapper>

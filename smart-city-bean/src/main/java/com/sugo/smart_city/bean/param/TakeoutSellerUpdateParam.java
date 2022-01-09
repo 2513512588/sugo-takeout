@@ -1,4 +1,4 @@
-package com.sugo.smart_city.bean.vo;
+package com.sugo.smart_city.bean.param;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -9,7 +9,7 @@ import java.time.LocalTime;
 
 @Data
 @ApiModel("卖家更新资料vo对象")
-public class TakeoutSellerUpdateVo implements Serializable {
+public class TakeoutSellerUpdateParam implements Serializable {
 
     /**
      * 店铺名称

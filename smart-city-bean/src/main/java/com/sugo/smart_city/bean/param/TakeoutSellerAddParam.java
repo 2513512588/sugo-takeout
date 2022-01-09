@@ -1,4 +1,4 @@
-package com.sugo.smart_city.bean.vo;
+package com.sugo.smart_city.bean.param;
 
 import com.sugo.smart_city.common.valid.Groups;
 import io.swagger.annotations.ApiModelProperty;
@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Data
-public class TakeoutSellerAddVo implements Serializable {
+public class TakeoutSellerAddParam implements Serializable {
 
     /**
      * 店铺类型id

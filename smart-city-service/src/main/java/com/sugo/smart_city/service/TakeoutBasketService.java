@@ -10,5 +10,5 @@ import com.sugo.smart_city.bean.model.TakeoutBasket;
  */
 public interface TakeoutBasketService extends IService<TakeoutBasket> {
 
-    Object selectPage(Page<TakeoutBasketDto> scartPage, Integer userId);
+    Object selectPage(Page<TakeoutBasketDto> basketPage, Integer userId);
 }

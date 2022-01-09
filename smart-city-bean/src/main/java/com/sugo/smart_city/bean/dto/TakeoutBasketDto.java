@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 
 /**
  * 外卖用户购物车表
- * @TableName takeout_scart
+ * @TableName takeout_basket
  */
 @ApiModel("用户购物车商品表")
 @Data

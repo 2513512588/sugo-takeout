@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface TakeoutSellerMapper extends BaseMapper<TakeoutSeller> {
 
-    List<TakeoutSellerDto> selectDtoPage(IPage<?> page, @Param("entity") TakeoutSeller queryWrapper);
+    IPage<TakeoutSellerDto> selectDtoPage(IPage<?> page, @Param("entity") TakeoutSeller queryWrapper);
 
 }
 
