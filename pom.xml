@@ -22,13 +22,13 @@
         <smart.city.version>0.0.1-SNAPSHOT</smart.city.version>
         <spring-boot.version>2.3.6.RELEASE</spring-boot.version>
         <swagger2.version>2.9.2</swagger2.version>
-        <mybatis.plus.version>3.4.3.4</mybatis.plus.version>
+        <mybatis-plus.version>3.4.3.4</mybatis-plus.version>
         <hutool.version>5.7.18</hutool.version>
         <jjwt.version>0.9.1</jjwt.version>
         <aliyun.version>3.10.2</aliyun.version>
         <fastjson.version>1.2.78</fastjson.version>
         <joda.time.version>2.10.1</joda.time.version>
-        <mybatis.typehandlers.version>1.0.2</mybatis.typehandlers.version>
+        <mybatis-typehandlers.version>1.0.2</mybatis-typehandlers.version>
         <java.version>1.8</java.version>
         <mysql.driver.version>8.0.27</mysql.driver.version>
         <maven.compiler.plugin.version>3.7.0</maven.compiler.plugin.version>
@@ -60,7 +60,7 @@
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-boot-starter</artifactId>
-                <version>${mybatis.plus.version}</version>
+                <version>${mybatis-plus.version}</version>
             </dependency>
 
             <dependency>
@@ -107,7 +107,7 @@
             <dependency>
                 <groupId>org.mybatis</groupId>
                 <artifactId>mybatis-typehandlers-jsr310</artifactId>
-                <version>${mybatis.typehandlers.version}</version>
+                <version>${mybatis-typehandlers.version}</version>
             </dependency>
 
         </dependencies>
