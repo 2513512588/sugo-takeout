@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sugo.smart_city.mapper.TakeoutOrderMapper">
+
+    <resultMap id="BaseResultMap" type="com.sugo.smart_city.bean.model.TakeoutOrder">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="userId" column="user_id" jdbcType="INTEGER"/>
+            <result property="sellerId" column="seller_id" jdbcType="INTEGER"/>
+            <result property="fullName" column="full_name" jdbcType="VARCHAR"/>
+            <result property="phone" column="phone" jdbcType="VARCHAR"/>
+            <result property="province" column="province" jdbcType="VARCHAR"/>
+            <result property="city" column="city" jdbcType="VARCHAR"/>
+            <result property="county" column="county" jdbcType="VARCHAR"/>
+            <result property="address" column="address" jdbcType="VARCHAR"/>
+            <result property="code" column="code" jdbcType="VARCHAR"/>
+            <result property="arriveTime" column="arrive_time" jdbcType="TIMESTAMP"/>
+            <result property="total" column="total" jdbcType="DECIMAL"/>
+            <result property="deliveryFee" column="delivery_fee" jdbcType="DECIMAL"/>
+            <result property="packingFee" column="packing_fee" jdbcType="DECIMAL"/>
+            <result property="isDeleted" column="is_deleted" jdbcType="BOOLEAN"/>
+            <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
+            <result property="status" column="status" jdbcType="INTEGER"/>
+            <result property="remark" column="remark" jdbcType="VARCHAR"/>
+            <result property="riderId" column="rider_id" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,user_id,seller_id,
+        full_name,phone,province,
+        city,county,address,
+        code,arrive_time,total,
+        delivery_fee,packing_fee,is_deleted,
+        gmt_create,status,remark,
+        rider_id
+    </sql>
+</mapper>

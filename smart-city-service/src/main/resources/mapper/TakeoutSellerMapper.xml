@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sugo.smart_city.mapper.TakeoutSellerMapper">
+
+    <resultMap id="BaseResultMap" type="com.sugo.smart_city.bean.model.TakeoutSeller">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="cover" column="cover" jdbcType="VARCHAR"/>
+            <result property="description" column="description" jdbcType="VARCHAR"/>
+            <result property="avatar" column="avatar" jdbcType="VARCHAR"/>
+            <result property="typeId" column="type_id" jdbcType="INTEGER"/>
+            <result property="phone" column="phone" jdbcType="VARCHAR"/>
+            <result property="phoneAdditional" column="phone_additional" jdbcType="VARCHAR"/>
+            <result property="city" column="city" jdbcType="VARCHAR"/>
+            <result property="province" column="province" jdbcType="VARCHAR"/>
+            <result property="enterpriseName" column="enterprise_name" jdbcType="VARCHAR"/>
+            <result property="enterpriseAddress" column="enterprise_address" jdbcType="VARCHAR"/>
+            <result property="enterprisePic" column="enterprise_pic" jdbcType="VARCHAR"/>
+            <result property="userId" column="user_id" jdbcType="INTEGER"/>
+            <result property="deliveryTimeStart" column="delivery_time_start" jdbcType="TIME"/>
+            <result property="deliveryTimeEnd" column="delivery_time_end" jdbcType="TIME"/>
+            <result property="startDelivery" column="start_delivery" jdbcType="DECIMAL"/>
+            <result property="status" column="status" jdbcType="TINYINT"/>
+            <result property="notice" column="notice" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,user_id,name,cover, delivery_time_start, delivery_time_end,
+        start_delivery, notice, status,
+        description,avatar,type_id,
+        phone,phone_additional,city,
+        province,enterprise_name,enterprise_address,
+        enterprise_pic
+    </sql>
+    <select id="selectDtoPage" resultType="com.sugo.smart_city.bean.dto.TakeoutSellerDto">
+        select <include refid="Base_Column_List" />
+        from takeout_seller
+        <where>
+            <if test="entity.province != null and entity.province != ''">
+                and province = #{entity.province}
+            </if>
+            <if test="entity.city != null and entity.city != ''">
+                and city = #{entity.city}
+            </if>
+             <if test="entity.name != null and entity.name != ''">
+                and name = #{entity.name}
+            </if>
+             <if test="entity.typeId != null">
+                and type_id = #{entity.typeId}
+            </if>
+        </where>
+    </select>
+</mapper>

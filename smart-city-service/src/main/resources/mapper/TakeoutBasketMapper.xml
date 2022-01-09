@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sugo.smart_city.mapper.TakeoutScartMapper">
+
+    <resultMap id="BaseResultMap" type="com.sugo.smart_city.bean.model.TakeoutBasket">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="sellerId" column="seller_id" jdbcType="INTEGER"/>
+            <result property="goodsId" column="goods_id" jdbcType="INTEGER"/>
+            <result property="quantity" column="quantity" jdbcType="INTEGER"/>
+            <result property="userId" column="user_id" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,seller_id,goods_id,
+        quantity,user_id
+    </sql>
+    <select id="selectScartListByUser" resultType="com.sugo.smart_city.bean.dto.TakeoutBasketDto">
+        select takeout_scart.id, quantity
+              , goods_id as goodsId , name, description, cover, score, sales_volume salesVolume, price from takeout_scart
+        left join takeout_goods on takeout_scart.goods_id = takeout_goods.id
+        where user_id = #{userId}
+    </select>
+</mapper>

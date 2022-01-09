@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sugo.smart_city.mapper.TakeoutGoodsEvaluateMapper">
+
+    <resultMap id="BaseResultMap" type="com.sugo.smart_city.bean.model.TakeoutGoodsEvaluate">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="orderItemId" column="order_item_id" jdbcType="INTEGER"/>
+            <result property="userId" column="user_id" jdbcType="INTEGER"/>
+            <result property="sellerId" column="seller_id" jdbcType="INTEGER"/>
+            <result property="goodsId" column="goods_id" jdbcType="INTEGER"/>
+            <result property="content" column="content" jdbcType="VARCHAR"/>
+            <result property="images" column="images" jdbcType="OTHER"/>
+            <result property="reply" column="reply" jdbcType="VARCHAR"/>
+            <result property="score" column="score" jdbcType="DECIMAL"/>
+            <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
+            <result property="isDeleted" column="is_deleted" jdbcType="BOOLEAN"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,order_item_id,user_id,
+        seller_id,goods_id,content,
+        images,reply,score,
+        gmt_create,is_deleted
+    </sql>
+</mapper>
