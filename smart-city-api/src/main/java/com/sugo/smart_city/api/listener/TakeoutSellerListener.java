@@ -8,7 +8,6 @@ import com.sugo.smart_city.bean.model.TakeoutSeller;
 import com.sugo.smart_city.service.LocationService;
 import com.sugo.smart_city.service.TakeoutGoodsEvaluateService;
 import com.sugo.smart_city.service.TakeoutOrderService;
-import com.sugo.smart_city.service.TakeoutSellerService;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.event.EventListener;
@@ -22,7 +21,6 @@ import java.util.stream.Collectors;
 public class TakeoutSellerListener {
 
     private LocationService locationService;
-    private TakeoutSellerService takeoutSellerService;
     private TakeoutOrderService takeoutOrderService;
     private TakeoutGoodsEvaluateService takeoutGoodsEvaluateService;
 
@@ -65,6 +63,7 @@ public class TakeoutSellerListener {
                 additionalDto.setDistance(distance);
                 additionalDto.setAvgCost(avgCostList.get(i));
                 additionalDto.setAvgScore(avgScoreList.get(i));
+                additionalDto.setMonthSoldNum(avgMonthSoldNumList.get(i));
                 additionalData.put(takeoutSellerList.get(i).getId(), additionalDto);
             }
         }
