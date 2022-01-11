@@ -24,4 +24,7 @@
         images,reply,score,
         gmt_create,is_deleted
     </sql>
+    <select id="getAvgScoreBySeller" resultType="java.lang.Double">
+        select ifnull(avg(score), 0) from takeout_goods_evaluate where seller_id = #{sellerId}
+    </select>
 </mapper>

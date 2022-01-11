@@ -13,6 +13,15 @@ import org.springframework.stereotype.Service;
 public class TakeoutOrderServiceImpl extends ServiceImpl<TakeoutOrderMapper, TakeoutOrder>
     implements TakeoutOrderService{
 
+    @Override
+    public double getAvgCostBySeller(Integer sellerId) {
+        return baseMapper.getAvgCostBySeller(sellerId);
+    }
+
+    @Override
+    public Integer getAvgMonthSoldNumBySeller(Integer sellerId) {
+        return baseMapper.getAvgMonthSoldNumBySeller(sellerId);
+    }
 }
 
 

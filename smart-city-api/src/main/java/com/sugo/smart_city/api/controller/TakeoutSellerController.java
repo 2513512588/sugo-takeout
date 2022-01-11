@@ -4,28 +4,33 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.sugo.smart_city.bean.dto.TakeoutSellerDto;
 import com.sugo.smart_city.bean.enums.TakeoutSellerStatus;
+import com.sugo.smart_city.bean.event.TakeoutSellerEvent;
 import com.sugo.smart_city.bean.model.TakeoutGoodsCategory;
 import com.sugo.smart_city.bean.model.TakeoutSeller;
 import com.sugo.smart_city.bean.model.User;
 import com.sugo.smart_city.bean.param.TakeoutSellerAddParam;
 import com.sugo.smart_city.common.aspect.annotation.ParsePage;
+import com.sugo.smart_city.common.aspect.annotation.ParseParam;
+import com.sugo.smart_city.common.aspect.annotation.RequestSingleParam;
 import com.sugo.smart_city.common.exception.SysException;
 import com.sugo.smart_city.common.util.Result;
 import com.sugo.smart_city.common.valid.Groups;
 import com.sugo.smart_city.security.annotation.ParseUser;
 import com.sugo.smart_city.security.enums.Role;
-import com.sugo.smart_city.service.TakeoutGoodsCategoryService;
-import com.sugo.smart_city.service.TakeoutSellerService;
-import com.sugo.smart_city.service.TakeoutSellerTypeService;
-import com.sugo.smart_city.service.UserService;
+import com.sugo.smart_city.service.*;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.context.ApplicationContext;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author hehaoyang
@@ -43,13 +48,20 @@ public class TakeoutSellerController {
     @Resource
     private TakeoutSellerTypeService takeoutSellerTypeService;
 
+
+    @Resource
+    private LocationService locationService;
+
     @Resource
     private UserService userService;
 
+    @Resource
+    private ApplicationContext applicationContext;
+
     @ApiOperation("申请注册商家")
     @PostMapping("/settled/apply")
-    public Result settledApply(@ParseUser Integer userId, @RequestBody @Validated(Groups.Add.class) TakeoutSellerAddParam takeoutSellerAddVo){
-        TakeoutSeller isExists = takeoutSellerService.getOne(new QueryWrapper<>(TakeoutSeller.builder().userId(userId).build()));
+    public Result settledApply(@ParseUser User user, @RequestBody @Validated(Groups.Add.class) TakeoutSellerAddParam takeoutSellerAddVo){
+        TakeoutSeller isExists = takeoutSellerService.getOne(new QueryWrapper<>(TakeoutSeller.builder().userId(user.getId()).build()));
         //判断是否提交过申请
         if (isExists != null){
             if (isExists.getStatus().equals(TakeoutSellerStatus.UNDER_REVIEW.getStatus())){
@@ -64,11 +76,12 @@ public class TakeoutSellerController {
         }else {
             TakeoutSeller takeoutSeller = new TakeoutSeller();
             BeanUtils.copyProperties(takeoutSellerAddVo, takeoutSeller);
-            takeoutSeller.setUserId(userId);
+            takeoutSeller.setUserId(user.getId());
+            takeoutSeller.setPhone(user.getPhone());
 
             // todo modify dev
             takeoutSeller.setStatus(TakeoutSellerStatus.NORMAL.getStatus());
-            userService.updateById(User.builder().id(userId).roleId(Role.ROLE_TAKEOUT_SELLER.getId()).build());
+            userService.updateById(User.builder().id(user.getId()).roleId(Role.ROLE_TAKEOUT_SELLER.getId()).build());
 
             return Result.auto(takeoutSellerService.save(takeoutSeller));
         }
@@ -76,7 +89,6 @@ public class TakeoutSellerController {
 
     /**
      * 获取附近商铺
-     * @param takeoutSeller 条件查询
      *  queryWrap.setProvince(takeoutSeller.getProvince());
      *  queryWrap.setCity(takeoutSeller.getCity());
      *  queryWrap.setName(takeoutSeller.getName());
@@ -84,9 +96,30 @@ public class TakeoutSellerController {
      */
     @ApiOperation("获取附近商铺")
     @PostMapping("/list")
-    public Result list(@ParsePage IPage<TakeoutSellerDto> takeoutSellerPage,
-                       @RequestBody @Validated(Groups.Query.class) TakeoutSeller takeoutSeller){
-        return (Result) takeoutSellerService.selectPage(takeoutSellerPage, takeoutSeller);
+    @ApiImplicitParams({
+         @ApiImplicitParam(name = "myLocation", value = "我的当前位置坐标（纬度,经度）"),
+         @ApiImplicitParam(name = "province", value = "我的省份"),
+         @ApiImplicitParam(name = "city", value = "我的城市")
+    })
+    @ParseParam
+    public Result list(@ParsePage IPage<TakeoutSeller> takeoutSellerPage,
+                       @RequestSingleParam("myLocation") String myLocation,
+                       @RequestSingleParam("province") String province,
+                       @RequestSingleParam("city") String city){
+        IPage<TakeoutSeller> iPage = takeoutSellerService.getBaseMapper().selectPage(takeoutSellerPage,
+                new QueryWrapper<>(TakeoutSeller.builder().province(province).city(city).build()));
+        List<TakeoutSeller> records = iPage.getRecords();
+        List<TakeoutSellerDto> takeoutSellerDtos = new ArrayList<>();
+        for (TakeoutSeller record : records) {
+            String[] split = myLocation.split(",");
+            String lng = String.format("%.6f", Double.parseDouble(split[0]));
+            String lat = String.format("%.6f", Double.parseDouble(split[1]));
+            TakeoutSellerDto takeoutSellerDto = new TakeoutSellerDto();
+            BeanUtils.copyProperties(record, takeoutSellerDto);
+            applicationContext.publishEvent(new TakeoutSellerEvent(record, String.format("%s,%s", lat, lng) , takeoutSellerDto.getAdditionalData()));
+            takeoutSellerDtos.add(takeoutSellerDto);
+        }
+        return Result.ok().data("rows", takeoutSellerDtos);
     }
 
     /**

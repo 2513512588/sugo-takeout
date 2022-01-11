@@ -35,4 +35,10 @@
         gmt_create,status,remark,
         rider_id
     </sql>
+    <select id="getAvgCostBySeller" resultType="java.lang.Double">
+        select ifnull(avg(total), 0) from takeout_order where seller_id = #{sellerId}
+    </select>
+    <select id="getAvgMonthSoldNumBySeller" resultType="java.lang.Integer">
+        select count(*) from takeout_order where seller_id = #{sellerId} and date_sub(curdate(), INTERVAL 30 DAY) &lt;= date(`gmt_create`)
+    </select>
 </mapper>

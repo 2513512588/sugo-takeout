@@ -25,14 +25,8 @@ spring:
   jackson:
     date-format: yyyy/MM/dd HH:mm:ss
     time-zone: GMT+8
-ali:
-  oss:
-    endPoint: oss-cn-shenzhen.aliyuncs.com
-    bucketName: smart-city-1
-    keyId: LTAI4G2q6gv7dC7LP8jvZpd7
-    keySecret: IOPQCZkFPYKp1Yjwcn1bQoOHXEGYeb
 logging:
-  level.com.smart_city.smartcity: debug
+  level.com.sugo.smart_city: debug
 #开启Mybatis下划线命名转驼峰命名
 mybatis-plus:
   configuration:

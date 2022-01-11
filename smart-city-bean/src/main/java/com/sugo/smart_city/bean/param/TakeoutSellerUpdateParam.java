@@ -71,4 +71,10 @@ public class TakeoutSellerUpdateParam implements Serializable {
     @ApiModelProperty("起送金额")
     private Double startDelivery;
 
+    /**
+     * 店铺位置信息经纬度json字符串
+     */
+    @ApiModelProperty("店铺位置信息经纬度json字符串")
+    private String location;
+
 }

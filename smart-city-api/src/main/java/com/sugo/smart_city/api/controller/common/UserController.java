@@ -1,8 +1,9 @@
-package com.sugo.smart_city.api.controller;
+package com.sugo.smart_city.api.controller.common;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
 import com.sugo.smart_city.bean.model.User;
+import com.sugo.smart_city.common.aspect.annotation.ParseParam;
 import com.sugo.smart_city.common.aspect.annotation.RequestSingleParam;
 import com.sugo.smart_city.common.util.Result;
 import com.sugo.smart_city.security.annotation.ParseUser;
@@ -39,7 +40,8 @@ public class UserController {
 
     @ApiOperation(value = "绑定邮箱")
     @PostMapping("/bindEmail")
-    public Result bindEmail(@RequestSingleParam String email){
+    @ParseParam
+    public Result bindEmail(@RequestSingleParam("email") String email){
         // 构建一个邮件对象
         SimpleMailMessage message = new SimpleMailMessage();
         // 设置邮件主题
@@ -104,9 +106,10 @@ public class UserController {
 
     @ApiOperation(value = "修改密码")
     @PostMapping("/updatePwd")
-    public Result updatePwd(@RequestSingleParam String oldPassword,
-                                   @RequestSingleParam String newPassword,
-                                   @ParseUser User user){
+    @ParseParam
+    public Result updatePwd(@RequestSingleParam("oldPassword") String oldPassword,
+                            @RequestSingleParam("newPassword") String newPassword,
+                            @ParseUser User user){
         if (passwordEncoder.matches(user.getPassword(), oldPassword)){
             String pwd = passwordEncoder.encode(newPassword);
             return Result.auto(userService.updateById(User.builder()
@@ -123,7 +126,8 @@ public class UserController {
      */
     @ApiOperation(value = "改绑手机号")
     @PostMapping("/updatePhone")
-    public Result updatePhone(@ParseUser Integer userId, @RequestSingleParam String phone){
+    @ParseParam
+    public Result updatePhone(@ParseUser Integer userId, @RequestSingleParam("phone") String phone){
         return Result.ok();
     }
 }

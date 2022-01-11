@@ -142,6 +142,12 @@ public class TakeoutSeller implements Serializable {
     @ApiModelProperty("店铺公告")
     private String notice;
 
+    /**
+     * 店铺位置信息经纬度json字符串
+     */
+    @ApiModelProperty("店铺位置信息经纬度json字符串")
+    private String location;
+
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }

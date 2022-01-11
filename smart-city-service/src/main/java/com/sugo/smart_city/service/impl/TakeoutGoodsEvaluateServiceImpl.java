@@ -13,6 +13,10 @@ import org.springframework.stereotype.Service;
 public class TakeoutGoodsEvaluateServiceImpl extends ServiceImpl<TakeoutGoodsEvaluateMapper, TakeoutGoodsEvaluate>
     implements TakeoutGoodsEvaluateService{
 
+    @Override
+    public Double getAvgScoreBySeller(Integer sellerId) {
+        return baseMapper.getAvgScoreBySeller(sellerId);
+    }
 }
 
 

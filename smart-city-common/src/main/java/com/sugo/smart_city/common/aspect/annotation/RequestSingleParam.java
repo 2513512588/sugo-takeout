@@ -11,6 +11,6 @@ import java.lang.annotation.*;
 @Documented
 public @interface RequestSingleParam {
 
-    String value() default "";
+    String value();
 
 }

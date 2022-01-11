@@ -1,4 +1,4 @@
-package com.sugo.smart_city.api.controller;
+package com.sugo.smart_city.api.controller.common;
 
 import com.sugo.smart_city.common.util.Result;
 import com.sugo.smart_city.service.OssService;

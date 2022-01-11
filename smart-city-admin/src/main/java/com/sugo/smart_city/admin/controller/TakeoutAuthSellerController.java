@@ -66,6 +66,16 @@ public class TakeoutAuthSellerController {
         return Result.ok();
     }
 
+    @ApiOperation("卖家完善资料")
+    @PostMapping("/info/edit/dev/{sellerId}")
+    public Result editInfo(@RequestBody TakeoutSellerUpdateParam takeoutSellerUpdateVo, @PathVariable Integer sellerId){
+        TakeoutSeller takeoutSeller = new TakeoutSeller();
+        BeanUtils.copyProperties(takeoutSellerUpdateVo, takeoutSeller);
+        takeoutSeller.setId(sellerId);
+        takeoutSellerService.updateById(takeoutSeller);
+        return Result.ok();
+    }
+
 
 
     /**

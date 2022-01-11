@@ -130,6 +130,8 @@ public class TakeoutSellerDto implements Serializable {
     @ApiModelProperty("店铺公告")
     private String notice;
 
+    private TakeoutSellerAdditionalDto additionalData = new TakeoutSellerAdditionalDto();
+
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }

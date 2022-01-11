@@ -2,7 +2,6 @@ package com.sugo.smart_city.api.config;
 
 
 import com.sugo.smart_city.common.aspect.resolver.ParsePageHandlerMethodArgumentResolver;
-import com.sugo.smart_city.common.aspect.resolver.RequestSingleParamHandlerMethodArgumentResolver;
 import com.sugo.smart_city.security.aspect.ParseUserHandlerMethodArgumentResolver;
 import com.sugo.smart_city.service.UserService;
 import org.springframework.context.annotation.Configuration;
@@ -34,7 +33,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         WebMvcConfigurer.super.addArgumentResolvers(resolvers);
-        resolvers.add(new RequestSingleParamHandlerMethodArgumentResolver());
         resolvers.add(new ParsePageHandlerMethodArgumentResolver());
         resolvers.add(new ParseUserHandlerMethodArgumentResolver(userService));
     }
