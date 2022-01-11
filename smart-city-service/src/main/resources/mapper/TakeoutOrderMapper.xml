@@ -41,4 +41,17 @@
     <select id="getAvgMonthSoldNumBySeller" resultType="java.lang.Integer">
         select count(*) from takeout_order where seller_id = #{sellerId} and date_sub(curdate(), INTERVAL 30 DAY) &lt;= date(`gmt_create`)
     </select>
+    <select id="getAvgCostBySellerList" resultType="java.lang.Double">
+        select (select ifnull(avg(total), 0) from takeout_order where takeout_order.seller_id = takeout_seller.id) from takeout_seller where takeout_seller.id in
+        <foreach collection="sellerIds" open="(" close=")" separator="," item="item">
+            #{item}
+        </foreach>
+    </select>
+    <select id="getAvgMonthSoldNumBySellerList" resultType="java.lang.Integer">
+        select (select count(*) from takeout_order where date_sub(curdate(), INTERVAL 30 DAY) &lt;= date(`gmt_create`) and takeout_order.seller_id = takeout_seller.id)
+        from takeout_seller where takeout_seller.id in
+        <foreach collection="sellerIds" open="(" close=")" separator="," item="item">
+            #{item}
+        </foreach>
+    </select>
 </mapper>

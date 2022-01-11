@@ -6,6 +6,8 @@ import com.sugo.smart_city.mapper.TakeoutGoodsEvaluateMapper;
 import com.sugo.smart_city.service.TakeoutGoodsEvaluateService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  *
  */
@@ -16,6 +18,11 @@ public class TakeoutGoodsEvaluateServiceImpl extends ServiceImpl<TakeoutGoodsEva
     @Override
     public Double getAvgScoreBySeller(Integer sellerId) {
         return baseMapper.getAvgScoreBySeller(sellerId);
+    }
+
+    @Override
+    public List<Double> getAvgScoreBySellerList(List<Integer> collect) {
+        return baseMapper.getAvgScoreBySellerList(collect);
     }
 }
 

@@ -110,13 +110,15 @@ public class TakeoutSellerController {
                 new QueryWrapper<>(TakeoutSeller.builder().province(province).city(city).build()));
         List<TakeoutSeller> records = iPage.getRecords();
         List<TakeoutSellerDto> takeoutSellerDtos = new ArrayList<>();
+        String[] split = myLocation.split(",");
+        String lng = String.format("%.6f", Double.parseDouble(split[0]));
+        String lat = String.format("%.6f", Double.parseDouble(split[1]));
+        TakeoutSellerEvent takeoutSellerEvent = new TakeoutSellerEvent(records, String.format("%s,%s", lat, lng));
+        applicationContext.publishEvent(takeoutSellerEvent);
         for (TakeoutSeller record : records) {
-            String[] split = myLocation.split(",");
-            String lng = String.format("%.6f", Double.parseDouble(split[0]));
-            String lat = String.format("%.6f", Double.parseDouble(split[1]));
             TakeoutSellerDto takeoutSellerDto = new TakeoutSellerDto();
             BeanUtils.copyProperties(record, takeoutSellerDto);
-            applicationContext.publishEvent(new TakeoutSellerEvent(record, String.format("%s,%s", lat, lng) , takeoutSellerDto.getAdditionalData()));
+            takeoutSellerDto.setAdditionalData(takeoutSellerEvent.getAdditionalData().get(record.getId()));
             takeoutSellerDtos.add(takeoutSellerDto);
         }
         return Result.ok().data("rows", takeoutSellerDtos);
