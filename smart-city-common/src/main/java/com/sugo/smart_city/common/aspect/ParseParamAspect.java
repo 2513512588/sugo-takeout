@@ -3,6 +3,7 @@ package com.sugo.smart_city.common.aspect;
 
 import com.alibaba.fastjson.JSONObject;
 import com.sugo.smart_city.common.aspect.annotation.RequestSingleParam;
+import com.sugo.smart_city.common.exception.SysException;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -37,16 +38,25 @@ public class ParseParamAspect {
             sb.append(buf, 0, rd);
         }
         JSONObject jsonObject = JSONObject.parseObject(sb.toString());
-        Method method = ((MethodSignature) proceedingJoinPoint.getSignature()).getMethod();
-        Parameter[] parameters = method.getParameters();
         Object[] args = proceedingJoinPoint.getArgs();
-        for (int i = 0; i <parameters.length; i++) {
-            Annotation[] annotations = parameters[i].getAnnotations();
-            for (Annotation annotation : annotations) {
-                if (annotation instanceof RequestSingleParam){
-                    args[i] = jsonObject.get(((RequestSingleParam) annotation).value());
+        if (jsonObject != null){
+            Method method = ((MethodSignature) proceedingJoinPoint.getSignature()).getMethod();
+            Parameter[] parameters = method.getParameters();
+            for (int i = 0; i <parameters.length; i++) {
+                Annotation[] annotations = parameters[i].getAnnotations();
+                for (Annotation annotation : annotations) {
+                    if (annotation instanceof RequestSingleParam){
+                        String key = ((RequestSingleParam) annotation).value();
+                        if (jsonObject.containsKey(key)){
+                            args[i] = jsonObject.get(key);
+                        }else {
+                            throw new SysException(String.format("缺少参数%s", key));
+                        }
+                    }
                 }
             }
+        }else {
+            throw new SysException("请传入json参数");
         }
         return proceedingJoinPoint.proceed(args);
     }

@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.sugo.smart_city.bean.dto.TakeoutSellerAdditionalDto;
 import com.sugo.smart_city.bean.event.TakeoutSellerEvent;
 import com.sugo.smart_city.bean.model.TakeoutSeller;
+import com.sugo.smart_city.common.exception.SysException;
 import com.sugo.smart_city.service.LocationService;
 import com.sugo.smart_city.service.TakeoutGoodsEvaluateService;
 import com.sugo.smart_city.service.TakeoutOrderService;
@@ -66,6 +67,8 @@ public class TakeoutSellerListener {
                 additionalDto.setMonthSoldNum(avgMonthSoldNumList.get(i));
                 additionalData.put(takeoutSellerList.get(i).getId(), additionalDto);
             }
+        }else {
+            throw new SysException(response.getString("message") + "，经纬度异常，格式为（纬度,经度）");
         }
 
     }

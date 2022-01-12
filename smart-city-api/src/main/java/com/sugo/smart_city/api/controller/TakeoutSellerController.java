@@ -99,7 +99,7 @@ public class TakeoutSellerController {
     @ApiImplicitParams({
          @ApiImplicitParam(name = "myLocation", value = "我的当前位置坐标（纬度,经度）"),
          @ApiImplicitParam(name = "province", value = "我的省份"),
-         @ApiImplicitParam(name = "city", value = "我的城市")
+         @ApiImplicitParam(name = "city", value = "我的城市"),
     })
     @ParseParam
     public Result list(@ParsePage IPage<TakeoutSeller> takeoutSellerPage,
@@ -121,7 +121,7 @@ public class TakeoutSellerController {
             takeoutSellerDto.setAdditionalData(takeoutSellerEvent.getAdditionalData().get(record.getId()));
             takeoutSellerDtos.add(takeoutSellerDto);
         }
-        return Result.ok().data("rows", takeoutSellerDtos);
+        return Result.ok().pageList(iPage, takeoutSellerDtos);
     }
 
     /**

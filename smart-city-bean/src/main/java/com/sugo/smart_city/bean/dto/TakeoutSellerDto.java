@@ -1,9 +1,5 @@
 package com.sugo.smart_city.bean.dto;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.sugo.smart_city.common.valid.Groups;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -15,11 +11,7 @@ import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.time.LocalTime;
 
-/**
- * 外卖商家表
- * @TableName takeout_seller
- */
-@TableName(value ="takeout_seller")
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -29,7 +21,6 @@ public class TakeoutSellerDto implements Serializable {
      * 主键id
      */
     @ApiModelProperty("卖家id")
-    @TableId(type = IdType.AUTO)
     private Integer id;
 
     /**
@@ -132,6 +123,5 @@ public class TakeoutSellerDto implements Serializable {
 
     private TakeoutSellerAdditionalDto additionalData = new TakeoutSellerAdditionalDto();
 
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
+
 }

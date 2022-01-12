@@ -1,10 +1,12 @@
 package com.sugo.smart_city.common.util;
 
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.sugo.smart_city.common.enums.ResultCode;
 import lombok.Data;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -58,4 +60,28 @@ public class Result {
         data.put(key, value);
         return this;
     }
+
+    public Result data(Object value){
+        data("item", value);
+        return this;
+    }
+
+    public Result list(List<?> list){
+        data("rows", list);
+        return this;
+    }
+
+    public Result pageList(IPage<?> page, List<?> list){
+        data("rows", list).
+        data("total", page.getTotal()).
+        data("pages", page.getPages());
+        return this;
+    }
+
+    public Result pageList(IPage<?> page){
+        pageList(page, page.getRecords());
+        return this;
+    }
+
+
 }

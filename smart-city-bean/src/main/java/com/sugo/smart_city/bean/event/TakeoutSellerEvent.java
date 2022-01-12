@@ -20,6 +20,9 @@ import java.util.Map;
 public class TakeoutSellerEvent {
 
     private List<TakeoutSeller> takeoutSeller;
+    /**
+     * <SellerId, AdditionDto>
+     */
     private Map<Integer, TakeoutSellerAdditionalDto> additionalData;
     private String currentLocation;
 

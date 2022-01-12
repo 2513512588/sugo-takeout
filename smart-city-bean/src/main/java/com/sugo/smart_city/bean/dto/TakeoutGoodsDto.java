@@ -1,26 +1,18 @@
-package com.sugo.smart_city.bean.model;
+package com.sugo.smart_city.bean.dto;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-/**
- * 外卖商品表
- * @TableName takeout_goods
- */
-@TableName(value ="takeout_goods")
+
 @Data
-public class TakeoutGoods implements Serializable {
+public class TakeoutGoodsDto implements Serializable {
     /**
      * 主键id
      */
-    @TableId(type = IdType.AUTO)
     private Integer id;
 
     /**
@@ -63,13 +55,9 @@ public class TakeoutGoods implements Serializable {
      */
     private BigDecimal price;
 
-    /**
-     * 是否删除
-     */
-    @TableField(select = false)
-    @JsonIgnore
-    private Boolean isDeleted;
 
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
+    private TakeoutSellerAdditionalDto additionalData = new TakeoutSellerAdditionalDto();
+
+    @JsonIgnore
+    private String location;
 }

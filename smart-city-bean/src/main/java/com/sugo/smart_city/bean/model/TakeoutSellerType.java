@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -27,8 +28,15 @@ public class TakeoutSellerType implements Serializable {
     private String name;
 
     /**
+     * 分类图标
+     */
+    private String icon;
+
+    /**
      * 是否删除 0 未删除 1已删除
      */
+    @TableField(select = false)
+    @JsonIgnore
     private Boolean isDeleted;
 
     @TableField(exist = false)

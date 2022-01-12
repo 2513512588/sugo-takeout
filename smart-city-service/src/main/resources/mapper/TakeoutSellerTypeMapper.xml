@@ -7,10 +7,11 @@
     <resultMap id="BaseResultMap" type="com.sugo.smart_city.bean.model.TakeoutSellerType">
             <id property="id" column="id" jdbcType="INTEGER"/>
             <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="icon" column="icon" jdbcType="VARCHAR"/>
             <result property="isDeleted" column="is_deleted" jdbcType="BOOLEAN"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,name,is_deleted
+        id,name,icon,is_deleted
     </sql>
 </mapper>

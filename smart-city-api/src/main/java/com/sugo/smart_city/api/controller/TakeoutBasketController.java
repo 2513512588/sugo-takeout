@@ -31,7 +31,7 @@ public class TakeoutBasketController {
     @GetMapping("/list")
     public Result list(@ParseUser Integer userId,
                        @ParsePage Page<TakeoutBasketDto> basketPage){
-       return (Result) takeoutBasketService.selectPage(basketPage, userId);
+       return Result.ok().pageList(takeoutBasketService.selectPage(basketPage, userId));
     }
 
 

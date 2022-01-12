@@ -18,8 +18,28 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,name,description,category_id, seller_id,
+        id, name, description, category_id, seller_id,
         cover,score,sales_volume,
         price,is_deleted
     </sql>
+    <select id="getListByCity" resultType="com.sugo.smart_city.bean.dto.TakeoutGoodsDto">
+        select
+        tg.id,
+        tg.name, tg.description, category_id, seller_id,
+        tg.cover, score,sales_volume,
+        price, location
+        from takeout_goods as tg
+        join takeout_seller ts on ts.id = tg.seller_id
+        where province = #{province} and city = #{city} and tg.id = (SELECT id FROM takeout_goods WHERE tg.seller_id = seller_id
+        and price != 0
+        <choose>
+            <when test="type == 1">
+                order by score desc
+            </when>
+            <otherwise>
+                order by price asc
+            </otherwise>
+        </choose>
+        LIMIT 1)
+    </select>
 </mapper>
