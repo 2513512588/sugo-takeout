@@ -12,9 +12,9 @@ public interface TakeoutOrderService extends IService<TakeoutOrder> {
 
     double getAvgCostBySeller(Integer sellerId);
 
-    Integer getAvgMonthSoldNumBySeller(Integer sellerId);
-
     List<Double> getAvgCostBySellerList(List<Integer> sellerIds);
 
-    List<Integer> getAvgMonthSoldNumBySellerList(List<Integer> sellerIds);
+    Integer getAvgMonthOrderNumBySeller(Integer sellerId);
+
+    List<Integer> getAvgMonthOrderNumBySellerList(List<Integer> sellerIds);
 }

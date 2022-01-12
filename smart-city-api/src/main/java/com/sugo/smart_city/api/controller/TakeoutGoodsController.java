@@ -2,14 +2,16 @@ package com.sugo.smart_city.api.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.sugo.smart_city.bean.dto.TakeoutGoodsDto;
+import com.sugo.smart_city.bean.dto.TakeoutListGoodsDto;
 import com.sugo.smart_city.bean.event.TakeoutSellerEvent;
 import com.sugo.smart_city.bean.model.TakeoutGoods;
+import com.sugo.smart_city.bean.model.TakeoutGoodsCategory;
 import com.sugo.smart_city.bean.model.TakeoutSeller;
 import com.sugo.smart_city.common.aspect.annotation.ParsePage;
 import com.sugo.smart_city.common.aspect.annotation.ParseParam;
 import com.sugo.smart_city.common.aspect.annotation.RequestSingleParam;
 import com.sugo.smart_city.common.util.Result;
+import com.sugo.smart_city.service.TakeoutGoodsCategoryService;
 import com.sugo.smart_city.service.TakeoutGoodsService;
 import com.sugo.smart_city.service.TakeoutSellerService;
 import io.swagger.annotations.Api;
@@ -38,9 +40,10 @@ public class TakeoutGoodsController {
     private TakeoutGoodsService takeoutGoodsService;
     private TakeoutSellerService takeoutSellerService;
     private ApplicationContext applicationContext;
+    private TakeoutGoodsCategoryService takeoutGoodsCategoryService;
 
     @ApiOperation("获取推荐商品")
-    @PostMapping("/list")
+    @PostMapping("/near/list")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "myLocation", value = "我的当前位置坐标（纬度,经度）"),
             @ApiImplicitParam(name = "province", value = "我的省份"),
@@ -55,10 +58,10 @@ public class TakeoutGoodsController {
                        @RequestSingleParam("type") Integer type){
 
         String[] split = myLocation.split(",");
-        IPage<TakeoutGoodsDto> iPage = takeoutGoodsService.getListByCity(province, city, type, takeoutGoodsPage);
-        List<TakeoutGoodsDto> records = iPage.getRecords();
+        IPage<TakeoutListGoodsDto> iPage = takeoutGoodsService.getListByCity(province, city, type, takeoutGoodsPage);
+        List<TakeoutListGoodsDto> records = iPage.getRecords();
         List<TakeoutSeller> sellerList = new ArrayList<>();
-        for (TakeoutGoodsDto record : records) {
+        for (TakeoutListGoodsDto record : records) {
             TakeoutSeller takeoutSeller = new TakeoutSeller();
             takeoutSeller.setLocation(record.getLocation());
             takeoutSeller.setId(record.getSellerId());
@@ -68,31 +71,25 @@ public class TakeoutGoodsController {
         String lat = String.format("%.6f", Double.parseDouble(split[1]));
         TakeoutSellerEvent takeoutSellerEvent = new TakeoutSellerEvent(sellerList, String.format("%s,%s", lat, lng));
         applicationContext.publishEvent(takeoutSellerEvent);
-        for (TakeoutGoodsDto takeoutGoodsDto : records) {
+        for (TakeoutListGoodsDto takeoutGoodsDto : records) {
             takeoutGoodsDto.setAdditionalData(takeoutSellerEvent.getAdditionalData().get(takeoutGoodsDto.getSellerId()));
         }
         iPage.setRecords(records);
         return Result.ok().pageList(iPage);
     }
 
-    @ApiOperation("根据商家id查询商品数据")
-    @GetMapping("/seller/{sellerId}")
-    public Result findGoodsBySeller(@PathVariable Integer sellerId){
-        TakeoutGoods takeoutGoods = new TakeoutGoods();
-        takeoutGoods.setSellerId(sellerId);
-        QueryWrapper<TakeoutGoods> queryWrapper = new QueryWrapper<>(takeoutGoods);
-        return Result.ok().list(takeoutGoodsService.list(queryWrapper));
+    @ApiOperation("根据商家id查询所有商品分类")
+    @GetMapping("/category/list")
+    public Result findGoodsCategoryList(@RequestParam Integer sellerId){
+        List<TakeoutGoodsCategory> list = takeoutGoodsCategoryService.list(new QueryWrapper<>(TakeoutGoodsCategory.builder().sellerId(sellerId).build()));
+        return Result.ok().list(list);
     }
 
     @ApiOperation("根据商家id和商品分类id查询商品数据")
-    @GetMapping("/seller/{sellerId}/category/{categoryId}")
-    public Result findGoodsBySellerAndCategory(@PathVariable Integer sellerId,
-                                               @PathVariable Integer categoryId){
-        TakeoutGoods takeoutGoods = new TakeoutGoods();
-        takeoutGoods.setSellerId(sellerId);
-        takeoutGoods.setCategoryId(categoryId);
-        QueryWrapper<TakeoutGoods> queryWrapper = new QueryWrapper<>(takeoutGoods);
-        return Result.ok().list(takeoutGoodsService.list(queryWrapper));
+    @GetMapping("/list")
+    public Result findGoodsBySellerAndCategory(@RequestParam Integer sellerId,
+                                               @RequestParam(required = false) Integer categoryId){
+        return Result.ok().list(takeoutGoodsService.getListBySeller(sellerId, categoryId));
     }
 
 

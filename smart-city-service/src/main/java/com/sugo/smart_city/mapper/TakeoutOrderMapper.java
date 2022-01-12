@@ -13,11 +13,11 @@ public interface TakeoutOrderMapper extends BaseMapper<TakeoutOrder> {
 
     double getAvgCostBySeller(@Param("sellerId") Integer sellerId);
 
-    int getAvgMonthSoldNumBySeller(@Param("sellerId") Integer sellerId);
-
     List<Double> getAvgCostBySellerList(@Param("sellerIds") List<Integer> sellerIds);
 
-    List<Integer> getAvgMonthSoldNumBySellerList(@Param("sellerIds") List<Integer> sellerIds);
+    int getAvgMonthOrderNumBySeller(@Param("sellerId") Integer sellerId);
+
+    List<Integer> getAvgMonthOrderNumBySellerList(@Param("sellerIds") List<Integer> sellerIds);
 }
 
 

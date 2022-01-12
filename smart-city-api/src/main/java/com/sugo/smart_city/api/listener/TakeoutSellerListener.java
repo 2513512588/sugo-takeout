@@ -7,9 +7,11 @@ import com.sugo.smart_city.bean.event.TakeoutSellerEvent;
 import com.sugo.smart_city.bean.model.TakeoutSeller;
 import com.sugo.smart_city.common.exception.SysException;
 import com.sugo.smart_city.service.LocationService;
+import com.sugo.smart_city.service.TakeoutDeliveryService;
 import com.sugo.smart_city.service.TakeoutGoodsEvaluateService;
 import com.sugo.smart_city.service.TakeoutOrderService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 @AllArgsConstructor
 public class TakeoutSellerListener {
@@ -24,6 +27,8 @@ public class TakeoutSellerListener {
     private LocationService locationService;
     private TakeoutOrderService takeoutOrderService;
     private TakeoutGoodsEvaluateService takeoutGoodsEvaluateService;
+    private TakeoutDeliveryService takeoutDeliveryService;
+
 
     @EventListener(TakeoutSellerEvent.class)
     public void takeoutSellerEvent(TakeoutSellerEvent takeoutSellerEvent){
@@ -44,31 +49,39 @@ public class TakeoutSellerListener {
         String join = StringUtils.join(takeoutSellerList.stream().map(TakeoutSeller::getLocation).collect(Collectors.toList()), "|");
 
         List<Integer> collect = takeoutSellerList.stream().map(TakeoutSeller::getId).collect(Collectors.toList());
-        //计算人均消费
-        List<Double> avgCostList = takeoutOrderService.getAvgCostBySellerList(collect);
-        //计算评分
-        List<Double> avgScoreList = takeoutGoodsEvaluateService.getAvgScoreBySellerList(collect);
 
-        //计算月销
-        List<Integer> avgMonthSoldNumList = takeoutOrderService.getAvgMonthSoldNumBySellerList(collect);
+        if (collect.size() > 0){
+            log.debug("sellerListIds =>{}", collect);
+            //计算人均消费
+            List<Double> avgCostList = takeoutOrderService.getAvgCostBySellerList(collect);
+            //计算评分
+            List<Double> avgScoreList = takeoutGoodsEvaluateService.getAvgScoreBySellerList(collect);
 
-        //计算距离
-        String routematrix = locationService.routematrix(takeoutSellerEvent.getCurrentLocation(), join);
-        JSONObject response = JSONObject.parseObject(routematrix);
-        Map<Integer, TakeoutSellerAdditionalDto> additionalData = takeoutSellerEvent.getAdditionalData();
-        if (response.getIntValue("status") == 0){
-            JSONArray result = response.getJSONArray("result");
-            for (int i = 0; i < result.size(); i++) {
-                long distance = result.getJSONObject(i).getJSONObject("distance").getLongValue("value");
-                TakeoutSellerAdditionalDto additionalDto = new TakeoutSellerAdditionalDto();
-                additionalDto.setDistance(distance);
-                additionalDto.setAvgCost(avgCostList.get(i));
-                additionalDto.setAvgScore(avgScoreList.get(i));
-                additionalDto.setMonthSoldNum(avgMonthSoldNumList.get(i));
-                additionalData.put(takeoutSellerList.get(i).getId(), additionalDto);
+            //计算月销
+            List<Integer> avgMonthOrderNumList = takeoutOrderService.getAvgMonthOrderNumBySellerList(collect);
+
+            //计算平均配送时间
+            List<Long> avgDeliveryTimeBySellerList = takeoutDeliveryService.getAvgDeliveryTimeBySellerList(collect);
+            log.debug("avgDeliveryTimeBySellerList => {}", avgDeliveryTimeBySellerList);
+            //计算距离
+            String routematrix = locationService.routematrix(takeoutSellerEvent.getCurrentLocation(), join);
+            JSONObject response = JSONObject.parseObject(routematrix);
+            Map<Integer, TakeoutSellerAdditionalDto> additionalData = takeoutSellerEvent.getAdditionalData();
+            if (response.getIntValue("status") == 0){
+                JSONArray result = response.getJSONArray("result");
+                for (int i = 0; i < result.size(); i++) {
+                    long distance = result.getJSONObject(i).getJSONObject("distance").getLongValue("value");
+                    TakeoutSellerAdditionalDto additionalDto = new TakeoutSellerAdditionalDto();
+                    additionalDto.setDistance(distance);
+                    additionalDto.setAvgCost(avgCostList.get(i));
+                    additionalDto.setAvgScore(avgScoreList.get(i));
+                    additionalDto.setMonthOrderNum(avgMonthOrderNumList.get(i));
+                    additionalDto.setAvgDeliveryTime(avgDeliveryTimeBySellerList.get(i));
+                    additionalData.put(takeoutSellerList.get(i).getId(), additionalDto);
+                }
+            }else {
+                throw new SysException(response.getString("message") + "，经纬度异常，格式为（纬度,经度）");
             }
-        }else {
-            throw new SysException(response.getString("message") + "，经纬度异常，格式为（纬度,经度）");
         }
 
     }

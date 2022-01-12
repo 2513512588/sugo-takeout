@@ -3,6 +3,7 @@ package com.sugo.smart_city.common.util;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.sugo.smart_city.common.enums.ResultCode;
+import com.sugo.smart_city.common.exception.SysException;
 import lombok.Data;
 
 import java.util.HashMap;
@@ -20,7 +21,7 @@ public class Result {
     private Integer code;
     private String message;
     private Boolean success;
-    private Map<String, Object> data = new HashMap<>();
+    private Object data = new HashMap<String, Object>();
 
     private Result() {
 
@@ -57,12 +58,17 @@ public class Result {
     }
 
     public Result data(String key, Object value){
-        data.put(key, value);
+        if (data instanceof Map){
+            Map<String, Object> map = (Map<String, Object>) data;
+            map.put(key, value);
+        }else {
+            throw new SysException("Result.data数据类型错误");
+        }
         return this;
     }
 
     public Result data(Object value){
-        data("item", value);
+        data = value;
         return this;
     }
 

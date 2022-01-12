@@ -8,6 +8,8 @@ import com.sugo.smart_city.bean.model.TakeoutCoupon;
  */
 public interface TakeoutCouponMapper extends BaseMapper<TakeoutCoupon> {
 
+    TakeoutCoupon findBySellerId(Integer id);
+
 }
 
 

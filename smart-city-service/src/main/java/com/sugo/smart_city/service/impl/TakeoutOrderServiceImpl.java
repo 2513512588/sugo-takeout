@@ -21,18 +21,19 @@ public class TakeoutOrderServiceImpl extends ServiceImpl<TakeoutOrderMapper, Tak
     }
 
     @Override
-    public Integer getAvgMonthSoldNumBySeller(Integer sellerId) {
-        return baseMapper.getAvgMonthSoldNumBySeller(sellerId);
-    }
-
-    @Override
     public List<Double> getAvgCostBySellerList(List<Integer> sellerIds) {
         return baseMapper.getAvgCostBySellerList(sellerIds);
     }
 
+
     @Override
-    public List<Integer> getAvgMonthSoldNumBySellerList(List<Integer> sellerIds) {
-        return baseMapper.getAvgMonthSoldNumBySellerList(sellerIds);
+    public Integer getAvgMonthOrderNumBySeller(Integer sellerId) {
+        return baseMapper.getAvgMonthOrderNumBySeller(sellerId);
+    }
+
+    @Override
+    public List<Integer> getAvgMonthOrderNumBySellerList(List<Integer> sellerIds) {
+        return baseMapper.getAvgMonthOrderNumBySellerList(sellerIds);
     }
 }
 

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,7 +39,9 @@ public class TakeoutGoodsCategory implements Serializable {
     /**
      * 商家id
      */
+    @JsonIgnore
     @ApiModelProperty("商家id")
+    @TableField(select = false)
     private Integer sellerId;
 
     @TableField(exist = false)

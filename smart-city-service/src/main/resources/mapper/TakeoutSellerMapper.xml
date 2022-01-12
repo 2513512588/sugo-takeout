@@ -27,6 +27,11 @@
             <result property="location" column="location" jdbcType="VARCHAR"/>
     </resultMap>
 
+    <resultMap id="UnionCouponMap" type="com.sugo.smart_city.bean.dto.TakeoutSellerDetailDto" extends="BaseResultMap" >
+        <collection property="coupons" ofType="com.sugo.smart_city.bean.model.TakeoutCoupon" javaType="java.util.ArrayList" column="id" jdbcType="INTEGER"
+        select="com.sugo.smart_city.mapper.TakeoutCouponMapper.findBySellerId" />
+    </resultMap>
+
     <sql id="Base_Column_List">
         id,user_id,name,cover, delivery_time_start, delivery_time_end,
         start_delivery, notice, status,
@@ -35,5 +40,11 @@
         province,enterprise_name,enterprise_address,
         enterprise_pic
     </sql>
+    <select id="getDetailById" resultMap="UnionCouponMap">
+        select id,name,cover,description,avatar,phone,phone_additional,enterprise_name,enterprise_address,
+               enterprise_pic,delivery_time_start,delivery_time_end,start_delivery,notice,
+               (select count(*) from takeout_goods_evaluate where seller_id = id) as commentNum
+       from takeout_seller where id = #{id}
+    </select>
 
 </mapper>

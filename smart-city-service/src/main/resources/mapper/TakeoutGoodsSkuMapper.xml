@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sugo.smart_city.mapper.TakeoutGoodsSkuMapper">
+
+    <resultMap id="BaseResultMap" type="com.sugo.smart_city.bean.model.TakeoutGoodsSku">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="goodsId" column="goods_id" jdbcType="INTEGER"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="stock" column="stock" jdbcType="INTEGER"/>
+            <result property="unit" column="unit" jdbcType="VARCHAR"/>
+            <result property="type" column="type" jdbcType="VARCHAR"/>
+            <result property="price" column="price" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,goods_id,name,type,price
+        stock,unit
+    </sql>
+    <select id="findByGoodsId" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List" />
+        from takeout_goods_sku where goods_id = #{goodsId}
+    </select>
+</mapper>

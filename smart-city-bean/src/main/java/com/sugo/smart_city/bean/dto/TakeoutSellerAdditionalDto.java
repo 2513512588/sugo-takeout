@@ -21,13 +21,18 @@ public class TakeoutSellerAdditionalDto implements Serializable {
     private Double avgCost;
 
     /**
-     * 已售数量
+     * 月订单数量
      */
-    private Integer monthSoldNum;
+    private Integer monthOrderNum;
 
 
     /**
      * 评分
      */
     private Double avgScore;
+
+    /**
+     * 配送时间
+     */
+    private Long avgDeliveryTime;
 }

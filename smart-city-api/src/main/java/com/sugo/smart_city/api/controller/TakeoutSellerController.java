@@ -2,7 +2,7 @@ package com.sugo.smart_city.api.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.sugo.smart_city.bean.dto.TakeoutSellerDto;
+import com.sugo.smart_city.bean.dto.TakeoutListSellerDto;
 import com.sugo.smart_city.bean.enums.TakeoutSellerStatus;
 import com.sugo.smart_city.bean.event.TakeoutSellerEvent;
 import com.sugo.smart_city.bean.model.TakeoutGoodsCategory;
@@ -16,7 +16,6 @@ import com.sugo.smart_city.common.exception.SysException;
 import com.sugo.smart_city.common.util.Result;
 import com.sugo.smart_city.common.valid.Groups;
 import com.sugo.smart_city.security.annotation.ParseUser;
-import com.sugo.smart_city.security.enums.Role;
 import com.sugo.smart_city.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -79,9 +78,9 @@ public class TakeoutSellerController {
             takeoutSeller.setUserId(user.getId());
             takeoutSeller.setPhone(user.getPhone());
 
-            // todo modify dev
-            takeoutSeller.setStatus(TakeoutSellerStatus.NORMAL.getStatus());
-            userService.updateById(User.builder().id(user.getId()).roleId(Role.ROLE_TAKEOUT_SELLER.getId()).build());
+            // todo modify dev 自动审核
+//            takeoutSeller.setStatus(TakeoutSellerStatus.NORMAL.getStatus());
+//            userService.updateById(User.builder().id(user.getId()).roleId(Role.ROLE_TAKEOUT_SELLER.getId()).build());
 
             return Result.auto(takeoutSellerService.save(takeoutSeller));
         }
@@ -95,7 +94,7 @@ public class TakeoutSellerController {
      *  queryWrap.setTypeId(takeoutSeller.getTypeId());
      */
     @ApiOperation("获取附近商铺")
-    @PostMapping("/list")
+    @PostMapping("/near/list")
     @ApiImplicitParams({
          @ApiImplicitParam(name = "myLocation", value = "我的当前位置坐标（纬度,经度）"),
          @ApiImplicitParam(name = "province", value = "我的省份"),
@@ -107,21 +106,21 @@ public class TakeoutSellerController {
                        @RequestSingleParam("province") String province,
                        @RequestSingleParam("city") String city){
         IPage<TakeoutSeller> iPage = takeoutSellerService.getBaseMapper().selectPage(takeoutSellerPage,
-                new QueryWrapper<>(TakeoutSeller.builder().province(province).city(city).build()));
+                new QueryWrapper<>(TakeoutSeller.builder().province(province).city(city).status(TakeoutSellerStatus.NORMAL.getStatus()).build()));
         List<TakeoutSeller> records = iPage.getRecords();
-        List<TakeoutSellerDto> takeoutSellerDtos = new ArrayList<>();
+        List<TakeoutListSellerDto> takeoutListSellerDtos = new ArrayList<>();
         String[] split = myLocation.split(",");
         String lng = String.format("%.6f", Double.parseDouble(split[0]));
         String lat = String.format("%.6f", Double.parseDouble(split[1]));
         TakeoutSellerEvent takeoutSellerEvent = new TakeoutSellerEvent(records, String.format("%s,%s", lat, lng));
         applicationContext.publishEvent(takeoutSellerEvent);
         for (TakeoutSeller record : records) {
-            TakeoutSellerDto takeoutSellerDto = new TakeoutSellerDto();
-            BeanUtils.copyProperties(record, takeoutSellerDto);
-            takeoutSellerDto.setAdditionalData(takeoutSellerEvent.getAdditionalData().get(record.getId()));
-            takeoutSellerDtos.add(takeoutSellerDto);
+            TakeoutListSellerDto takeoutListSellerDto = new TakeoutListSellerDto();
+            BeanUtils.copyProperties(record, takeoutListSellerDto);
+            takeoutListSellerDto.setAdditionalData(takeoutSellerEvent.getAdditionalData().get(record.getId()));
+            takeoutListSellerDtos.add(takeoutListSellerDto);
         }
-        return Result.ok().pageList(iPage, takeoutSellerDtos);
+        return Result.ok().pageList(iPage, takeoutListSellerDtos);
     }
 
     /**
@@ -132,7 +131,7 @@ public class TakeoutSellerController {
     @ApiOperation("根据商铺id获取商铺详情")
     @GetMapping("/detail/{id}")
     public Result detail(@PathVariable Integer id){
-        return Result.ok().data("data", takeoutSellerService.getById(id));
+        return Result.ok().data(takeoutSellerService.getDetailById(id));
     }
 
     /**
@@ -144,8 +143,7 @@ public class TakeoutSellerController {
     @GetMapping("/category/{sellerId}")
     public Result categoryList(@PathVariable Integer sellerId){
         QueryWrapper<TakeoutGoodsCategory> queryWrapper = new QueryWrapper<>(TakeoutGoodsCategory.builder().sellerId(sellerId).build());
-        queryWrapper.select("id", "name");
-        return Result.ok().data("rows", takeoutGoodsCategoryService.list(queryWrapper));
+        return Result.ok().list(takeoutGoodsCategoryService.list(queryWrapper));
     }
 
     /**

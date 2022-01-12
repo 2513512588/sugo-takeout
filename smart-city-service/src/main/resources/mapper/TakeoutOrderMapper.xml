@@ -24,6 +24,7 @@
             <result property="status" column="status" jdbcType="INTEGER"/>
             <result property="remark" column="remark" jdbcType="VARCHAR"/>
             <result property="riderId" column="rider_id" jdbcType="INTEGER"/>
+            <result property="skuId" column="sku_id" jdbcType="INTEGER"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -33,25 +34,31 @@
         code,arrive_time,total,
         delivery_fee,packing_fee,is_deleted,
         gmt_create,status,remark,
-        rider_id
+        rider_id,sku_id
     </sql>
     <select id="getAvgCostBySeller" resultType="java.lang.Double">
         select ifnull(avg(total), 0) from takeout_order where seller_id = #{sellerId}
     </select>
-    <select id="getAvgMonthSoldNumBySeller" resultType="java.lang.Integer">
-        select count(*) from takeout_order where seller_id = #{sellerId} and date_sub(curdate(), INTERVAL 30 DAY) &lt;= date(`gmt_create`)
-    </select>
     <select id="getAvgCostBySellerList" resultType="java.lang.Double">
         select (select ifnull(avg(total), 0) from takeout_order where takeout_order.seller_id = takeout_seller.id) from takeout_seller where takeout_seller.id in
-        <foreach collection="sellerIds" open="(" close=")" separator="," item="item">
+        (
+        <foreach collection="sellerIds" separator="," close="," item="item">
             #{item}
         </foreach>
+        0
+        )
     </select>
-    <select id="getAvgMonthSoldNumBySellerList" resultType="java.lang.Integer">
+    <select id="getAvgMonthOrderNumBySeller" resultType="java.lang.Integer">
+        select count(*) from takeout_order where seller_id = #{sellerId} and date_sub(curdate(), INTERVAL 30 DAY) &lt;= date(`gmt_create`)
+    </select>
+    <select id="getAvgMonthOrderNumBySellerList" resultType="java.lang.Integer">
         select (select count(*) from takeout_order where date_sub(curdate(), INTERVAL 30 DAY) &lt;= date(`gmt_create`) and takeout_order.seller_id = takeout_seller.id)
-        from takeout_seller where takeout_seller.id in
-        <foreach collection="sellerIds" open="(" close=")" separator="," item="item">
+        from takeout_seller
+        where takeout_seller.id in (
+        <foreach collection="sellerIds" separator="," close="," item="item">
             #{item}
         </foreach>
+        0
+        )
     </select>
 </mapper>

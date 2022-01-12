@@ -1,22 +1,18 @@
 package com.sugo.smart_city.bean.dto;
 
-import com.sugo.smart_city.common.valid.Groups;
+import com.sugo.smart_city.bean.model.TakeoutCoupon;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
-import java.io.Serializable;
 import java.time.LocalTime;
+import java.util.List;
 
-
+/**
+ * @author hehaoyang
+ */
 @Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class TakeoutSellerDto implements Serializable {
+public class TakeoutSellerDetailDto {
+
     /**
      * 主键id
      */
@@ -28,7 +24,6 @@ public class TakeoutSellerDto implements Serializable {
      */
     @ApiModelProperty("店铺名称")
     private String name;
-
     /**
      * 店铺招牌背景
      */
@@ -40,19 +35,11 @@ public class TakeoutSellerDto implements Serializable {
      */
     @ApiModelProperty("店铺介绍")
     private String description;
-
     /**
      * 店铺logo
      */
     @ApiModelProperty("店铺logo")
     private String avatar;
-
-    /**
-     * 店铺类型id
-     */
-    @ApiModelProperty("店铺类型id")
-    private Integer typeId;
-
     /**
      * 店铺联系电话
      */
@@ -64,21 +51,6 @@ public class TakeoutSellerDto implements Serializable {
      */
     @ApiModelProperty("备用联系电话")
     private String phoneAdditional;
-
-    /**
-     * 商家所在市
-     */
-    @ApiModelProperty("商家所在市")
-    @NotBlank(message = "当前位置城市不能为空", groups = Groups.Query.class)
-    private String city;
-
-    /**
-     * 商家所在省份
-     */
-    @ApiModelProperty("商家所在省份")
-    @NotBlank(message = "当前位置省份不能为空", groups = Groups.Query.class)
-    private String province;
-
     /**
      * 工商备案名称
      */
@@ -96,7 +68,6 @@ public class TakeoutSellerDto implements Serializable {
      */
     @ApiModelProperty("营业执照照片")
     private String enterprisePic;
-
     /**
      * 开始配送时间
      */
@@ -114,14 +85,37 @@ public class TakeoutSellerDto implements Serializable {
      */
     @ApiModelProperty("起送金额")
     private Double startDelivery;
-
     /**
      * 店铺公告
      */
     @ApiModelProperty("店铺公告")
     private String notice;
 
-    private TakeoutSellerAdditionalDto additionalData = new TakeoutSellerAdditionalDto();
+    /**
+     * 店铺评价数量
+     */
+    private Integer commentNum;
+
+    /**
+     * 店铺优惠卷
+     */
+    private List<TakeoutCoupon> coupons;
+
+    /**
+     * 店铺评分
+     */
+    private Double score;
+
+    /**
+     * 月订单数量
+     */
+    private Integer monthOrderNum;
+    /**
+     * 配送时间
+     */
+    private Long avgDeliveryTime;
+
+
 
 
 }

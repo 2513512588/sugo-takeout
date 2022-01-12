@@ -7,9 +7,11 @@ import lombok.Data;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-
+/**
+ * 首页推荐商品 数据模型
+ */
 @Data
-public class TakeoutGoodsDto implements Serializable {
+public class TakeoutListGoodsDto implements Serializable {
     /**
      * 主键id
      */

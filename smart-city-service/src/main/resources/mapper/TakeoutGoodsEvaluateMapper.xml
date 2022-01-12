@@ -28,10 +28,14 @@
         select ifnull(avg(score), 0) from takeout_goods_evaluate where seller_id = #{sellerId}
     </select>
     <select id="getAvgScoreBySellerList" resultType="java.lang.Double">
-        select (select ifnull(avg(score), 0) from takeout_goods_evaluate where takeout_goods_evaluate.seller_id = takeout_seller.id) from takeout_seller
+        select (select ifnull(avg(score), 0) from takeout_goods_evaluate where takeout_goods_evaluate.seller_id =
+        takeout_seller.id) from takeout_seller
         where takeout_seller.id in
-        <foreach collection="sellerIds" open="(" close=")" separator="," item="item">
+        (
+        <foreach collection="sellerIds" separator="," close="," item="item">
             #{item}
-         </foreach>
+        </foreach>
+        0
+        )
     </select>
 </mapper>

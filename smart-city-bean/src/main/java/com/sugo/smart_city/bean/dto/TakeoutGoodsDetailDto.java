@@ -1,10 +1,8 @@
-package com.sugo.smart_city.bean.model;
+package com.sugo.smart_city.bean.dto;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
+
+import com.sugo.smart_city.bean.model.TakeoutGoodsSku;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,21 +10,19 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
- * 外卖商品表
- * @TableName takeout_goods
+ * 店铺内商品数据模型
  */
-@TableName(value ="takeout_goods")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TakeoutGoods implements Serializable {
+public class TakeoutGoodsDetailDto implements Serializable {
     /**
      * 主键id
      */
-    @TableId(type = IdType.AUTO)
     private Integer id;
 
     /**
@@ -43,11 +39,6 @@ public class TakeoutGoods implements Serializable {
      * 商品分类id
      */
     private Integer categoryId;
-
-    /**
-     * 商铺id
-     */
-    private Integer sellerId;
 
     /**
      * 商品图片
@@ -69,18 +60,15 @@ public class TakeoutGoods implements Serializable {
      */
     private BigDecimal price;
 
-    /**
-     * 是否上架 0 未上架 1已上架
-     */
-    private Integer status;
 
     /**
-     * 是否删除
+     * 加购数量
      */
-    @TableField(select = false)
-    @JsonIgnore
-    private Boolean isDeleted;
+    private Integer basketNum;
 
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
+    /**
+     * 商品sku
+     */
+    private List<TakeoutGoodsSku> skus;
+
 }
