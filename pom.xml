@@ -31,6 +31,7 @@
         <mybatis-typehandlers.version>1.0.2</mybatis-typehandlers.version>
         <java.version>1.8</java.version>
         <mysql.driver.version>8.0.27</mysql.driver.version>
+        <orika.version>1.5.4</orika.version>
         <maven.compiler.plugin.version>2.3.6.RELEASE</maven.compiler.plugin.version>
     </properties>
 
@@ -108,6 +109,12 @@
                 <groupId>org.mybatis</groupId>
                 <artifactId>mybatis-typehandlers-jsr310</artifactId>
                 <version>${mybatis-typehandlers.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>ma.glasnost.orika</groupId>
+                <artifactId>orika-core</artifactId>
+                <version>${orika.version}</version>
             </dependency>
 
         </dependencies>

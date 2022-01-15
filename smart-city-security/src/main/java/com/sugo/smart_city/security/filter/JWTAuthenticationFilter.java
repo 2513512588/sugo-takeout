@@ -88,6 +88,6 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         response.setContentType("application/json; charset=utf-8");
-        response.getWriter().write(new ObjectMapper().writeValueAsString(Result.of(ResultCode.FORBIDDEN).message( failed.getMessage())));
+        response.getWriter().write(new ObjectMapper().writeValueAsString(Result.of(ResultCode.FAILED).message( failed.getMessage())));
     }
 }

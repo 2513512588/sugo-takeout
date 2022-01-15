@@ -81,6 +81,11 @@ public class TakeoutGoods implements Serializable {
     @JsonIgnore
     private Boolean isDeleted;
 
+    /**
+     * 是否为必点品 0 不是 1是
+     */
+    private Boolean isMandatory;
+
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }

@@ -12,10 +12,11 @@
             <result property="unit" column="unit" jdbcType="VARCHAR"/>
             <result property="type" column="type" jdbcType="VARCHAR"/>
             <result property="price" column="price" jdbcType="DECIMAL"/>
+            <result property="originPrice" column="origin_price" jdbcType="DECIMAL"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,goods_id,name,type,price
+        id,goods_id,name,type,price,origin_price,
         stock,unit
     </sql>
     <select id="findByGoodsId" resultMap="BaseResultMap">

@@ -15,6 +15,7 @@
             <result property="sellerId" column="seller_id" jdbcType="INTEGER"/>
             <result property="price" column="price" jdbcType="DECIMAL"/>
             <result property="isDeleted" column="is_deleted" jdbcType="BOOLEAN"/>
+            <result property="isMandatory" column="is_mandatory" jdbcType="BOOLEAN"/>
             <result property="status" column="status" jdbcType="TINYINT"/>
     </resultMap>
 
@@ -26,7 +27,7 @@
     <sql id="Base_Column_List">
         id, name, description, category_id, seller_id,
         cover,score,sales_volume, status,
-        price,is_deleted
+        price,is_deleted,is_mandatory
     </sql>
     <select id="getListByCity" resultType="com.sugo.smart_city.bean.dto.TakeoutListGoodsDto">
         select
@@ -50,7 +51,7 @@
     </select>
 
     <select id="getListBySeller" resultMap="UnionSkuMap">
-        select id, name, description, category_id, cover, price,
+        select id, name, description, category_id, cover, price, is_mandatory,
         ifnull(score, ifnull((select avg(score) from takeout_goods_evaluate where takeout_goods_evaluate.goods_id = takeout_goods.id) / 5 * 100, 0)) as score,
         ifnull(sales_volume, ifnull((select SUM(quantity) from takeout_order_item where order_code in (select code from takeout_order where takeout_order.seller_id = takeout_goods.seller_id)), 0)) as sales_volume,
         (select COUNT(*) from takeout_basket where takeout_basket.seller_id = takeout_goods.seller_id) as basketNum

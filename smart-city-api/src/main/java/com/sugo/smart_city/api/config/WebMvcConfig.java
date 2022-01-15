@@ -3,6 +3,7 @@ package com.sugo.smart_city.api.config;
 
 import com.sugo.smart_city.common.aspect.resolver.ParsePageHandlerMethodArgumentResolver;
 import com.sugo.smart_city.security.aspect.ParseUserHandlerMethodArgumentResolver;
+import com.sugo.smart_city.security.util.JwtTokenUtils;
 import com.sugo.smart_city.service.UserService;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -24,10 +25,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedHeaders("Content-Type")
+                .allowedHeaders("Content-Type", JwtTokenUtils.TOKEN_HEADER)
                 .allowedOrigins("*")
-                .allowedMethods("GET", "POST", "OPTIONS", "PUT", "DELETE")
-                ;
+                .allowedMethods("GET", "POST", "OPTIONS", "PUT", "DELETE");
     }
 
     @Override

@@ -66,6 +66,12 @@ public class TakeoutGoodsDetailDto implements Serializable {
      */
     private Integer basketNum;
 
+
+    /**
+     * 是否为必点品 0 不是 1是
+     */
+    private Boolean isMandatory;
+
     /**
      * 商品sku
      */

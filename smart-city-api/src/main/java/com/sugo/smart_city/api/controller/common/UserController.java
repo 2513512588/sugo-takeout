@@ -101,7 +101,7 @@ public class UserController {
     @ApiOperation(value = "查询用户基本信息")
     @GetMapping("/getInfo")
     public Result getInfo(@ParseUser User user){
-        return Result.ok().data("user", user);
+        return Result.ok().data(user);
     }
 
     @ApiOperation(value = "修改密码")

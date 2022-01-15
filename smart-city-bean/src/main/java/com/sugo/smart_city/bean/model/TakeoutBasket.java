@@ -47,6 +47,11 @@ public class TakeoutBasket implements Serializable {
      */
     private Integer userId;
 
+    /**
+     * skuId
+     */
+    private Integer skuId;
+
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }

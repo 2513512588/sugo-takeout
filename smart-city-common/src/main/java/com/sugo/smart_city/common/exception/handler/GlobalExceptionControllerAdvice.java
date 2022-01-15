@@ -43,9 +43,9 @@ public class GlobalExceptionControllerAdvice {
         return Result.error().message(e.getMessage());
     }
 
-    @ExceptionHandler(value = PermissionException.class)
+    @ExceptionHandler(value = {PermissionException.class})
     public Result handGlobException(PermissionException e){
-        return Result.of(ResultCode.FORBIDDEN).message(e.getMessage());
+        return Result.of(ResultCode.FORBIDDEN).message("身份校验失败");
     }
 
     @ExceptionHandler(value = Exception.class)
