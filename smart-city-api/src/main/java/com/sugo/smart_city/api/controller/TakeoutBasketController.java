@@ -42,6 +42,17 @@ public class TakeoutBasketController {
        return Result.ok().pageList(takeoutBasketService.selectPage(basketPage, userId));
     }
 
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "sellerId", value = "店铺id"),
+    })
+    @ApiOperation("查询当前用户某店铺的购物车数据")
+    @GetMapping("/listBySeller")
+    public Result list(@ParseUser Integer userId, @RequestParam Integer sellerId){
+        TakeoutBasket takeoutBasket = TakeoutBasket.builder().userId(userId).sellerId(sellerId).build();
+        QueryWrapper<TakeoutBasket> queryWrapper = new QueryWrapper<>(takeoutBasket);
+        return Result.ok().list(takeoutBasketService.list(queryWrapper));
+    }
+
 
     @ApiImplicitParams({
             @ApiImplicitParam(name = "goodsId", value = "商品id"),

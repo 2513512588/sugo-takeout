@@ -15,12 +15,26 @@
             <result property="originPrice" column="origin_price" jdbcType="DECIMAL"/>
     </resultMap>
 
+
+    <resultMap id="GroupSkuMap" type="com.sugo.smart_city.bean.dto.TakeoutGoodsSkuDto" >
+        <result property="type" column="type" jdbcType="VARCHAR"/>
+        <collection property="children" javaType="java.util.List" ofType="com.sugo.smart_city.bean.model.TakeoutGoodsSku" column="{goodsId=goods_id, type=type}"
+         select="findByType"/>
+    </resultMap>
+
     <sql id="Base_Column_List">
         id,goods_id,name,type,price,origin_price,
         stock,unit
     </sql>
-    <select id="findByGoodsId" resultMap="BaseResultMap">
+
+    <select id="findByType" resultMap="BaseResultMap" >
         select <include refid="Base_Column_List" />
+        from takeout_goods_sku where type = #{type} and goods_id = #{goodsId}
+    </select>
+
+    <select id="findByGoodsId" resultMap="GroupSkuMap">
+        select distinct goods_id, type
         from takeout_goods_sku where goods_id = #{goodsId}
     </select>
+
 </mapper>

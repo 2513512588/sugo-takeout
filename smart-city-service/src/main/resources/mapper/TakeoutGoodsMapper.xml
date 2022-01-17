@@ -37,7 +37,7 @@
         price, location
         from takeout_goods as tg
         join takeout_seller ts on ts.id = tg.seller_id
-        where province = #{province} and city = #{city} and tg.id = (SELECT id FROM takeout_goods WHERE tg.seller_id = seller_id
+        where province = #{province} and city = #{city} and tg.id = (select id from takeout_goods where tg.seller_id = seller_id
         and price != 0 and status = 1 and is_deleted = 0
         <choose>
             <when test="type == 1">
@@ -54,7 +54,7 @@
         select id, name, description, category_id, cover, price, is_mandatory,
         ifnull(score, ifnull((select avg(score) from takeout_goods_evaluate where takeout_goods_evaluate.goods_id = takeout_goods.id) / 5 * 100, 0)) as score,
         ifnull(sales_volume, ifnull((select SUM(quantity) from takeout_order_item where order_code in (select code from takeout_order where takeout_order.seller_id = takeout_goods.seller_id)), 0)) as sales_volume,
-        (select COUNT(*) from takeout_basket where takeout_basket.seller_id = takeout_goods.seller_id) as basketNum
+        (select quantity from takeout_basket where takeout_basket.seller_id = takeout_goods.seller_id and goods_id = takeout_goods.id) as basketNum
         from takeout_goods
         where status = 1 and is_deleted = 0
         and seller_id = #{sellerId}
