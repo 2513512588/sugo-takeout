@@ -3,7 +3,7 @@ package com.sugo.smart_city.api.controller.common;
 
 import com.sugo.smart_city.common.util.IpUtil;
 import com.sugo.smart_city.common.util.Result;
-import com.sugo.smart_city.service.LocationService;
+import com.sugo.smart_city.service.MapService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -23,14 +23,14 @@ import javax.servlet.http.HttpServletRequest;
 public class LocationController {
 
     @Resource
-    private LocationService locationService;
+    private MapService mapService;
 
     @SneakyThrows
     @GetMapping("/position")
     @ApiOperation("通过用户ip获取位置信息")
     public Result position(HttpServletRequest request){
         String ipAddress = IpUtil.getIpAddr(request);
-        String location = locationService.location(ipAddress);
+        String location = mapService.location(ipAddress);
         return Result.ok().data("location", location);
     }
 
@@ -45,7 +45,7 @@ public class LocationController {
     )
     public Result geocoding(@RequestParam String address,
                             @RequestParam(required = false, defaultValue = "") String city){
-        String geocoding = locationService.geocoding(address, city);
+        String geocoding = mapService.geocoding(address, city);
         return Result.ok().data("location", geocoding);
     }
 

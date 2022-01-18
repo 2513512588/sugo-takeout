@@ -10,17 +10,28 @@
             <result property="goodsId" column="goods_id" jdbcType="INTEGER"/>
             <result property="quantity" column="quantity" jdbcType="INTEGER"/>
             <result property="userId" column="user_id" jdbcType="INTEGER"/>
-            <result property="skuId" column="sku_id" jdbcType="INTEGER"/>
+            <result property="skuIdGroup" column="sku_id_group" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="UnionGoodsMap" type="com.sugo.smart_city.bean.dto.TakeoutBasketDto" extends="BaseResultMap">
+        <association property="goods" javaType="com.sugo.smart_city.bean.model.TakeoutGoods"
+        column="goods_id" jdbcType="INTEGER" select="com.sugo.smart_city.mapper.TakeoutGoodsMapper.findById"
+        />
     </resultMap>
 
     <sql id="Base_Column_List">
         id,seller_id,goods_id,
-        quantity,user_id,sku_id
+        quantity,user_id,sku_id_group
     </sql>
-    <select id="selectBasketListByUser" resultType="com.sugo.smart_city.bean.dto.TakeoutBasketDto">
-        select takeout_basket.id, quantity
-              , goods_id as goodsId , name, description, cover, score, sales_volume salesVolume, price from takeout_basket
-        left join takeout_goods on takeout_basket.goods_id = takeout_goods.id
+
+    <select id="selectBasketListByUser" resultMap="UnionGoodsMap">
+        select id, quantity, goods_id, sku_id_group
+        from takeout_basket
         where user_id = #{userId}
+    </select>
+    <select id="list" resultMap="UnionGoodsMap">
+        select id, quantity, goods_id, sku_id_group
+        from takeout_basket
+        where user_id = #{userId} and seller_id = #{sellerId}
     </select>
 </mapper>

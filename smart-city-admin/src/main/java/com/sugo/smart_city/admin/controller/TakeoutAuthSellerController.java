@@ -2,7 +2,7 @@ package com.sugo.smart_city.admin.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.sugo.smart_city.bean.model.TakeoutCoupon;
+import com.sugo.smart_city.bean.model.TakeoutActivity;
 import com.sugo.smart_city.bean.model.TakeoutGoods;
 import com.sugo.smart_city.bean.model.TakeoutGoodsCategory;
 import com.sugo.smart_city.bean.model.TakeoutSeller;
@@ -12,7 +12,7 @@ import com.sugo.smart_city.common.util.Result;
 import com.sugo.smart_city.common.valid.Groups;
 import com.sugo.smart_city.security.annotation.ParseUser;
 import com.sugo.smart_city.security.enums.Role;
-import com.sugo.smart_city.service.TakeoutCouponService;
+import com.sugo.smart_city.service.TakeoutActivityService;
 import com.sugo.smart_city.service.TakeoutGoodsCategoryService;
 import com.sugo.smart_city.service.TakeoutGoodsService;
 import com.sugo.smart_city.service.TakeoutSellerService;
@@ -41,7 +41,7 @@ public class TakeoutAuthSellerController {
     @Resource
     private TakeoutGoodsCategoryService takeoutGoodsCategoryService;
     @Resource
-    private TakeoutCouponService takeoutGoodsCategory;
+    private TakeoutActivityService takeoutGoodsCategory;
 
     @ApiOperation("卖家发布商品")
     @PostMapping("/goods/add")
@@ -108,9 +108,9 @@ public class TakeoutAuthSellerController {
     @ApiOperation("当前用户添加优惠卷信息")
     @PostMapping("/coupon/add")
     public Result addCoupon(@ParseUser(Role.ROLE_TAKEOUT_SELLER) Integer sellerId,
-                            @RequestBody TakeoutCoupon takeoutCoupon){
-        takeoutCoupon.setSellerId(sellerId);
-        return Result.auto(takeoutGoodsCategory.save(takeoutCoupon));
+                            @RequestBody TakeoutActivity takeoutActivity){
+        takeoutActivity.setSellerId(sellerId);
+        return Result.auto(takeoutGoodsCategory.save(takeoutActivity));
     }
 
 

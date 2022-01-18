@@ -1,13 +1,14 @@
 package com.sugo.smart_city.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sugo.smart_city.bean.dto.TakeoutSellerDetailDto;
 import com.sugo.smart_city.bean.model.TakeoutSeller;
+import com.sugo.smart_city.common.enums.ResultCode;
+import com.sugo.smart_city.common.exception.SugoException;
+import com.sugo.smart_city.common.util.StringUtil;
 import com.sugo.smart_city.mapper.TakeoutSellerMapper;
-import com.sugo.smart_city.service.TakeoutDeliveryService;
-import com.sugo.smart_city.service.TakeoutGoodsEvaluateService;
-import com.sugo.smart_city.service.TakeoutOrderService;
-import com.sugo.smart_city.service.TakeoutSellerService;
+import com.sugo.smart_city.service.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -24,6 +25,7 @@ public class TakeoutSellerServiceImpl extends ServiceImpl<TakeoutSellerMapper, T
     private TakeoutOrderService takeoutOrderService;
     private TakeoutGoodsEvaluateService takeoutGoodsEvaluateService;
     private TakeoutDeliveryService takeoutDeliveryService;
+    private MapService mapService;
 
     @Override
     public TakeoutSellerDetailDto getDetailById(Integer id) {
@@ -37,6 +39,25 @@ public class TakeoutSellerServiceImpl extends ServiceImpl<TakeoutSellerMapper, T
             avgDeliveryTimeBySeller = 0L;
         }
         detail.setAvgDeliveryTime(avgDeliveryTimeBySeller);
+        return detail;
+    }
+
+    @Override
+    public TakeoutSellerDetailDto getDetailById(Integer id, String location) {
+        TakeoutSellerDetailDto detail = getDetailById(id);
+        if (!StringUtils.isEmpty(location)){
+            String[] myLocation = StringUtil.formatLatLng(location);
+            String sellerLocation = StringUtil.parseSellerLocation(detail.getLocation());
+            Long distance = mapService.routematrixOne(org.apache.commons.lang3.StringUtils.join(myLocation, ","), sellerLocation);
+            //todo 配送价格表 每公里x，最低，最高
+            @SuppressWarnings("ALL")
+            double price = distance / 1000 * 2;
+            double max = 5;
+            double min = 2;
+            detail.setDeliveryFee(Math.max(Math.min(max, price), min));
+        }else {
+            throw new SugoException("请传入位置信息", ResultCode.VALIDATE_FAILED);
+        }
         return detail;
     }
 }

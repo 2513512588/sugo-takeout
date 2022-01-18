@@ -1,14 +1,16 @@
 package com.sugo.smart_city.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.sugo.smart_city.bean.model.TakeoutCoupon;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
+import java.util.List;
 
 /**
- * @Entity com.smart_city.smartcity.entity.TakeoutCoupon
+ * @Entity com.sugo.smart_city.bean.model.domain.TakeoutCoupon
  */
 public interface TakeoutCouponMapper extends BaseMapper<TakeoutCoupon> {
 
-    TakeoutCoupon findBySellerId(Integer id);
+    List<TakeoutCoupon> findBySellerId(Integer id);
 
 }
 

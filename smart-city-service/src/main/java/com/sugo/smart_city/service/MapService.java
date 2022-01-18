@@ -1,22 +1,44 @@
 package com.sugo.smart_city.service;
 
-import java.util.Map;
+import java.util.List;
 
 public interface MapService {
 
     /**
-     * 获取位置的经纬度
-     * @param address 位置字符串
-     * @return 经纬度map
+     * 通过ip获取位置信息
      */
-    Map<String, String> getLatitude(String address);
+    String location(String ip);
 
     /**
-     * 获取两地距离
-     * @param startMap 起始地坐标
-     * @param endMap 目标地坐标
-     * @return 距离
+     * 地址信息编码为经纬度
      */
-    double backDis(Map<String, String> startMap, Map<String, String> endMap);
+    String geocoding(String address);
+    String geocoding(String address, String city);
+
+    /**
+     * 路线规划
+     */
+    String directionlite(String origin, String destination);
+
+    /**
+     * 计算两地距离
+     */
+    String routematrix(String origin, String destination);
+
+    /**
+     *
+     * @param origin 开始坐标
+     * @param destination 目的坐标
+     * @return distance
+     */
+    Long routematrixOne(String origin, String destination);
+
+    /**
+     *
+     * @param origin 开始坐标
+     * @param destination 目的坐标
+     * @return distanceList
+     */
+    List<Long> routematrixList(String origin, String destination);
 
 }

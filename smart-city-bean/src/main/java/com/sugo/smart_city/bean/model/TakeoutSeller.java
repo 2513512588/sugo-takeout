@@ -128,7 +128,7 @@ public class TakeoutSeller implements Serializable {
      * 起送金额
      */
     @ApiModelProperty("起送金额")
-    private Double startDelivery;
+    private Double minDeliveryPrice;
 
     /**
      * 店铺状态 1 审核中 2 封禁 3 正常

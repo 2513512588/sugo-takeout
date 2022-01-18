@@ -25,4 +25,6 @@ public @interface ParseUser {
 
     Role value() default Role.ROLE_USER;
 
+    boolean required() default true;
+
 }

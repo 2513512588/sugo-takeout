@@ -2,7 +2,6 @@ package com.sugo.smart_city.bean.dto;
 
 
 
-import com.sugo.smart_city.bean.model.TakeoutGoodsSku;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -65,6 +64,31 @@ public class TakeoutGoodsDetailDto implements Serializable {
      * 是否为必点品 0 不是 1是
      */
     private Boolean isMandatory;
+
+    /**
+     * 起购数量
+     */
+    private Integer minPurchaseNum;
+
+    /**
+     * 每份打包费
+     */
+    private Double packingFee;
+
+    /**
+     * 库存数量
+     */
+    private Integer stock;
+
+    /**
+     * 商品原价
+     */
+    private Double originPrice;
+
+    /**
+     * 限购数量
+     */
+    private Integer maxPurchaseNum;
 
     /**
      * 商品sku

@@ -7,6 +7,8 @@ import com.sugo.smart_city.bean.dto.TakeoutBasketDto;
 import com.sugo.smart_city.bean.model.TakeoutBasket;
 import com.sugo.smart_city.bean.param.TakeoutBasketParam;
 
+import java.util.List;
+
 /**
  *
  */
@@ -19,4 +21,5 @@ public interface TakeoutBasketService extends IService<TakeoutBasket> {
      */
     boolean updateQuantity(Integer userId, TakeoutBasketParam takeoutBasketParam);
 
+    List<TakeoutBasketDto> list(Integer userId, Integer sellerId);
 }

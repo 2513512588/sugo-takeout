@@ -11,7 +11,7 @@ import java.math.BigDecimal;
  * 首页推荐商品 数据模型
  */
 @Data
-public class TakeoutListGoodsDto implements Serializable {
+public class TakeoutGoodsListDto implements Serializable {
     /**
      * 主键id
      */
@@ -57,9 +57,14 @@ public class TakeoutListGoodsDto implements Serializable {
      */
     private BigDecimal price;
 
-
+    /**
+     * 统计数据
+     */
     private TakeoutSellerAdditionalDto additionalData = new TakeoutSellerAdditionalDto();
 
+    /**
+     * 商家位置
+     */
     @JsonIgnore
     private String location;
 }

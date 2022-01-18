@@ -3,7 +3,7 @@ package com.sugo.smart_city.common.aspect;
 
 import com.alibaba.fastjson.JSONObject;
 import com.sugo.smart_city.common.aspect.annotation.RequestSingleParam;
-import com.sugo.smart_city.common.exception.SysException;
+import com.sugo.smart_city.common.exception.SugoException;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -50,13 +50,13 @@ public class ParseParamAspect {
                         if (jsonObject.containsKey(key)){
                             args[i] = jsonObject.get(key);
                         }else {
-                            throw new SysException(String.format("缺少参数%s", key));
+                            throw new SugoException(String.format("缺少参数%s", key));
                         }
                     }
                 }
             }
         }else {
-            throw new SysException("请传入json参数");
+            throw new SugoException("请传入json参数");
         }
         return proceedingJoinPoint.proceed(args);
     }

@@ -7,19 +7,22 @@
     <resultMap id="BaseResultMap" type="com.sugo.smart_city.bean.model.TakeoutCoupon">
             <id property="id" column="id" jdbcType="INTEGER"/>
             <result property="sellerId" column="seller_id" jdbcType="INTEGER"/>
-            <result property="condition" column="condition" jdbcType="DECIMAL"/>
-            <result property="reduce" column="reduce" jdbcType="DECIMAL"/>
+            <result property="price" column="price" jdbcType="DECIMAL"/>
+            <result property="type" column="type" jdbcType="TINYINT"/>
             <result property="quantity" column="quantity" jdbcType="INTEGER"/>
+            <result property="condition" column="condition" jdbcType="DECIMAL"/>
+            <result property="startTime" column="start_time" jdbcType="TIMESTAMP"/>
             <result property="expirationTime" column="expiration_time" jdbcType="TIMESTAMP"/>
+            <result property="effectiveDuration" column="effective_duration" jdbcType="BIGINT"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,seller_id,`condition`,
-        reduce,quantity,expiration_time
+        id,seller_id,price,
+        type,`condition`,start_time,
+        expiration_time,effective_duration,quantity
     </sql>
-
     <select id="findBySellerId" resultMap="BaseResultMap">
-        select <include refid="Base_Column_List" /> from takeout_coupon where seller_id = #{id}
+        select <include refid="Base_Column_List" />
+        from takeout_coupon where seller_id = #{id} and now() between start_time and expiration_time
     </select>
-
 </mapper>

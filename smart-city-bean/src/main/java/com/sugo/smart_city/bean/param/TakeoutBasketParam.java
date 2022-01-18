@@ -33,9 +33,8 @@ public class TakeoutBasketParam implements Serializable {
     private Integer quantity;
 
     /**
-     * skuId
+     * skuId组
      */
-    @NotNull(message = "商品sku不能为空", groups = {Groups.Add.class, Groups.Query.class})
-    private Integer skuId;
+    private String skuIdGroup;
 
 }

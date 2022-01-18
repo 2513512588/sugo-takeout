@@ -50,9 +50,9 @@ public class TakeoutBasket implements Serializable {
     private Integer userId;
 
     /**
-     * skuId
+     * skuId组 json字符串
      */
-    private Integer skuId;
+    private String skuIdGroup;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

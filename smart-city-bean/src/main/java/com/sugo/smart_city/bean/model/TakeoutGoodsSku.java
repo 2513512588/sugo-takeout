@@ -7,7 +7,11 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 
 /**
  * 外卖商品sku
@@ -15,6 +19,9 @@ import lombok.Data;
  */
 @TableName(value ="takeout_goods_sku")
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class TakeoutGoodsSku implements Serializable {
     /**
      * 主键id
@@ -37,25 +44,20 @@ public class TakeoutGoodsSku implements Serializable {
      */
     @JsonIgnore
     private String type;
-
-    /**
-     * 库存数量
-     */
-    private Integer stock;
-
-    /**
-     * 单价
-     */
-    private Double originPrice;
     /**
      * 单价
      */
     private Double price;
 
     /**
-     * 单位名称
+     * 1 独立价格 2 加价
      */
-    private String unit;
+    private Integer mode;
+
+    /**
+     * 是否删除
+     */
+    private Boolean isDeleted;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

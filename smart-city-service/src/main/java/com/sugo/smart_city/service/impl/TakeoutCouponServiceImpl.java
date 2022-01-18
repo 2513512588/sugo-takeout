@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class TakeoutCouponServiceImpl extends ServiceImpl<TakeoutCouponMapper, TakeoutCoupon>
-    implements TakeoutCouponService{
+    implements TakeoutCouponService {
 
 }
 

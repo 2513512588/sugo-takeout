@@ -24,7 +24,7 @@
             <result property="status" column="status" jdbcType="INTEGER"/>
             <result property="remark" column="remark" jdbcType="VARCHAR"/>
             <result property="riderId" column="rider_id" jdbcType="INTEGER"/>
-            <result property="skuId" column="sku_id" jdbcType="INTEGER"/>
+            <result property="skuNameGroup" column="sku_name_group" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -34,7 +34,7 @@
         code,arrive_time,total,
         delivery_fee,packing_fee,is_deleted,
         gmt_create,status,remark,
-        rider_id,sku_id
+        rider_id,sku_name_group
     </sql>
     <select id="getAvgCostBySeller" resultType="java.lang.Double">
         select ifnull(avg(total), 0) from takeout_order where seller_id = #{sellerId}

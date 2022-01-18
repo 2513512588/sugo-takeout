@@ -47,10 +47,12 @@ public class TakeoutBasketController {
     })
     @ApiOperation("查询当前用户某店铺的购物车数据")
     @GetMapping("/listBySeller")
-    public Result list(@ParseUser Integer userId, @RequestParam Integer sellerId){
-        TakeoutBasket takeoutBasket = TakeoutBasket.builder().userId(userId).sellerId(sellerId).build();
-        QueryWrapper<TakeoutBasket> queryWrapper = new QueryWrapper<>(takeoutBasket);
-        return Result.ok().list(takeoutBasketService.list(queryWrapper));
+    public Result list(@ParseUser(required = false) Integer userId, @RequestParam Integer sellerId){
+         if (userId != null){
+             return Result.ok().list(takeoutBasketService.list(userId, sellerId));
+         }else {
+             return Result.ok();
+         }
     }
 
 
@@ -73,11 +75,15 @@ public class TakeoutBasketController {
     })
     @ApiOperation("查询当前用户某个商品的加购详情")
     @PostMapping("/detail")
-    public Result detail(@ParseUser Integer userId,
+    public Result detail(@ParseUser(required = false) Integer userId,
                          @RequestBody @Validated(Groups.Query.class) TakeoutBasketParam takeoutBasketParam){
-        TakeoutBasket takeoutBasket = mapperFacade.map(takeoutBasketParam, TakeoutBasket.class);
-        takeoutBasket.setUserId(userId);
-        return Result.ok().data(takeoutBasketService.getOne(new QueryWrapper<>(takeoutBasket)));
+        if (userId != null){
+            TakeoutBasket takeoutBasket = mapperFacade.map(takeoutBasketParam, TakeoutBasket.class);
+            takeoutBasket.setUserId(userId);
+            return Result.ok().data(takeoutBasketService.getOne(new QueryWrapper<>(takeoutBasket)));
+        }else {
+            return Result.ok();
+        }
     }
 
 

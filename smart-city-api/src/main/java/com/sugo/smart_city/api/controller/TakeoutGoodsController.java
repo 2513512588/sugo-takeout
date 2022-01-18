@@ -2,7 +2,7 @@ package com.sugo.smart_city.api.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.sugo.smart_city.bean.dto.TakeoutListGoodsDto;
+import com.sugo.smart_city.bean.dto.TakeoutGoodsListDto;
 import com.sugo.smart_city.bean.event.TakeoutSellerEvent;
 import com.sugo.smart_city.bean.model.TakeoutGoods;
 import com.sugo.smart_city.bean.model.TakeoutGoodsCategory;
@@ -58,10 +58,10 @@ public class TakeoutGoodsController {
                        @RequestSingleParam("type") Integer type){
 
         String[] split = myLocation.split(",");
-        IPage<TakeoutListGoodsDto> iPage = takeoutGoodsService.getListByCity(province, city, type, takeoutGoodsPage);
-        List<TakeoutListGoodsDto> records = iPage.getRecords();
+        IPage<TakeoutGoodsListDto> iPage = takeoutGoodsService.getListByCity(province, city, type, takeoutGoodsPage);
+        List<TakeoutGoodsListDto> records = iPage.getRecords();
         List<TakeoutSeller> sellerList = new ArrayList<>();
-        for (TakeoutListGoodsDto record : records) {
+        for (TakeoutGoodsListDto record : records) {
             TakeoutSeller takeoutSeller = new TakeoutSeller();
             takeoutSeller.setLocation(record.getLocation());
             takeoutSeller.setId(record.getSellerId());
@@ -71,7 +71,7 @@ public class TakeoutGoodsController {
         String lat = String.format("%.6f", Double.parseDouble(split[1]));
         TakeoutSellerEvent takeoutSellerEvent = new TakeoutSellerEvent(sellerList, String.format("%s,%s", lat, lng));
         applicationContext.publishEvent(takeoutSellerEvent);
-        for (TakeoutListGoodsDto takeoutGoodsDto : records) {
+        for (TakeoutGoodsListDto takeoutGoodsDto : records) {
             takeoutGoodsDto.setAdditionalData(takeoutSellerEvent.getAdditionalData().get(takeoutGoodsDto.getSellerId()));
         }
         iPage.setRecords(records);

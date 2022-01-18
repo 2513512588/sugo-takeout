@@ -2,7 +2,7 @@ package com.sugo.smart_city.api.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.sugo.smart_city.bean.dto.TakeoutListSellerDto;
+import com.sugo.smart_city.bean.dto.TakeoutSellerListDto;
 import com.sugo.smart_city.bean.enums.TakeoutSellerStatus;
 import com.sugo.smart_city.bean.event.TakeoutSellerEvent;
 import com.sugo.smart_city.bean.model.TakeoutGoodsCategory;
@@ -12,8 +12,9 @@ import com.sugo.smart_city.bean.param.TakeoutSellerAddParam;
 import com.sugo.smart_city.common.aspect.annotation.ParsePage;
 import com.sugo.smart_city.common.aspect.annotation.ParseParam;
 import com.sugo.smart_city.common.aspect.annotation.RequestSingleParam;
-import com.sugo.smart_city.common.exception.SysException;
+import com.sugo.smart_city.common.exception.SugoException;
 import com.sugo.smart_city.common.util.Result;
+import com.sugo.smart_city.common.util.StringUtil;
 import com.sugo.smart_city.common.valid.Groups;
 import com.sugo.smart_city.security.annotation.ParseUser;
 import com.sugo.smart_city.service.*;
@@ -22,6 +23,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.validation.annotation.Validated;
@@ -49,7 +51,7 @@ public class TakeoutSellerController {
 
 
     @Resource
-    private LocationService locationService;
+    private MapService mapService;
 
     @Resource
     private UserService userService;
@@ -70,7 +72,7 @@ public class TakeoutSellerController {
             }else if (isExists.getStatus().equals(TakeoutSellerStatus.NORMAL.getStatus())){
                 return Result.error().message("您的账户已正常开通店铺，请勿重复申请");
             }else {
-                throw new SysException("错误的店铺状态: " + isExists);
+                throw new SugoException("错误的店铺状态: " + isExists);
             }
         }else {
             TakeoutSeller takeoutSeller = new TakeoutSeller();
@@ -108,30 +110,29 @@ public class TakeoutSellerController {
         IPage<TakeoutSeller> iPage = takeoutSellerService.getBaseMapper().selectPage(takeoutSellerPage,
                 new QueryWrapper<>(TakeoutSeller.builder().province(province).city(city).status(TakeoutSellerStatus.NORMAL.getStatus()).build()));
         List<TakeoutSeller> records = iPage.getRecords();
-        List<TakeoutListSellerDto> takeoutListSellerDtos = new ArrayList<>();
-        String[] split = myLocation.split(",");
-        String lng = String.format("%.6f", Double.parseDouble(split[0]));
-        String lat = String.format("%.6f", Double.parseDouble(split[1]));
-        TakeoutSellerEvent takeoutSellerEvent = new TakeoutSellerEvent(records, String.format("%s,%s", lat, lng));
+        List<TakeoutSellerListDto> takeoutSellerListDtos = new ArrayList<>();
+        String[] location = StringUtil.formatLatLng(myLocation);
+        TakeoutSellerEvent takeoutSellerEvent = new TakeoutSellerEvent(records, StringUtils.join(location, ","));
         applicationContext.publishEvent(takeoutSellerEvent);
         for (TakeoutSeller record : records) {
-            TakeoutListSellerDto takeoutListSellerDto = new TakeoutListSellerDto();
-            BeanUtils.copyProperties(record, takeoutListSellerDto);
-            takeoutListSellerDto.setAdditionalData(takeoutSellerEvent.getAdditionalData().get(record.getId()));
-            takeoutListSellerDtos.add(takeoutListSellerDto);
+            TakeoutSellerListDto takeoutSellerListDto = new TakeoutSellerListDto();
+            BeanUtils.copyProperties(record, takeoutSellerListDto);
+            takeoutSellerListDto.setAdditionalData(takeoutSellerEvent.getAdditionalData().get(record.getId()));
+            takeoutSellerListDtos.add(takeoutSellerListDto);
         }
-        return Result.ok().pageList(iPage, takeoutListSellerDtos);
+        return Result.ok().pageList(iPage, takeoutSellerListDtos);
     }
 
     /**
      * 根据商家id获取商铺详情
      * @param id 商家id
+     * @param myLocation (纬度,经度)
      * @return 商家详情数据
      */
     @ApiOperation("根据商铺id获取商铺详情")
     @GetMapping("/detail/{id}")
-    public Result detail(@PathVariable Integer id){
-        return Result.ok().data(takeoutSellerService.getDetailById(id));
+    public Result detail(@PathVariable Integer id, @RequestParam("myLocation") String myLocation){
+        return Result.ok().data(takeoutSellerService.getDetailById(id, myLocation));
     }
 
     /**

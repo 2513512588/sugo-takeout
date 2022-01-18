@@ -13,7 +13,7 @@ import java.io.Serializable;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TakeoutListSellerDto implements Serializable {
+public class TakeoutSellerListDto implements Serializable {
     /**
      * 主键id
      */

@@ -3,7 +3,7 @@ package com.sugo.smart_city.common.exception.handler;
 
 import com.sugo.smart_city.common.enums.ResultCode;
 import com.sugo.smart_city.common.exception.PermissionException;
-import com.sugo.smart_city.common.exception.SysException;
+import com.sugo.smart_city.common.exception.SugoException;
 import com.sugo.smart_city.common.util.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindException;
@@ -37,10 +37,10 @@ public class GlobalExceptionControllerAdvice {
         return Result.of(ResultCode.VALIDATE_FAILED).data("errorMap", errorMap);
     }
 
-    @ExceptionHandler(value = SysException.class)
-    public Result handGlobException(SysException e){
+    @ExceptionHandler(value = SugoException.class)
+    public Result handGlobException(SugoException e){
         e.printStackTrace();
-        return Result.error().message(e.getMessage());
+        return Result.of(e.getResultCode()).message(e.getMessage());
     }
 
     @ExceptionHandler(value = {PermissionException.class})

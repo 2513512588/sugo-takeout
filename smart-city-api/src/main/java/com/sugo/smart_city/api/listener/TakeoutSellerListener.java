@@ -5,8 +5,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.sugo.smart_city.bean.dto.TakeoutSellerAdditionalDto;
 import com.sugo.smart_city.bean.event.TakeoutSellerEvent;
 import com.sugo.smart_city.bean.model.TakeoutSeller;
-import com.sugo.smart_city.common.exception.SysException;
-import com.sugo.smart_city.service.LocationService;
+import com.sugo.smart_city.common.exception.SugoException;
+import com.sugo.smart_city.common.util.StringUtil;
+import com.sugo.smart_city.service.MapService;
 import com.sugo.smart_city.service.TakeoutDeliveryService;
 import com.sugo.smart_city.service.TakeoutGoodsEvaluateService;
 import com.sugo.smart_city.service.TakeoutOrderService;
@@ -24,7 +25,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class TakeoutSellerListener {
 
-    private LocationService locationService;
+    private MapService mapService;
     private TakeoutOrderService takeoutOrderService;
     private TakeoutGoodsEvaluateService takeoutGoodsEvaluateService;
     private TakeoutDeliveryService takeoutDeliveryService;
@@ -35,15 +36,8 @@ public class TakeoutSellerListener {
         List<TakeoutSeller> takeoutSellerList = takeoutSellerEvent.getTakeoutSeller();
 
         for (TakeoutSeller item : takeoutSellerList) {
-            JSONObject jsonObject = JSONObject.parseObject(item.getLocation());
-            int status = jsonObject.getIntValue("status");
-            if (status == 0) {
-                JSONObject result = jsonObject.getJSONObject("result").getJSONObject("location");
-                String lng = String.format("%.6f", result.getFloatValue("lng"));
-                String lat = String.format("%.6f", result.getFloatValue("lat"));
-                String location = lat + "," + lng;
-                item.setLocation(location);
-            }
+            String s = StringUtil.parseSellerLocation(item.getLocation());
+            item.setLocation(s);
         }
 
         String join = StringUtils.join(takeoutSellerList.stream().map(TakeoutSeller::getLocation).collect(Collectors.toList()), "|");
@@ -64,23 +58,16 @@ public class TakeoutSellerListener {
             List<Long> avgDeliveryTimeBySellerList = takeoutDeliveryService.getAvgDeliveryTimeBySellerList(collect);
             log.debug("avgDeliveryTimeBySellerList => {}", avgDeliveryTimeBySellerList);
             //计算距离
-            String routematrix = locationService.routematrix(takeoutSellerEvent.getCurrentLocation(), join);
-            JSONObject response = JSONObject.parseObject(routematrix);
             Map<Integer, TakeoutSellerAdditionalDto> additionalData = takeoutSellerEvent.getAdditionalData();
-            if (response.getIntValue("status") == 0){
-                JSONArray result = response.getJSONArray("result");
-                for (int i = 0; i < result.size(); i++) {
-                    long distance = result.getJSONObject(i).getJSONObject("distance").getLongValue("value");
-                    TakeoutSellerAdditionalDto additionalDto = new TakeoutSellerAdditionalDto();
-                    additionalDto.setDistance(distance);
-                    additionalDto.setAvgCost(avgCostList.get(i));
-                    additionalDto.setAvgScore(avgScoreList.get(i));
-                    additionalDto.setMonthOrderNum(avgMonthOrderNumList.get(i));
-                    additionalDto.setAvgDeliveryTime(avgDeliveryTimeBySellerList.get(i));
-                    additionalData.put(takeoutSellerList.get(i).getId(), additionalDto);
-                }
-            }else {
-                throw new SysException(response.getString("message") + "，经纬度异常，格式为（纬度,经度）");
+            List<Long> longs = mapService.routematrixList(takeoutSellerEvent.getCurrentLocation(), join);
+            for (int i = 0; i < longs.size(); i++) {
+                TakeoutSellerAdditionalDto additionalDto = new TakeoutSellerAdditionalDto();
+                additionalDto.setDistance(longs.get(i));
+                additionalDto.setAvgCost(avgCostList.get(i));
+                additionalDto.setAvgScore(avgScoreList.get(i));
+                additionalDto.setMonthOrderNum(avgMonthOrderNumList.get(i));
+                additionalDto.setAvgDeliveryTime(avgDeliveryTimeBySellerList.get(i));
+                additionalData.put(takeoutSellerList.get(i).getId(), additionalDto);
             }
         }
 

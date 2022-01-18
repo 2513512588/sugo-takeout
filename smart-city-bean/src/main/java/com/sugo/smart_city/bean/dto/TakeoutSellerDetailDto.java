@@ -1,5 +1,7 @@
 package com.sugo.smart_city.bean.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sugo.smart_city.bean.model.TakeoutActivity;
 import com.sugo.smart_city.bean.model.TakeoutCoupon;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -84,7 +86,7 @@ public class TakeoutSellerDetailDto {
      * 起送金额
      */
     @ApiModelProperty("起送金额")
-    private Double startDelivery;
+    private Double minDeliveryPrice;
     /**
      * 店铺公告
      */
@@ -95,6 +97,11 @@ public class TakeoutSellerDetailDto {
      * 店铺评价数量
      */
     private Integer commentNum;
+
+    /**
+     * 店铺活动
+     */
+    private List<TakeoutActivity> activities;
 
     /**
      * 店铺优惠卷
@@ -110,11 +117,22 @@ public class TakeoutSellerDetailDto {
      * 月订单数量
      */
     private Integer monthOrderNum;
+
     /**
      * 配送时间
      */
     private Long avgDeliveryTime;
 
+    /**
+     * 商家位置
+     */
+    @JsonIgnore
+    private String location;
+
+    /**
+     * 配送费
+     */
+    private Double deliveryFee;
 
 
 

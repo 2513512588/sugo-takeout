@@ -8,11 +8,10 @@
             <id property="id" column="id" jdbcType="INTEGER"/>
             <result property="goodsId" column="goods_id" jdbcType="INTEGER"/>
             <result property="name" column="name" jdbcType="VARCHAR"/>
-            <result property="stock" column="stock" jdbcType="INTEGER"/>
-            <result property="unit" column="unit" jdbcType="VARCHAR"/>
             <result property="type" column="type" jdbcType="VARCHAR"/>
             <result property="price" column="price" jdbcType="DECIMAL"/>
-            <result property="originPrice" column="origin_price" jdbcType="DECIMAL"/>
+            <result property="mode" column="mode" jdbcType="TINYINT"/>
+            <result property="isDeleted" column="is_deleted" jdbcType="BOOLEAN"/>
     </resultMap>
 
 
@@ -23,8 +22,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,goods_id,name,type,price,origin_price,
-        stock,unit
+        id,goods_id,name,type,price,mode,is_deleted
     </sql>
 
     <select id="findByType" resultMap="BaseResultMap" >

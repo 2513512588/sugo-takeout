@@ -114,9 +114,9 @@ public class TakeoutOrder implements Serializable {
     private Integer riderId;
 
     /**
-     * 商品规格id
+     * 商品规格名称组 json字符串
      */
-    private Integer skuId;
+    private String skuNameGroup;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

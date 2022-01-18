@@ -10,4 +10,8 @@ import com.sugo.smart_city.bean.model.TakeoutSeller;
 public interface TakeoutSellerService extends IService<TakeoutSeller> {
 
     TakeoutSellerDetailDto getDetailById(Integer id);
+
+    TakeoutSellerDetailDto getDetailById(Integer id, String location);
+
+
 }
