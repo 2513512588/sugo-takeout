@@ -19,6 +19,7 @@ import com.sugo.smart_city.service.TakeoutGoodsService;
 import com.sugo.smart_city.service.TakeoutGoodsSkuService;
 import lombok.AllArgsConstructor;
 import ma.glasnost.orika.MapperFacade;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -73,27 +74,17 @@ public class TakeoutBasketServiceImpl extends ServiceImpl<TakeoutBasketMapper, T
             param.setSkuIdGroup(takeoutBasket.getSkuIdGroup());
         }
         QueryWrapper<TakeoutBasket> queryWrapper = new QueryWrapper<>(param);
-        Long count = baseMapper.selectCount(queryWrapper);
-        //不存在记录
-        if (count == 0){
-            if (takeoutBasket.getQuantity() == 0){
-                return true;
-            }else if (takeoutBasket.getQuantity() > 0){
-                return baseMapper.insert(takeoutBasket) == 1;
+        if (takeoutBasket.getQuantity() == 0){
+            return baseMapper.delete(queryWrapper) == 1;
+        }else {
+            try {
+                return saveOrUpdate(takeoutBasket, queryWrapper);
+                //点击太快了
+            }catch (DuplicateKeyException e){
+                e.printStackTrace();
+                throw new SugoException("小主慢点操作哦！");
             }
-        //存在记录
-        }else if (count == 1){
-            if (takeoutBasket.getQuantity() == 0){
-                return baseMapper.delete(queryWrapper) == 1;
-            }else if (takeoutBasket.getQuantity() > 0){
-                return baseMapper.update(takeoutBasket, queryWrapper) == 1;
-            }
-        //数据有问题
-        }else if (count > 1){
-            //todo 数据错误 应该记录通过日志记录下来
-            throw new SugoException("系统数据错误");
         }
-        return false;
     }
 
     @Override

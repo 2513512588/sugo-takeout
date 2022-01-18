@@ -4,18 +4,20 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import lombok.Data;
 
 /**
- * 外卖商家优惠卷表
+ * 外卖商家活动表
  * @TableName takeout_coupon
  */
-@TableName(value ="takeout_coupon")
+@TableName(value ="takeout_activity")
 @Data
-public class TakeoutCoupon implements Serializable {
+public class TakeoutActivity implements Serializable {
     /**
      * 主键id
      */
@@ -23,19 +25,21 @@ public class TakeoutCoupon implements Serializable {
     private Integer id;
 
     /**
-     * 外卖商家id
+     * 店铺id
      */
+    @JsonIgnore
     private Integer sellerId;
 
     /**
-     * 优惠卷金额
+     * 满足条件
      */
-    private BigDecimal price;
+    @TableField("`condition`")
+    private BigDecimal condition;
 
     /**
-     * 优惠卷类型 1 关注店铺 2 消费满多少
+     * 减免金额
      */
-    private Integer type;
+    private BigDecimal reduce;
 
     /**
      * 发行数量
@@ -43,13 +47,7 @@ public class TakeoutCoupon implements Serializable {
     private Integer quantity;
 
     /**
-     * 条件金额
-     */
-    @TableField("`condition`")
-    private BigDecimal condition;
-
-    /**
-     * 开始时间
+     * 活动开始时间
      */
     private LocalDateTime startTime;
 
@@ -58,10 +56,6 @@ public class TakeoutCoupon implements Serializable {
      */
     private LocalDateTime expirationTime;
 
-    /**
-     * 有效时长
-     */
-    private Long effectiveDuration;
-
-
+    @TableField(exist = false)
+    private static final long serialVersionUID = 1L;
 }

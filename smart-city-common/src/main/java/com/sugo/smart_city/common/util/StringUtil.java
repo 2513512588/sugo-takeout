@@ -9,13 +9,17 @@ import org.apache.commons.lang3.StringUtils;
 public class StringUtil {
 
     public String[] formatLatLng(String location){
+        return formatLatLngStr(location).split(",");
+    }
+
+    public String formatLatLngStr(String location){
         try {
             String[] split = location.split(",");
             //纬度
             String lat = String.format("%.6f", Double.parseDouble(split[0]));
             //经度
             String lng = String.format("%.6f", Double.parseDouble(split[1]));
-            return new String[]{lat, lng};
+            return String.format("%s,%s", lat, lng);
         }catch (Exception e){
             throw new SugoException("位置信息异常，坐标信息需为（纬度,经度）");
         }
@@ -31,8 +35,7 @@ public class StringUtil {
         int status = jsonObject.getIntValue("status");
         if (status == 0) {
             JSONObject result = jsonObject.getJSONObject("result").getJSONObject("location");
-            String[] strings = formatLatLng(String.format("%s,%s", result.getFloatValue("lat"), result.getFloatValue("lng")));
-            return StringUtils.join(strings, ",");
+            return formatLatLngStr(StringUtils.join(new String[]{result.getString("lat"), result.getString("lng")}, ","));
         }
         return null;
     }

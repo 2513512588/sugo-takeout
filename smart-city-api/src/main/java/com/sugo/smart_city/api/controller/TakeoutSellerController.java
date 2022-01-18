@@ -111,8 +111,8 @@ public class TakeoutSellerController {
                 new QueryWrapper<>(TakeoutSeller.builder().province(province).city(city).status(TakeoutSellerStatus.NORMAL.getStatus()).build()));
         List<TakeoutSeller> records = iPage.getRecords();
         List<TakeoutSellerListDto> takeoutSellerListDtos = new ArrayList<>();
-        String[] location = StringUtil.formatLatLng(myLocation);
-        TakeoutSellerEvent takeoutSellerEvent = new TakeoutSellerEvent(records, StringUtils.join(location, ","));
+        String location = StringUtil.formatLatLngStr(myLocation);
+        TakeoutSellerEvent takeoutSellerEvent = new TakeoutSellerEvent(records, location);
         applicationContext.publishEvent(takeoutSellerEvent);
         for (TakeoutSeller record : records) {
             TakeoutSellerListDto takeoutSellerListDto = new TakeoutSellerListDto();

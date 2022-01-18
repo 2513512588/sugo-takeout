@@ -7,6 +7,7 @@ import com.sugo.smart_city.common.config.location.BaiduMapProperties;
 import com.sugo.smart_city.common.exception.SugoException;
 import com.sugo.smart_city.service.MapService;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Slf4j
 public class BaiduMapServiceImpl implements MapService {
 
     private final HttpClient client = HttpClientBuilder.create().build();
@@ -68,6 +70,8 @@ public class BaiduMapServiceImpl implements MapService {
 
     @Override
     public Long routematrixOne(String origin, String destination){
+        log.debug("destination => {}", destination);
+        log.debug("origin => {}", origin);
         JSONObject response = JSONObject.parseObject(routematrix(origin, destination));
         if (response.getIntValue("status") == 0){
             return response.getJSONArray("result").getJSONObject(0).getJSONObject("distance").getLongValue("value");
@@ -78,6 +82,8 @@ public class BaiduMapServiceImpl implements MapService {
 
     @Override
     public List<Long> routematrixList(String origin, String destination){
+        log.debug("destination => {}", destination);
+        log.debug("origin => {}", origin);
         JSONObject response = JSONObject.parseObject(routematrix(origin, destination));
         List<Long> resultList = new ArrayList<>();
         if (response.getIntValue("status") == 0){
@@ -87,7 +93,7 @@ public class BaiduMapServiceImpl implements MapService {
                 resultList.add(distance);
             }
         }else {
-            throw new SugoException(response.getString("message") + "，经纬度异常，格式为（纬度,经度）");
+            throw new SugoException(response.getString("message") + ": 经纬度异常，格式为（纬度,经度）");
         }
         return resultList;
     }

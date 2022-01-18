@@ -11,6 +11,7 @@ import com.sugo.smart_city.common.aspect.annotation.ParsePage;
 import com.sugo.smart_city.common.aspect.annotation.ParseParam;
 import com.sugo.smart_city.common.aspect.annotation.RequestSingleParam;
 import com.sugo.smart_city.common.util.Result;
+import com.sugo.smart_city.common.util.StringUtil;
 import com.sugo.smart_city.service.TakeoutGoodsCategoryService;
 import com.sugo.smart_city.service.TakeoutGoodsService;
 import com.sugo.smart_city.service.TakeoutSellerService;
@@ -57,7 +58,6 @@ public class TakeoutGoodsController {
                        @RequestSingleParam("city") String city,
                        @RequestSingleParam("type") Integer type){
 
-        String[] split = myLocation.split(",");
         IPage<TakeoutGoodsListDto> iPage = takeoutGoodsService.getListByCity(province, city, type, takeoutGoodsPage);
         List<TakeoutGoodsListDto> records = iPage.getRecords();
         List<TakeoutSeller> sellerList = new ArrayList<>();
@@ -67,9 +67,8 @@ public class TakeoutGoodsController {
             takeoutSeller.setId(record.getSellerId());
             sellerList.add(takeoutSeller);
         }
-        String lng = String.format("%.6f", Double.parseDouble(split[0]));
-        String lat = String.format("%.6f", Double.parseDouble(split[1]));
-        TakeoutSellerEvent takeoutSellerEvent = new TakeoutSellerEvent(sellerList, String.format("%s,%s", lat, lng));
+
+        TakeoutSellerEvent takeoutSellerEvent = new TakeoutSellerEvent(sellerList, StringUtil.formatLatLngStr(myLocation));
         applicationContext.publishEvent(takeoutSellerEvent);
         for (TakeoutGoodsListDto takeoutGoodsDto : records) {
             takeoutGoodsDto.setAdditionalData(takeoutSellerEvent.getAdditionalData().get(takeoutGoodsDto.getSellerId()));

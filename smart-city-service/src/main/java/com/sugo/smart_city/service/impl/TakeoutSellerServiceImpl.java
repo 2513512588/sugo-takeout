@@ -1,6 +1,5 @@
 package com.sugo.smart_city.service.impl;
 
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sugo.smart_city.bean.dto.TakeoutSellerDetailDto;
 import com.sugo.smart_city.bean.model.TakeoutSeller;
@@ -46,9 +45,9 @@ public class TakeoutSellerServiceImpl extends ServiceImpl<TakeoutSellerMapper, T
     public TakeoutSellerDetailDto getDetailById(Integer id, String location) {
         TakeoutSellerDetailDto detail = getDetailById(id);
         if (!StringUtils.isEmpty(location)){
-            String[] myLocation = StringUtil.formatLatLng(location);
+            String myLocation = StringUtil.formatLatLngStr(location);
             String sellerLocation = StringUtil.parseSellerLocation(detail.getLocation());
-            Long distance = mapService.routematrixOne(org.apache.commons.lang3.StringUtils.join(myLocation, ","), sellerLocation);
+            Long distance = mapService.routematrixOne(myLocation, sellerLocation);
             //todo 配送价格表 每公里x，最低，最高
             @SuppressWarnings("ALL")
             double price = distance / 1000 * 2;
