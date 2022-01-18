@@ -10,6 +10,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 /**
+ * 商家详情信息
  * @author hehaoyang
  */
 @Data

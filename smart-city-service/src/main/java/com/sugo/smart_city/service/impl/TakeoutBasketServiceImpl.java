@@ -2,11 +2,13 @@ package com.sugo.smart_city.service.impl;
 
 
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONException;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sugo.smart_city.bean.dto.TakeoutBasketDto;
+import com.sugo.smart_city.bean.dto.TakeoutGoodsSkuDto;
 import com.sugo.smart_city.bean.model.TakeoutBasket;
 import com.sugo.smart_city.bean.model.TakeoutGoods;
 import com.sugo.smart_city.bean.model.TakeoutGoodsSku;
@@ -21,8 +23,10 @@ import lombok.AllArgsConstructor;
 import ma.glasnost.orika.MapperFacade;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -88,8 +92,35 @@ public class TakeoutBasketServiceImpl extends ServiceImpl<TakeoutBasketMapper, T
     }
 
     @Override
-    public List<TakeoutBasketDto> list(Integer userId, Integer sellerId) {
-        return baseMapper.list(userId, sellerId);
+    public List<TakeoutBasketDto> list(Integer userId, Integer sellerId, Integer goodsStatus) {
+        List<TakeoutBasketDto> list = baseMapper.list(userId, sellerId, goodsStatus);
+        for (TakeoutBasketDto takeoutBasketDto : list) {
+            List<TakeoutGoodsSkuDto> skus = takeoutBasketDto.getGoods().getSkus();
+            //如果商品存在sku 则对加购数据对sku进行校验
+            if (!CollectionUtils.isEmpty(skus)){
+                String skuIdGroup = takeoutBasketDto.getSkuIdGroup();
+                if (!StringUtils.isEmpty(skuIdGroup)){
+                    try {
+                        List<Integer> skuIdList = JSONArray.parseArray(skuIdGroup, Integer.class);
+                        List<List<TakeoutGoodsSku>> collect = skus.stream().map(TakeoutGoodsSkuDto::getChildren).collect(Collectors.toList());
+                        List<TakeoutGoodsSku> temp = new ArrayList<>();
+                        for (List<TakeoutGoodsSku> takeoutGoodsSkus : collect) {
+                            temp.addAll(takeoutGoodsSkus);
+                        }
+                        List<Integer> collect1 = temp.stream().map(TakeoutGoodsSku::getId).collect(Collectors.toList());
+                        takeoutBasketDto.setSkuValid(collect1.containsAll(skuIdList));
+                    }catch (JSONException e){
+                        e.printStackTrace();
+                    }
+                }else {
+                    takeoutBasketDto.setSkuValid(false);
+                    //todo 加购数据异常
+                }
+            }else {
+                takeoutBasketDto.setSkuValid(true);
+            }
+        }
+        return list;
     }
 }
 

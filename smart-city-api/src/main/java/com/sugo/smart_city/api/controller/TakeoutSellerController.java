@@ -66,11 +66,11 @@ public class TakeoutSellerController {
         //判断是否提交过申请
         if (isExists != null){
             if (isExists.getStatus().equals(TakeoutSellerStatus.UNDER_REVIEW.getStatus())){
-                return Result.error().message("你已提交申请了，请勿重复提交");
+                return Result.error().message(TakeoutSellerStatus.UNDER_REVIEW.getMessage());
             }else if (isExists.getStatus().equals(TakeoutSellerStatus.FORBIDDEN.getStatus())){
-                return Result.error().message("您的账户已被封禁，请联系在线客服");
+                return Result.error().message(TakeoutSellerStatus.FORBIDDEN.getMessage());
             }else if (isExists.getStatus().equals(TakeoutSellerStatus.NORMAL.getStatus())){
-                return Result.error().message("您的账户已正常开通店铺，请勿重复申请");
+                return Result.error().message(TakeoutSellerStatus.NORMAL.getMessage());
             }else {
                 throw new SugoException("错误的店铺状态: " + isExists);
             }

@@ -3,6 +3,7 @@ package com.sugo.smart_city.api.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sugo.smart_city.bean.dto.TakeoutBasketDto;
+import com.sugo.smart_city.bean.enums.TakeoutGoodsStatus;
 import com.sugo.smart_city.bean.model.TakeoutBasket;
 import com.sugo.smart_city.bean.param.TakeoutBasketParam;
 import com.sugo.smart_city.common.aspect.annotation.ParsePage;
@@ -17,6 +18,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,9 +49,13 @@ public class TakeoutBasketController {
     })
     @ApiOperation("查询当前用户某店铺的购物车数据")
     @GetMapping("/listBySeller")
-    public Result list(@ParseUser(required = false) Integer userId, @RequestParam Integer sellerId){
+    public Result list(@ParseUser(required = false) Integer userId, @RequestParam Integer sellerId,
+                       @RequestParam(required = false) Integer status){
+         if (StringUtils.isEmpty(status)){
+             status = TakeoutGoodsStatus.ON_SHELF.getStatus();
+         }
          if (userId != null){
-             return Result.ok().list(takeoutBasketService.list(userId, sellerId));
+             return Result.ok().list(takeoutBasketService.list(userId, sellerId, status));
          }else {
              return Result.ok();
          }

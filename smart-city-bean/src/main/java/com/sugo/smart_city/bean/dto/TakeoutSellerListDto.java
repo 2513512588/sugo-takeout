@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 
 
+/**
+ * 商家列表推荐的商家数据模型
+ */
 @Data
 @Builder
 @NoArgsConstructor

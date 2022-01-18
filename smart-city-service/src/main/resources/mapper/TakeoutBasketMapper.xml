@@ -14,8 +14,8 @@
     </resultMap>
 
     <resultMap id="UnionGoodsMap" type="com.sugo.smart_city.bean.dto.TakeoutBasketDto" extends="BaseResultMap">
-        <association property="goods" javaType="com.sugo.smart_city.bean.model.TakeoutGoods"
-        column="goods_id" jdbcType="INTEGER" select="com.sugo.smart_city.mapper.TakeoutGoodsMapper.findById"
+        <association property="goods" javaType="com.sugo.smart_city.bean.dto.TakeoutGoodsBasketDto"
+           column="goods_id" jdbcType="INTEGER" select="com.sugo.smart_city.mapper.TakeoutGoodsMapper.findById"
         />
     </resultMap>
 
@@ -32,6 +32,6 @@
     <select id="list" resultMap="UnionGoodsMap">
         select id, quantity, goods_id, sku_id_group
         from takeout_basket
-        where user_id = #{userId} and seller_id = #{sellerId}
+        where user_id = #{userId} and seller_id = #{sellerId} and exists(select count(*) from takeout_goods where status = #{status})
     </select>
 </mapper>

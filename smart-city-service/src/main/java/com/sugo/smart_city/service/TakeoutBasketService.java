@@ -21,5 +21,11 @@ public interface TakeoutBasketService extends IService<TakeoutBasket> {
      */
     boolean updateQuantity(Integer userId, TakeoutBasketParam takeoutBasketParam);
 
-    List<TakeoutBasketDto> list(Integer userId, Integer sellerId);
+    /**
+     * @param userId 用户id
+     * @param sellerId 卖家id
+     * @param goodsStatus 商品状态
+     * @return 购物车dto数据
+     */
+    List<TakeoutBasketDto> list(Integer userId, Integer sellerId, Integer goodsStatus);
 }

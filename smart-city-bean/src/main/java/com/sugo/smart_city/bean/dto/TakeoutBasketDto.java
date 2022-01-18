@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.sugo.smart_city.bean.model.TakeoutGoods;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,7 +27,7 @@ public class TakeoutBasketDto implements Serializable {
     /**
      * 商品信息
      */
-    private TakeoutGoods goods;
+    private TakeoutGoodsBasketDto goods;
 
     /**
      * 商品id
@@ -40,6 +39,11 @@ public class TakeoutBasketDto implements Serializable {
      * 加购数量
      */
     private Integer quantity;
+
+    /**
+     * 商品规格是否失效
+     */
+    private Boolean skuValid;
 
     /**
      * skuId组 json字符串

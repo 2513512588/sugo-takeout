@@ -8,8 +8,11 @@ import java.io.Serializable;
 import java.util.List;
 
 
+/**
+ * 商品Sku数据模型
+ */
 @Data
-public class TakeoutGoodsSkuDto implements Serializable {
+public class TakeoutGoodsSkuDto implements Serializable{
 
     /**
      * 库存类型
@@ -20,7 +23,6 @@ public class TakeoutGoodsSkuDto implements Serializable {
      * 该type分类下的sku
      */
     private List<TakeoutGoodsSku> children;
-
 
 
 }

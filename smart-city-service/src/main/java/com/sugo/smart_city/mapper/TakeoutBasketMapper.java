@@ -15,7 +15,7 @@ public interface TakeoutBasketMapper extends BaseMapper<TakeoutBasket> {
 
     IPage<TakeoutBasketDto> selectBasketListByUser(IPage<?> page, @Param("userId") Integer userId);
 
-    List<TakeoutBasketDto> list(@Param("userId") Integer userId, @Param("sellerId") Integer sellerId);
+    List<TakeoutBasketDto> list(@Param("userId") Integer userId, @Param("sellerId") Integer sellerId, @Param("status") Integer goodsStatus);
 }
 
 

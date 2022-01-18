@@ -1,9 +1,12 @@
 package com.sugo.smart_city.common.util;
 
+import com.alibaba.fastjson.JSONArray;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.security.NoSuchAlgorithmException;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -16,6 +19,9 @@ public class SnCal {
 
     public static void main(String[] args) throws UnsupportedEncodingException,
             NoSuchAlgorithmException {
+
+        List<Integer> list = JSONArray.parseArray("dsad", Integer.class);
+
         SnCal snCal = new SnCal();
 
         // 计算sn跟参数对出现顺序有关，get请求请使用LinkedHashMap保存<key,value>，该方法根据key的插入顺序排序；post请使用TreeMap保存<key,value>，

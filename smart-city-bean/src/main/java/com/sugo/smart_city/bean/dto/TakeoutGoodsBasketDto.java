@@ -11,14 +11,15 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
+
 /**
- * 店铺内商品数据模型 根据店铺和商品分类进行查询 过滤下架的商品
+ * 购物车里的商品数据模型
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TakeoutGoodsDetailDto implements Serializable {
+public class TakeoutGoodsBasketDto implements Serializable {
     /**
      * 主键id
      */
@@ -45,30 +46,24 @@ public class TakeoutGoodsDetailDto implements Serializable {
     private String cover;
 
     /**
-     * 商品评分
-     */
-    private BigDecimal score;
-
-    /**
-     * 商品销量
-     */
-    private Integer salesVolume;
-
-    /**
      * 商品价格
      */
     private BigDecimal price;
 
-
     /**
-     * 是否为必点品 0 不是 1是
+     * 商品原价
      */
-    private Boolean isMandatory;
+    private Double originPrice;
 
     /**
      * 起购数量
      */
     private Integer minPurchaseNum;
+
+    /**
+     * 限购数量
+     */
+    private Integer maxPurchaseNum;
 
     /**
      * 每份打包费
@@ -81,14 +76,9 @@ public class TakeoutGoodsDetailDto implements Serializable {
     private Integer stock;
 
     /**
-     * 商品原价
+     * 是否上架 0 未上架 1已上架
      */
-    private Double originPrice;
-
-    /**
-     * 限购数量
-     */
-    private Integer maxPurchaseNum;
+    private Integer status;
 
     /**
      * 商品sku

@@ -118,6 +118,11 @@ public class TakeoutOrder implements Serializable {
      */
     private String skuNameGroup;
 
+    /**
+     * 餐具数量
+     */
+    private Integer tablewareNum;
+
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }

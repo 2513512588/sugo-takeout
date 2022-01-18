@@ -28,17 +28,15 @@
                     select="com.sugo.smart_city.mapper.TakeoutGoodsSkuMapper.findByGoodsId" />
     </resultMap>
 
-    <select id="findById" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List" />
-        from takeout_goods where id = #{id} and is_deleted = 0
-    </select>
+    <resultMap id="UnionBasketSkuMap" type="com.sugo.smart_city.bean.dto.TakeoutGoodsBasketDto" extends="BaseResultMap">
+        <collection property="skus" ofType="com.sugo.smart_city.bean.model.TakeoutGoodsSku" javaType="java.util.ArrayList" column="id" jdbcType="INTEGER"
+                    select="com.sugo.smart_city.mapper.TakeoutGoodsSkuMapper.findByGoodsId" />
+    </resultMap>
 
     <sql id="Base_Column_List">
         id, name, description, category_id, seller_id,
-        cover,sales_volume, status,min_purchase_num,
-        price,is_deleted,is_mandatory,packing_fee,stock,max_purchase_num,
-        origin_price
+        cover,sales_volume, status,min_purchase_num,max_purchase_num,
+        price, origin_price,is_deleted,is_mandatory,packing_fee,stock
     </sql>
     <select id="getListByCity" resultType="com.sugo.smart_city.bean.dto.TakeoutGoodsListDto">
         select
@@ -62,7 +60,7 @@
     </select>
 
     <select id="getListBySeller" resultMap="UnionSkuMap">
-        select id, name, description, category_id, cover, price, is_mandatory, min_purchase_num, packing_fee, stock, origin_price, max_purchase_num,
+        select id, name, description, category_id, cover, price, origin_price, is_mandatory, packing_fee, stock, max_purchase_num, min_purchase_num,
         ifnull((select avg(score) from takeout_goods_evaluate where takeout_goods_evaluate.goods_id = takeout_goods.id) / 5 * 100, 0) as score,
         ifnull(sales_volume, ifnull((select SUM(quantity) from takeout_order_item where order_code in (select code from takeout_order where takeout_order.seller_id = takeout_goods.seller_id)), 0)) as sales_volume
         from takeout_goods
@@ -72,4 +70,12 @@
             and category_id = #{goodsCategoryId}
         </if>
     </select>
+
+    <select id="findById" resultMap="UnionBasketSkuMap">
+        select
+            id, name, description, category_id, cover, price, origin_price, min_purchase_num, max_purchase_num, packing_fee, stock, status
+        from takeout_goods where id = #{id} and is_deleted = 0
+    </select>
+
+
 </mapper>
