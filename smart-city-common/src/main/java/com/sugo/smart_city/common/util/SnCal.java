@@ -5,9 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.security.NoSuchAlgorithmException;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 /**
@@ -20,7 +18,13 @@ public class SnCal {
     public static void main(String[] args) throws UnsupportedEncodingException,
             NoSuchAlgorithmException {
 
-        List<Integer> list = JSONArray.parseArray("dsad", Integer.class);
+//        List<Integer> list = JSONArray.parseArray("dsad", Integer.class);
+
+        List<Double> doubles = new ArrayList<>();
+        doubles.add(1d);
+
+        Optional<Double> reduce = doubles.stream().reduce(Double::sum);
+        System.out.println(reduce);
 
         SnCal snCal = new SnCal();
 

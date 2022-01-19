@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -47,7 +46,7 @@ public class TakeoutGoodsDetailDto implements Serializable {
     /**
      * 商品评分
      */
-    private BigDecimal score;
+    private Double score;
 
     /**
      * 商品销量
@@ -57,7 +56,7 @@ public class TakeoutGoodsDetailDto implements Serializable {
     /**
      * 商品价格
      */
-    private BigDecimal price;
+    private Double price;
 
 
     /**

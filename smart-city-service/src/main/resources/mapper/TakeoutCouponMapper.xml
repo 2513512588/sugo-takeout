@@ -23,6 +23,6 @@
     </sql>
     <select id="findBySellerId" resultMap="BaseResultMap">
         select <include refid="Base_Column_List" />
-        from takeout_coupon where seller_id = #{id} and now() between start_time and expiration_time
+        from takeout_coupon where seller_id = #{id} and now() between start_time and expiration_time and (quantity > 0 or quantity is null)
     </select>
 </mapper>

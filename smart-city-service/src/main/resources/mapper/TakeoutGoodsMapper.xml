@@ -73,7 +73,7 @@
 
     <select id="findById" resultMap="UnionBasketSkuMap">
         select
-            id, name, description, category_id, cover, price, origin_price, min_purchase_num, max_purchase_num, packing_fee, stock, status
+            id, name, description, category_id, cover, price, origin_price, min_purchase_num, max_purchase_num, packing_fee, stock, status, is_mandatory
         from takeout_goods where id = #{id} and is_deleted = 0
     </select>
 

@@ -18,10 +18,10 @@ public enum TakeoutGoodsStatus {
      */
     SELL_OUT(3, "商品已售罄");
 
-    private final Integer status;
+    private final int status;
     private final String message;
 
-    TakeoutGoodsStatus(Integer status, String message) {
+    TakeoutGoodsStatus(int status, String message) {
         this.status = status;
         this.message = message;
     }

@@ -47,9 +47,16 @@ public class ParseParamAspect {
                 for (Annotation annotation : annotations) {
                     if (annotation instanceof RequestSingleParam){
                         String key = ((RequestSingleParam) annotation).value();
+                        boolean required = ((RequestSingleParam) annotation).required();
                         if (jsonObject.containsKey(key)){
-                            args[i] = jsonObject.get(key);
-                        }else {
+                            Object o = jsonObject.get(key);
+                            Class<?> type = parameters[i].getType();
+                            if (type != o.getClass()){
+                                throw new SugoException(String.format("参数类型不一致，期望的是%s，实际则是%s", type.toString(), o.getClass().toString()));
+                            }else {
+                                args[i] = o;
+                            }
+                        }else if (required){
                             throw new SugoException(String.format("缺少参数%s", key));
                         }
                     }

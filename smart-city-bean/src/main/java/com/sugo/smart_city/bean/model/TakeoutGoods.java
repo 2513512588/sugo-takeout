@@ -62,7 +62,7 @@ public class TakeoutGoods implements Serializable {
     /**
      * 商品价格
      */
-    private BigDecimal price;
+    private Double price;
 
     /**
      * 是否上架 0 未上架 1已上架

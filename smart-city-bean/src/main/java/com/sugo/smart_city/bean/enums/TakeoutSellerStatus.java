@@ -18,10 +18,10 @@ public enum TakeoutSellerStatus {
      */
     NORMAL(3, "您的账户已正常开通店铺");
 
-    private final Integer status;
+    private final int status;
     private final String message;
 
-    TakeoutSellerStatus(Integer status, String message) {
+    TakeoutSellerStatus(int status, String message) {
         this.status = status;
         this.message = message;
     }

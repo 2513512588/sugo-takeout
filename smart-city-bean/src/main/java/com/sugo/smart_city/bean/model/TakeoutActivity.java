@@ -31,6 +31,11 @@ public class TakeoutActivity implements Serializable {
     private Integer sellerId;
 
     /**
+     * 活动类型 1 红包减免 2 折扣
+     */
+    private Integer type;
+
+    /**
      * 满足条件
      */
     @TableField("`condition`")
@@ -44,6 +49,7 @@ public class TakeoutActivity implements Serializable {
     /**
      * 发行数量
      */
+    @JsonIgnore
     private Integer quantity;
 
     /**

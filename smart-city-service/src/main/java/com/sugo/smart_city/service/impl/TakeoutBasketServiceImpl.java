@@ -8,7 +8,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sugo.smart_city.bean.dto.TakeoutBasketDto;
+import com.sugo.smart_city.bean.dto.TakeoutGoodsBasketDto;
 import com.sugo.smart_city.bean.dto.TakeoutGoodsSkuDto;
+import com.sugo.smart_city.bean.enums.TakeoutGoodsSkuMode;
 import com.sugo.smart_city.bean.model.TakeoutBasket;
 import com.sugo.smart_city.bean.model.TakeoutGoods;
 import com.sugo.smart_city.bean.model.TakeoutGoodsSku;
@@ -28,6 +30,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -50,21 +53,52 @@ public class TakeoutBasketServiceImpl extends ServiceImpl<TakeoutBasketMapper, T
 
     @Override
     public boolean updateQuantity(Integer userId, TakeoutBasketParam takeoutBasketParam) {
+        //根据商品id查询对应的sku数据
         List<TakeoutGoodsSku> list = takeoutGoodsSkuService.list(new QueryWrapper<>(TakeoutGoodsSku.builder().goodsId(takeoutBasketParam.getGoodsId()).build()));
         if (list.size() > 0){
             List<Integer> skuIds = list.stream().map(TakeoutGoodsSku::getId).collect(Collectors.toList());
             if (!StringUtils.isEmpty(takeoutBasketParam.getSkuIdGroup())){
-                //json格式化id组
-                List<Integer> skuIdGroup = JSONArray.parseArray(takeoutBasketParam.getSkuIdGroup(), Integer.class);
-                if (skuIds.containsAll(skuIdGroup)){
-                    takeoutBasketParam.setSkuIdGroup(JSONArray.toJSONString(skuIdGroup));
-                }else {
-                    //参数错误 没有对应的sku
-                    throw new SugoException("没有对应的skuId", ResultCode.VALIDATE_FAILED);
+                try {
+                    //json格式化id组
+                    List<Integer> skuIdGroup = JSONArray.parseArray(takeoutBasketParam.getSkuIdGroup(), Integer.class);
+                    if (skuIds.containsAll(skuIdGroup)){
+                        //找出该商品所有sku的分类数量
+                        long count = list.stream().map(TakeoutGoodsSku::getType).distinct().count();
+                        // 初步校验 提交的数量和sku分类数量一致
+                        if (count == skuIdGroup.size()){
+                            // 过滤出用户提交的skuIds数据中有哪些分类
+                            List<String> typeList = new ArrayList<>();
+                            for (int skuId : skuIdGroup) {
+                                @SuppressWarnings("all") // skuIds.containsAll(skuIdGroup) 已经判断了
+                                String type = list.stream().filter(item -> item.getId() == skuId).findFirst().get().getType();
+                                typeList.add(type);
+                            }
+                            // typeList.stream().distinct().count() == count 说明同一个分类下只选了一个
+                            // 总数量一致 且没有分类提交了重复的
+                            // 如果要有分类多选的话 应该遍历商品的sku分类 判断 提交上来的分类 单选的有一个 多选的至少有一个
+                            if (typeList.stream().distinct().count() == count){
+                                takeoutBasketParam.setSkuIdGroup(JSONArray.toJSONString(skuIdGroup));
+                            }else {
+                                throw new SugoException("sku参数错误", ResultCode.VALIDATE_FAILED);
+                            }
+                        }else {
+                            throw new SugoException("sku参数错误", ResultCode.VALIDATE_FAILED);
+                        }
+                    }else {
+                        //参数错误 没有对应的sku
+                        throw new SugoException("没有对应的skuId", ResultCode.VALIDATE_FAILED);
+                    }
+                }catch (JSONException e){
+                    e.printStackTrace();
+                    throw new SugoException("sku参数格式有误");
                 }
             }else {
                 //没有提交sku参数
                 throw new SugoException("缺少sku参数", ResultCode.VALIDATE_FAILED);
+            }
+        }else {
+            if (!StringUtils.isEmpty(takeoutBasketParam.getSkuIdGroup())) {
+                throw new SugoException("sku参数非法");
             }
         }
 
@@ -109,7 +143,28 @@ public class TakeoutBasketServiceImpl extends ServiceImpl<TakeoutBasketMapper, T
                         }
                         List<Integer> collect1 = temp.stream().map(TakeoutGoodsSku::getId).collect(Collectors.toList());
                         takeoutBasketDto.setSkuValid(collect1.containsAll(skuIdList));
+
+                        //sku有效的话计算sku价格
+                        if (takeoutBasketDto.getSkuValid()){
+                            TakeoutGoodsBasketDto goods = takeoutBasketDto.getGoods();
+                            double totalPrice = 0;
+                            //找到价格不为0选中的sku
+                            List<TakeoutGoodsSku> skuActiveList = goods.getSkus().stream().map(item -> item.getChildren().stream().filter(el -> skuIdList.contains(el.getId())).findFirst().get())
+                                    .filter(item -> item.getPrice() > 0).collect(Collectors.toList());
+                            Optional<TakeoutGoodsSku> baseSku = skuActiveList.stream().filter(item -> item.getMode() == TakeoutGoodsSkuMode.INDEPENDENT_PRICE.getMode()).findFirst();
+                            if (baseSku.isPresent()){
+                                totalPrice = baseSku.get().getPrice();
+                            }else {
+                                totalPrice = goods.getPrice();
+                            }
+                            Optional<Double> reduce = skuActiveList.stream().filter(item -> item.getMode() == TakeoutGoodsSkuMode.MARK_UP_PRICE.getMode()).map(TakeoutGoodsSku::getPrice).reduce(Double::sum);
+                            if (reduce.isPresent()){
+                                totalPrice += reduce.get();
+                            }
+                            goods.setPrice(totalPrice);
+                        }
                     }catch (JSONException e){
+                        takeoutBasketDto.setSkuValid(false);
                         e.printStackTrace();
                     }
                 }else {

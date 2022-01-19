@@ -49,7 +49,7 @@ public class TakeoutSellerServiceImpl extends ServiceImpl<TakeoutSellerMapper, T
             String sellerLocation = StringUtil.parseSellerLocation(detail.getLocation());
             Long distance = mapService.routematrixOne(myLocation, sellerLocation);
             //todo 配送价格表 每公里x，最低，最高
-            @SuppressWarnings("ALL")
+            @SuppressWarnings("all")
             double price = distance / 1000 * 2;
             double max = 5;
             double min = 2;

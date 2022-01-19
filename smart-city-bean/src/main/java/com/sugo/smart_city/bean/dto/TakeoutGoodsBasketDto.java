@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.List;
 
 
@@ -48,7 +47,7 @@ public class TakeoutGoodsBasketDto implements Serializable {
     /**
      * 商品价格
      */
-    private BigDecimal price;
+    private Double price;
 
     /**
      * 商品原价
@@ -79,6 +78,11 @@ public class TakeoutGoodsBasketDto implements Serializable {
      * 是否上架 0 未上架 1已上架
      */
     private Integer status;
+
+    /**
+     * 是否为必点品 0 不是 1是
+     */
+    private Boolean isMandatory;
 
     /**
      * 商品sku

@@ -23,7 +23,6 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.validation.annotation.Validated;
@@ -154,7 +153,7 @@ public class TakeoutSellerController {
     @ApiOperation("获取店铺主题列表")
     @GetMapping("/theme/list")
     public Result themeList(){
-        return Result.ok().data("rows", takeoutSellerTypeService.list());
+        return Result.ok().list(takeoutSellerTypeService.list());
     }
 
 }

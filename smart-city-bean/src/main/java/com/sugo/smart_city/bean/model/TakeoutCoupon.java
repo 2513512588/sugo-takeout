@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 /**
@@ -40,6 +42,7 @@ public class TakeoutCoupon implements Serializable {
     /**
      * 发行数量
      */
+    @JsonIgnore
     private Integer quantity;
 
     /**

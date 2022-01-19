@@ -12,5 +12,6 @@ import java.lang.annotation.*;
 public @interface RequestSingleParam {
 
     String value();
+    boolean required() default true;
 
 }

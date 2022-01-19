@@ -7,6 +7,8 @@ import com.sugo.smart_city.bean.enums.TakeoutGoodsStatus;
 import com.sugo.smart_city.bean.model.TakeoutBasket;
 import com.sugo.smart_city.bean.param.TakeoutBasketParam;
 import com.sugo.smart_city.common.aspect.annotation.ParsePage;
+import com.sugo.smart_city.common.aspect.annotation.ParseParam;
+import com.sugo.smart_city.common.aspect.annotation.RequestSingleParam;
 import com.sugo.smart_city.common.util.Result;
 import com.sugo.smart_city.common.valid.Groups;
 import com.sugo.smart_city.security.annotation.ParseUser;
@@ -101,6 +103,21 @@ public class TakeoutBasketController {
     public Result deleteById(@ParseUser Integer userId,
                              @PathVariable Integer id){
         return Result.auto(takeoutBasketService.remove(new QueryWrapper<>(TakeoutBasket.builder().id(id).userId(userId).build())));
+    }
+
+
+    /**
+     * 清空购物车
+     */
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "sellerId", value = "商家id", required = true, dataType = "Integer")
+    })
+    @ApiOperation("清空购物车")
+    @DeleteMapping("/clear")
+    @ParseParam
+    public Result clear(@ParseUser Integer userId, @RequestSingleParam("sellerId") Integer sellerId){
+        QueryWrapper<TakeoutBasket> queryWrapper = new QueryWrapper<>(TakeoutBasket.builder().sellerId(sellerId).userId(userId).build());
+        return Result.auto(takeoutBasketService.remove(queryWrapper));
     }
 
 

@@ -5,7 +5,9 @@ import com.sugo.smart_city.common.aspect.resolver.ParsePageHandlerMethodArgument
 import com.sugo.smart_city.security.aspect.ParseUserHandlerMethodArgumentResolver;
 import com.sugo.smart_city.security.util.JwtTokenUtils;
 import com.sugo.smart_city.service.UserService;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.filter.FormContentFilter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -35,5 +37,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
         WebMvcConfigurer.super.addArgumentResolvers(resolvers);
         resolvers.add(new ParsePageHandlerMethodArgumentResolver());
         resolvers.add(new ParseUserHandlerMethodArgumentResolver(userService));
+    }
+
+    @Bean
+    public FormContentFilter httpPutFormContentFilter() {
+        return new FormContentFilter();
     }
 }
