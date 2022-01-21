@@ -20,7 +20,7 @@
 
 			<!-- 商家信息 -->
 			<u-gap height="10px"></u-gap>
-			<view class="u-flex wrap" style="align-items: flex-start;">
+			<view class="u-flex u-flex-col-start wrap" >
 				<view class="seller-info-wrap">
 					<h2 class="seller-name">{{detail.name}}</h2>
 					<view class="seller-detail-info-wrap">
@@ -31,9 +31,8 @@
 					</view>
 					<u-gap height="5"></u-gap>
 					<view class="u-flex u-flex-row-start activities-wrap">
-						<Tag v-for="item in detail.coupons" type="error" desc="领">
-							<u-icon slot="text" name="rmb" color="#fff" labelColor="#fff" size="12px" labelSize="13px"
-								space="0" :label="item.price"></u-icon>
+						<Tag class="activitie-item" v-for="item in detail.coupons" type="error" desc="领" @click="showCouponPopup = true">
+							<cn-money slot="text" :money="item.price" size="12px" color="#fff"></cn-money>
 						</Tag>
 					</view>
 					<view class="u-flex u-flex-row-start coupons-wrap">
@@ -58,8 +57,8 @@
 			<view v-show="menuActive === 0" class="goods-container">
 				<scroll-view :scroll-y="true" style="width: auto;">
 					<view class="category-wrap">
-						<view v-for="(item,index) in categoryList" :key="index" @click="changeCategory(index)"
-							:class="{'active' : index === categoryActive}">
+						<view class="category-item" v-for="(item,index) in categoryList" :key="index"
+							@click="changeCategory(index)" :class="{'active' : index === categoryActive}">
 							<view class="category-name u-line-2">
 								{{item.name}}
 							</view>
@@ -109,7 +108,7 @@
 		</view>
 
 		<!-- 结算购物车统计栏 -->
-		<view class="statistics-bar" @click="basketList.length && (basketActionSheet.show = true)">
+		<view class="statistics-bar" @click="basketList.length && (basketPopup.show = true)">
 			<view class="u-flex">
 				<view class="basket-icon-wrap">
 					<u-icon name="shopping-cart-fill" size="34"
@@ -117,12 +116,11 @@
 					<u-badge type="error" max="99" :value="statisticsBar.totalCount"></u-badge>
 				</view>
 				<view style="margin-left: 9px;">
-					<u-icon name="rmb" :label="basketActionSheet.discount.finalPrice || statisticsBar.totalPrice"
-						color="#fff" labelColor="#fff" :size="16" :labelSize="20" bold></u-icon>
+					<cn-money :money="basketPopup.discount.finalPrice || statisticsBar.totalPrice" size="20px"
+						color="#fff" iconNormalSize></cn-money>
 					<view class="u-flex u-flex-row-start" v-if="detail.deliveryFee > 0">
 						<u-text text="预估另需配送费" color="#fff" size="12px"></u-text>
-						<u-icon name="rmb" :label="detail.deliveryFee" color="#fff" labelColor="#fff" size="12px"
-							labelSize="12px" space="0"></u-icon>
+						<cn-money :money="detail.deliveryFee" color="#fff" size="12px" iconNormalSize></cn-money>
 					</view>
 				</view>
 			</view>
@@ -141,19 +139,19 @@
 		</view>
 
 
-		<!-- 购物车action-sheet -->
-		<u-action-sheet :show="basketActionSheet.show" closeOnClickAction round @close="basketActionSheet.show = false"
-			round="8px">
-			<view class="discount-tip-wrap u-flex" v-show="basketActionSheet.discount.reduce > 0">
+		<!-- 购物车u-popup -->
+		<u-popup class="basket-popup" :show="basketPopup.show" closeOnClickAction @close="basketPopup.show = false"
+			round="8px" zIndex="12">
+			<view class="discount-tip-wrap u-flex" v-show="basketPopup.discount.reduce > 0">
 				<u-text text="已享" color="#333" size="12px" bold></u-text>
-				<u-text color="#FFD000" :text="discountStr(basketActionSheet.discount, 2)" size="12px" bold></u-text>
+				<u-text color="#FFD000" :text="discountStr(basketPopup.discount, 2)" size="12px" bold></u-text>
 			</view>
 			<u-gap height="15px"></u-gap>
 			<view class="u-flex wrap">
 				<view class="u-flex">
 					<u-text text="打包费" size="12px" color="#333" bold></u-text>
 					<u-icon name="rmb" size="12px" labelSize="13px" space="0" color="#d66156" labelColor="#d66156" bold
-						:label="basketActionSheet.packageFee"></u-icon>
+						:label="basketPopup.packageFee"></u-icon>
 				</view>
 				<u-icon name="trash" label="清空购物车" color="#666" labelColor="#666" size="12px" labelSize="12px" bold
 					@tap="clearBasket"></u-icon>
@@ -167,7 +165,7 @@
 					<u-gap height="60"></u-gap>
 				</view>
 			</scroll-view>
-		</u-action-sheet>
+		</u-popup>
 
 		<!-- 商品加购数量modal -->
 		<u-modal :show="basketNumModal.show" @confirm="onConfirmBasketNum" title="设置购买数量"
@@ -178,7 +176,7 @@
 
 		<!-- 选择sku popup -->
 		<u-popup :customStyle="{width: '90%', overflow: 'hidden'}" :show="skuPopup.show" mode="center" round="8"
-			closeable @close="skuPopup.show = false">
+			closeable @close="skuPopup.show = false" >
 			<view class="sku-container">
 				<u-text :text="skuPopup.goods.name" bold size="18px"></u-text>
 				<u-gap height="10px"></u-gap>
@@ -216,6 +214,42 @@
 			</view>
 		</u-popup>
 
+		<!-- 领取店铺红包 -->
+		<u-popup :show="showCouponPopup" closeOnClickAction @close="showCouponPopup = false" round="8px" closeable>
+			<u-gap height="25px"></u-gap>
+			<view class="wrap">
+				<u-text text="免费领" bold color="#000" size="14px"></u-text>
+				<u-gap height="5px"></u-gap>
+				<view class="card u-flex coupon-item" v-for="(item,index) in detail.coupons" >
+					<image class="coupon-cover" :src="detail.avatar" mode="aspectFill"></image>
+					<view class="coupon-item-content u-flex">
+						<view>
+							<view class="u-flex u-flex-row-start">
+								<cn-money :money="item.price" size="17px" color="#e05e37" bold margin="0 5px 0 0"
+									iconNormalSize></cn-money>
+								<u-text text="代金劵" bold size="15px"></u-text>
+								<u-text v-if="item.condition" :text="'(满{0}元可用)'.format(item.condition)" size="15px"></u-text>
+							</view>
+							<u-gap height="5px"></u-gap>
+							<u-text v-if="item.expirationTime" :text="'有效期至{0}'.format(item.expirationTime)" size="12px"
+								color="#999"></u-text>
+						</view>
+						<view class="coupon-receive-wrap">
+							<view v-if="!item.isReceive" @click="getCoupon(item.id)">
+								<u-text v-if="item.conditionIsFav"
+									text="收藏门店并领取"
+									size="13px" color="#e05e37" bold></u-text>
+								<u-text v-else text="领取" size="13px" color="#e05e37" bold></u-text>
+							</view>
+							<u-text v-else text="已领取" size="13px" color="#999"></u-text>
+							<u-text v-if="item.conditionCostPrice" :text="'(消费满{0}元)'.format(item.conditionCostPrice)" size="13px" color="#e05e37" bold></u-text>
+						</view>
+					</view>
+				</view>
+			</view>
+			<u-gap height="145px"></u-gap>
+		</u-popup>
+
 	</view>
 </template>
 
@@ -229,7 +263,7 @@
 	import CommentItem from '@/components/CommentItem.vue';
 	import Tag from '@/components/Tag.vue';
 	import Stepper from '@/components/Stepper.vue';
-
+	import CnMoney from '@/components/cn-money/cn-money.vue';
 
 	export default {
 		data() {
@@ -260,7 +294,7 @@
 				],
 				evaluateList: [],
 				// 购物车actionSheet
-				basketActionSheet: {
+				basketPopup: {
 					show: false,
 					discount: {
 						condition: 0,
@@ -289,14 +323,17 @@
 					canBuy: false
 				},
 				//定位信息
-				location: {}
+				location: {},
+				//是否显示领卷action-sheet
+				showCouponPopup: false
 			}
 		},
 		components: {
 			FoodItem,
 			CommentItem,
 			Tag,
-			Stepper
+			Stepper,
+			CnMoney
 		},
 		methods: {
 			//切换菜品分类
@@ -383,9 +420,9 @@
 				})
 
 				//自动关闭购物袋显示
-				if (this.basketActionSheet.show) {
+				if (this.basketPopup.show) {
 					if (this.basketList.length === 0) {
-						this.basketActionSheet.show = false
+						this.basketPopup.show = false
 					}
 				}
 			},
@@ -474,20 +511,20 @@
 			//下单
 			orderGoods() {
 				uni.navigateTo({
-					url: '/pages/seller/advancePayment'
+					url: '/pages/order/advance-payment?id=' + this.sellerId
 				})
 			},
 			//清空购物车
 			clearBasket() {
-				 this.$q({
+				this.$q({
 					url: '/api/takeout/basket/clear',
 					method: 'DELETE',
 					data: {
 						sellerId: this.sellerId
 					},
 					needToken: true,
-				}).then(res =>{
-					this.basketActionSheet.show = false
+				}).then(res => {
+					this.basketPopup.show = false
 					this.basketList = []
 					this.updateStatisticsData()
 				})
@@ -517,12 +554,12 @@
 
 
 				//统计所有打包费
-				this.basketActionSheet.packageFee = this.basketList.map(item => item.quantity * item.goods.packingFee)
+				this.basketPopup.packageFee = this.basketList.map(item => item.quantity * item.goods.packingFee)
 					.concat([0, 0]).reduce((a, b) => a + b)
 				//统计总金额
 				this.statisticsBar.totalPrice = this.basketList.map(item => item.quantity * item.goods.price).concat([0,
 					0
-				]).reduce((a, b) => a + b) + this.basketActionSheet.packageFee
+				]).reduce((a, b) => a + b) + this.basketPopup.packageFee
 
 				//更新是否能够购买状态
 				this.statisticsBar.hasMandatory = this.basketList.find(item => item.goods.isMandatory && item.quantity >
@@ -543,15 +580,15 @@
 				})
 				activities = activities.sort((a, b) => a.finalPrice - b.finalPrice)
 				if (activities.length > 0) {
-					if (this.basketActionSheet.discount.id !== activities[0].id) {
+					if (this.basketPopup.discount.id !== activities[0].id) {
 						uni.showToast({
 							icon: 'none',
 							title: '已享' + this.discountStr(activities[0], 1)
 						})
 					}
-					this.basketActionSheet.discount = activities[0]
-				}else{
-					this.basketActionSheet.discount = {}
+					this.basketPopup.discount = activities[0]
+				} else {
+					this.basketPopup.discount = {}
 				}
 
 			},
@@ -577,11 +614,9 @@
 			discountStr(discount, mode) {
 				// mode 1 详细提示 2 简略提示
 				if (discount.type === 1) {
-					return mode === 1 ? ('满' + discount.condition + '元减' + discount.reduce + '元') : (discount.condition +
-						'减' + discount.reduce)
+					return (mode === 1 ? '满{0}元减{1}元' : '{0}减{1}').format(discount.condition, discount.reduce) 
 				} else if (discount.type === 2) {
-					return mode === 1 ? ('满' + discount.condition + '元打' + parseInt(discount.reduce * 100) + '折') : ('满' +
-						discount.condition + '元' + parseInt(discount.reduce * 100) + '折')
+					return (mode === 1 ? '满{0}元打{1}折' : '满{0}元{1}折').format(discount.condition, parseInt(discount.reduce * 100))
 				}
 			},
 			//收藏店铺 / 取消收藏店铺
@@ -591,24 +626,44 @@
 					data: {
 						sellerId: this.sellerId
 					},
-					method: this.isFav ? 'DELETE' : 'PUT',
+					method: this.isFav ? 'DELETE' : 'POST',
 					needToken: true
-				}).then(res =>{
+				}).then(res => {
 					this.isFav = !this.isFav
-				}).catch(err =>{
+				}).catch(err => {
 					this.updateFavStatus()
 				})
 			},
 			// 更新收藏状态
-			updateFavStatus(){
+			updateFavStatus() {
 				this.$q({
 					url: '/api/takeout/collection/check',
 					data: {
 						sellerId: this.sellerId
 					},
 					needToken: true
-				}).then(res =>{
+				}).then(res => {
 					this.isFav = res.data.check
+				})
+			},
+			// 领取商家红包
+			getCoupon(id) {
+				this.$q({
+					url: '/api/takeout/coupon/add',
+					data: {
+						couponId: id
+					},
+					needToken: true
+				}).then(res =>{
+					let coupon = this.detail.coupons.find(item => item.id === id)
+					coupon.isReceive = true
+					if(coupon.conditionIsFav){
+						this.isFav = true
+					}
+					uni.showToast({
+						icon: 'none',
+						title: '领取成功！'
+					})
 				})
 			},
 			//初始化
@@ -635,6 +690,8 @@
 				])
 
 				this.detail = res[0].data
+				//显示评论数量
+				this.menuList[1].badge.value = this.detail.commentNum
 
 				if (res[1].data && res[1].data.rows) {
 					//过滤有效商品
@@ -712,7 +769,7 @@
 			.activities-wrap {
 				flex-wrap: wrap;
 
-				>view {
+				.activitie-item{
 					margin-right: 5px;
 					margin-bottom: 5px;
 				}
@@ -755,7 +812,7 @@
 				padding-bottom: 60px;
 				overflow: hidden;
 
-				>view {
+				.category-item {
 					display: flex;
 					align-items: center;
 					justify-content: center;
@@ -774,7 +831,7 @@
 					}
 				}
 
-				>view.active {
+				.category-item.active {
 					background-color: #fff;
 					font-weight: bold;
 				}
@@ -828,7 +885,7 @@
 		justify-content: space-between;
 		overflow: hidden;
 		padding-left: 20px;
-		z-index: 99999;
+		z-index: 13;
 
 
 		.statistics-bar-right-info-wrap {
@@ -861,7 +918,7 @@
 	}
 
 	.basket-goods-wrap {
-		max-height: 60vh;
+		max-height: 40vh;
 	}
 
 	.sku-container {
@@ -883,9 +940,6 @@
 		.sku-total-price {
 			align-items: flex-end;
 
-			::v-deep .u-icon__icon {
-				line-height: unset !important;
-			}
 		}
 
 		.add-cart-btn {
@@ -894,11 +948,6 @@
 			padding: 15px 0;
 			border-radius: 5px;
 			margin: 0;
-
-			::v-deep .u-icon__icon.uicon-plus {
-				line-height: unset !important;
-				font-size: 12px !important;
-			}
 		}
 	}
 
@@ -912,5 +961,35 @@
 		justify-content: center;
 		padding: 8px 0;
 		background-color: #f2eed7;
+	}
+
+	.coupon-item {
+		width: 100%;
+		padding: 10px;
+
+		.coupon-cover {
+			width: 50px;
+			height: 50px;
+			border-radius: 5px;
+		}
+
+		.coupon-item-content {
+			width: calc(100% - 65px);
+		}
+		
+		.coupon-receive-wrap{
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+		}
+	}
+	
+	.basket-popup{
+		
+		::v-deep .u-transition{
+			z-index: 12 !important;
+		}
+		
 	}
 </style>

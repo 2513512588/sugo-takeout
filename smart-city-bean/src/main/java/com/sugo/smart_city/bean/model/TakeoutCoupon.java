@@ -9,7 +9,10 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 外卖商家优惠卷表
@@ -17,6 +20,9 @@ import lombok.Data;
  */
 @TableName(value ="takeout_coupon")
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class TakeoutCoupon implements Serializable {
     /**
      * 主键id
@@ -35,9 +41,14 @@ public class TakeoutCoupon implements Serializable {
     private BigDecimal price;
 
     /**
-     * 优惠卷类型 1 关注店铺 2 消费满多少
+     * 是否关注店铺才能领取
      */
-    private Integer type;
+    private Boolean conditionIsFav;
+
+    /**
+     * 消费多少金额可以领取
+     */
+    private Double conditionCostPrice;
 
     /**
      * 发行数量
@@ -46,7 +57,7 @@ public class TakeoutCoupon implements Serializable {
     private Integer quantity;
 
     /**
-     * 条件金额
+     * 使用条件金额
      */
     @TableField("`condition`")
     private BigDecimal condition;
@@ -62,7 +73,7 @@ public class TakeoutCoupon implements Serializable {
     private LocalDateTime expirationTime;
 
     /**
-     * 有效时长
+     * 有效时长(秒)
      */
     private Long effectiveDuration;
 

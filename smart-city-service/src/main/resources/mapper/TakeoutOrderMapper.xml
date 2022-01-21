@@ -62,4 +62,7 @@
         0
         )
     </select>
+    <select id="getTotalPriceByUserAndSeller" resultType="java.lang.Double">
+        select ifnull(sum(total), 0) from takeout_order where user_id = #{userId} and seller_id = #{sellerId}
+    </select>
 </mapper>

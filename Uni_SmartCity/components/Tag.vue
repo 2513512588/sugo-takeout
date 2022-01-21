@@ -14,6 +14,11 @@
 </template>
 
 <script>
+	
+	/**
+	 * @event {Function()} click 
+	 */
+	
 	export default {
 		name: "Tag",
 		props: {

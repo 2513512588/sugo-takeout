@@ -35,7 +35,7 @@ public class StringUtil {
         int status = jsonObject.getIntValue("status");
         if (status == 0) {
             JSONObject result = jsonObject.getJSONObject("result").getJSONObject("location");
-            return formatLatLngStr(StringUtils.join(new String[]{result.getString("lat"), result.getString("lng")}, ","));
+            return formatLatLngStr(result.getString("lat") + "," + result.getString("lng"));
         }
         return null;
     }

@@ -6,7 +6,11 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 外卖优惠券领取记录表
@@ -14,6 +18,9 @@ import lombok.Data;
  */
 @TableName(value ="takeout_coupon_receive")
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class TakeoutCouponReceive implements Serializable {
     /**
      * 主键id
@@ -34,7 +41,7 @@ public class TakeoutCouponReceive implements Serializable {
     /**
      * 状态 1 未使用 2 已使用
      */
-    private Boolean status;
+    private Integer status;
 
     /**
      * 过期时间

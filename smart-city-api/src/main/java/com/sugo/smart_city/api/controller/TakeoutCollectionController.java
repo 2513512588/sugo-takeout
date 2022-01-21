@@ -14,6 +14,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,16 +37,15 @@ public class TakeoutCollectionController {
             @ApiImplicitParam(name = "goodsId", value = "商品Id")
     })
     @ApiOperation("添加店铺或者商品收藏")
-    @PutMapping("/add")
+    @PostMapping("/add")
     @ParseParam
     public Result add(@ParseUser Integer userId,
                       @RequestSingleParam("sellerId") Integer sellerId,
                       @RequestSingleParam(value = "goodsId", required = false) Integer goodsId){
         TakeoutCollection build = TakeoutCollection.builder().userId(userId).sellerId(sellerId).goodsId(goodsId).build();
-        boolean exists = takeoutCollectionService.exists(userId, sellerId, goodsId);
-        if (!exists){
+        try {
             return Result.auto(takeoutCollectionService.save(build)).data("collected", true);
-        }else {
+        }catch (DuplicateKeyException e){
             return Result.error().message("你已收藏过了");
         }
     }
@@ -60,9 +60,9 @@ public class TakeoutCollectionController {
                       @RequestSingleParam("sellerId") Integer sellerId,
                       @RequestSingleParam(value = "goodsId", required = false) Integer goodsId){
         TakeoutCollection build = TakeoutCollection.builder().userId(userId).sellerId(sellerId).goodsId(goodsId).build();
-        boolean exists = takeoutCollectionService.exists(userId, sellerId, goodsId);
-        if (exists){
-            return Result.auto(takeoutCollectionService.remove(new QueryWrapper<>(build))).data("collected", false);
+        boolean remove = takeoutCollectionService.remove(new QueryWrapper<>(build));
+        if (remove){
+            return Result.ok().data("collected", false);
         }else {
             return Result.error().message("你还未收藏");
         }
@@ -101,5 +101,8 @@ public class TakeoutCollectionController {
                         @RequestParam(required = false) Integer goodsId){
         return Result.ok().data("check", takeoutCollectionService.exists(userId, sellerId, goodsId));
     }
+
+
+
 
 }

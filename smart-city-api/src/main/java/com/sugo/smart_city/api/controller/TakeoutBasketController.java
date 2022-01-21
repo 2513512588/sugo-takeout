@@ -72,7 +72,7 @@ public class TakeoutBasketController {
     @ApiOperation("修改购物车商品数量")
     @PostMapping("/update")
     public Result update(@ParseUser Integer userId,
-                         @RequestBody @Validated(Groups.Add.class) TakeoutBasketParam takeoutBasketParam){
+                         @RequestBody @Validated(Groups.Add.class) TakeoutBasketParam takeoutBasketParam)  {
         return Result.auto(takeoutBasketService.updateQuantity(userId, takeoutBasketParam));
     }
 

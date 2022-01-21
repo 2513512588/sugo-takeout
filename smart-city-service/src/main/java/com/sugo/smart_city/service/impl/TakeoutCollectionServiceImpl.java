@@ -25,6 +25,11 @@ public class TakeoutCollectionServiceImpl extends ServiceImpl<TakeoutCollectionM
     }
 
     @Override
+    public boolean exists(Integer userId, Integer sellerId) {
+        return exists(userId, sellerId, null);
+    }
+
+    @Override
     public List<TakeoutGoods> getCollectSellerList(Integer userId) {
         return null;
     }

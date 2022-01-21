@@ -1,11 +1,9 @@
 package com.sugo.smart_city.api.listener;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
+
 import com.sugo.smart_city.bean.dto.TakeoutSellerAdditionalDto;
 import com.sugo.smart_city.bean.event.TakeoutSellerEvent;
 import com.sugo.smart_city.bean.model.TakeoutSeller;
-import com.sugo.smart_city.common.exception.SugoException;
 import com.sugo.smart_city.common.util.StringUtil;
 import com.sugo.smart_city.service.MapService;
 import com.sugo.smart_city.service.TakeoutDeliveryService;

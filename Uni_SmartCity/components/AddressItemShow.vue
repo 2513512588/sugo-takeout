@@ -1,19 +1,19 @@
 <template>
 	<u-cell isLink :border="false">
-		<view class="address_item" slot="title">
-			<h2 class="address_detail">{{data.addressDetail}}</h2>
+		<view class="address-item" slot="title">
+			<h2 class="address-detail">{{data.name}}</h2>
 			<u-gap height="3"></u-gap>
-			<view class="info_wrap">
+			<view class="u-flex u-flex-row-start info-cell">
 				<p>
-					<u-text color="#999" :size="13" :text="data.name"></u-text>
+					<u-text color="#999" :size="13" :text="data.consignee"></u-text>
 				</p>
 				<p>
 					<u-text color="#999" :size="13" :text="data.phone"></u-text>
 				</p>
 			</view>
 			<u-gap height="5"></u-gap>
-			<view class="tags_group">
-				<u-tag v-if="data.label !== ''" :text="data.label" type="warning"></u-tag>
+			<view class="u-flex">
+				<u-tag v-if="data.marker" :text="data.marker" type="warning"></u-tag>
 			</view>
 		</view>
 
@@ -47,19 +47,15 @@
 </script>
 
 <style lang="scss">
-	.info_wrap {
-		display: flex;
-		align-items: center;
-		justify-content: flex-start;
-
-		p {
+	.info-cell{
+		p{
 			margin-right: 8px;
 		}
 	}
-
-	.address_detail {
+	.address-detail {
 		font-size: 20px;
 		font-weight: 500;
 		color: #333;
+		text-align: left;
 	}
 </style>

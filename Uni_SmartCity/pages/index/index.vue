@@ -39,13 +39,11 @@
 						<span>{{(item.additionalData.distance / 1000).toFixed(1)}}km</span>
 					</view>
 					<view class="seller_info">
-						<view class="seller_price_wrap">
-							人均 <span>&yen;</span>
-							<h3>{{item.additionalData.avgCost}}</h3>
-						</view>
+						<cn-money :money="item.additionalData.avgCost" color="#f76343" size="18" iconNormalSize></cn-money>
 						<u-tag size="mini" plain :text="'配送时间' + (item.additionalData.avgDeliveryTime) + '分'" type="warning"
-							color="#f76343" style="margin-left: auto;"></u-tag>
+							color="#f76343" style="margin-left: auto; transform-origin: right center; transform: scale(.8);"></u-tag>
 					</view>
+					<u-gap height="3px"></u-gap>
 				</view>
 			</template>
 		</WaterfallFlow>
@@ -60,13 +58,11 @@
 						<span>{{(item.additionalData.distance / 1000).toFixed(1)}}km</span>
 					</view>
 					<view class="seller_info">
-						<view class="seller_price_wrap">
-							 <span>&yen;</span>
-							<h3>{{item.price}}</h3>
-						</view>
+						<cn-money :money="item.price" color="#f76343" size="18" iconNormalSize></cn-money>
 						<u-tag size="mini" plain :text="'配送时间' + (item.additionalData.avgDeliveryTime) + '分'" type="warning"
-							color="#f76343" style="margin-left: auto;"></u-tag>
+							color="#f76343" style="margin-left: auto; transform-origin: right center; transform: scale(.8);"></u-tag>
 					</view>
+					<u-gap height="3px"></u-gap>
 				</view>
 			</template>
 		</WaterfallFlow>
@@ -76,7 +72,8 @@
 
 <script>
 	import WaterfallFlow from '@/components/WaterfallFlow.vue'
-
+	import CnMoney from '@/components/cn-money/cn-money.vue';	
+	
 	export default {
 		data() {
 			return {
@@ -106,7 +103,8 @@
 			}
 		},
 		components: {
-			WaterfallFlow
+			WaterfallFlow,
+			CnMoney
 		},
 		methods: {
 			loadData(e){
@@ -155,7 +153,7 @@
 			},
 			goSellerDetail(id){
 				uni.navigateTo({
-					url: '/pages/seller/seller?id=' + id
+					url: '/pages/shop/shop?id=' + id
 				})
 			}
 		},
@@ -233,29 +231,6 @@
 			align-items: center;
 			justify-content: flex-start;
 
-
-			.seller_price_wrap {
-				font-size: 13px;
-				height: 1.8em;
-				margin-bottom: 5px;
-				color: #999;
-				display: flex;
-				align-items: flex-end;
-				justify-content: center;
-				letter-spacing: 1px;
-
-				span {
-					color: #f76343;
-					margin-left: 3px;
-				}
-
-				h3 {
-					color: #f76343;
-					font-size: 20px;
-					line-height: 1em;
-				}
-			}
-
 			::v-deep .u-tag {
 				margin-left: 4px;
 				border: 1px solid #f76343 !important;
@@ -296,17 +271,17 @@
 
 	}
 	
-	.takeout {
-		.u-tabbar {
-			::v-deep .u-tabbar__content__item-wrapper{
-				height: 55px !important;
-			}
-			::v-deep .u-icon__icon{
-				font-size: 32px !important;
-				line-height: 26px !important;
-			}
-		}
-	}
+	// .takeout {
+	// 	.u-tabbar {
+	// 		::v-deep .u-tabbar__content__item-wrapper{
+	// 			height: 55px !important;
+	// 		}
+	// 		::v-deep .u-icon__icon{
+	// 			font-size: 32px !important;
+	// 			line-height: 26px !important;
+	// 		}
+	// 	}
+	// }
 	
 	
 </style>

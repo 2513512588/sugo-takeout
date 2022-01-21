@@ -8,7 +8,8 @@
             <id property="id" column="id" jdbcType="INTEGER"/>
             <result property="sellerId" column="seller_id" jdbcType="INTEGER"/>
             <result property="price" column="price" jdbcType="DECIMAL"/>
-            <result property="type" column="type" jdbcType="TINYINT"/>
+            <result property="conditionIsFav" column="condition_is_fav" jdbcType="TINYINT"/>
+            <result property="conditionCostPrice" column="condition_cost_price" jdbcType="DECIMAL"/>
             <result property="quantity" column="quantity" jdbcType="INTEGER"/>
             <result property="condition" column="condition" jdbcType="DECIMAL"/>
             <result property="startTime" column="start_time" jdbcType="TIMESTAMP"/>
@@ -18,7 +19,7 @@
 
     <sql id="Base_Column_List">
         id,seller_id,price,
-        type,`condition`,start_time,
+        condition_cost_price, condition_is_fav,`condition`,start_time,
         expiration_time,effective_duration,quantity
     </sql>
     <select id="findBySellerId" resultMap="BaseResultMap">

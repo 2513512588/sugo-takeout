@@ -6,6 +6,7 @@ const baseRequest = ops =>{
 		uni.request({
 			...ops,
 			url: baseURL + ops.url,
+			timeout: 8000,
 			header: {
 				Authorization: ops.needToken ? uni.getStorageSync('token') : undefined
 			},

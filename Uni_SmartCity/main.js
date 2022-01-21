@@ -5,7 +5,7 @@ import Vue from 'vue'
 Vue.config.productionTip = false
 App.mpType = 'app'
 const app = new Vue({
-    ...App
+	...App
 })
 app.$mount()
 // #endif
@@ -19,13 +19,22 @@ import request from './util/request.js'
 Vue.prototype.$q = request.baseRequest
 Vue.prototype.$url = request.baseURL
 
+String.prototype.format = function() {
+	if (arguments.length == 0)
+		return this;
+	for (var s = this, i = 0; i < arguments.length; i++)
+		s = s.replace(new RegExp("\\{" + i + "\\}", "g"), arguments[i]);
+	return s;
+};
 
 // #ifdef VUE3
-import { createSSRApp } from 'vue'
+import {
+	createSSRApp
+} from 'vue'
 export function createApp() {
-  const app = createSSRApp(App)
-  return {
-    app
-  }
+	const app = createSSRApp(App)
+	return {
+		app
+	}
 }
 // #endif

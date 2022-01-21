@@ -2,6 +2,7 @@ package com.sugo.smart_city.api.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.sugo.smart_city.bean.dto.TakeoutSellerBaseInfoDto;
 import com.sugo.smart_city.bean.dto.TakeoutSellerListDto;
 import com.sugo.smart_city.bean.enums.TakeoutSellerStatus;
 import com.sugo.smart_city.bean.event.TakeoutSellerEvent;
@@ -23,6 +24,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import ma.glasnost.orika.MapperFacade;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.validation.annotation.Validated;
@@ -47,13 +49,9 @@ public class TakeoutSellerController {
     private TakeoutGoodsCategoryService takeoutGoodsCategoryService;
     @Resource
     private TakeoutSellerTypeService takeoutSellerTypeService;
-
-
     @Resource
-    private MapService mapService;
+    private MapperFacade mapperFacade;
 
-    @Resource
-    private UserService userService;
 
     @Resource
     private ApplicationContext applicationContext;
@@ -124,14 +122,23 @@ public class TakeoutSellerController {
 
     /**
      * 根据商家id获取商铺详情
-     * @param id 商家id
+     * @param sellerId 商家id
      * @param myLocation (纬度,经度)
      * @return 商家详情数据
      */
     @ApiOperation("根据商铺id获取商铺详情")
-    @GetMapping("/detail/{id}")
-    public Result detail(@PathVariable Integer id, @RequestParam("myLocation") String myLocation){
-        return Result.ok().data(takeoutSellerService.getDetailById(id, myLocation));
+    @GetMapping("/detail/{sellerId}")
+    public Result detail(@PathVariable Integer sellerId, @RequestParam("myLocation") String myLocation){
+        return Result.ok().data(takeoutSellerService.getDetailById(sellerId, myLocation));
+    }
+
+
+    @ApiOperation("获取商铺基本信息")
+    @GetMapping("/baseInfo/{sellerId}")
+    public Result baseInfo(@PathVariable Integer sellerId){
+        TakeoutSeller takeoutSeller = takeoutSellerService.getById(sellerId);
+        TakeoutSellerBaseInfoDto baseInfoDto = mapperFacade.map(takeoutSeller, TakeoutSellerBaseInfoDto.class);
+        return Result.ok().data(baseInfoDto);
     }
 
     /**
