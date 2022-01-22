@@ -12,7 +12,9 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 
 
-
+/**
+ *  购物车数据展示
+ */
 @Data
 @Builder
 @AllArgsConstructor

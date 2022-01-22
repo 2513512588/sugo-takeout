@@ -1,6 +1,7 @@
 package com.sugo.smart_city.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.sugo.smart_city.bean.dto.TakeoutCouponDto;
 import com.sugo.smart_city.bean.model.TakeoutCollection;
 import com.sugo.smart_city.bean.model.TakeoutCoupon;
 import com.sugo.smart_city.bean.model.TakeoutCouponReceive;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  *
@@ -76,6 +78,11 @@ public class TakeoutCouponServiceImpl extends ServiceImpl<TakeoutCouponMapper, T
         }catch (DuplicateKeyException e){
             throw new SugoException("你已经领取过红包啦！");
         }
+    }
+
+    @Override
+    public List<TakeoutCouponDto> list(Integer sellerId, Integer userId) {
+        return baseMapper.findBySellerAndUser(sellerId, userId);
     }
 }
 

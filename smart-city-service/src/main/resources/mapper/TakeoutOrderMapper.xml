@@ -25,7 +25,7 @@
             <result property="remark" column="remark" jdbcType="VARCHAR"/>
             <result property="riderId" column="rider_id" jdbcType="INTEGER"/>
             <result property="skuNameGroup" column="sku_name_group" jdbcType="VARCHAR"/>
-            <result property="tablewareNum" column="tableware_num" jdbcType="INTEGER"/>
+            <result property="tablewareNum" column="tableware_num" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">

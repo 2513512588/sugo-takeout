@@ -67,7 +67,11 @@
 		align-items: flex-end;
 	}
 	.u-flex-row-end{
-		justify-content: flex-end;
+		justify-content: flex-end !important;
+	}
+	
+	.u-line-1{
+		display: block !important;
 	}
 	
 </style>

@@ -1,5 +1,8 @@
 <template>
 	<view class="cn-money-box" :class="original ? 'cn-money-original' : ''" :style="{ padding: padding, margin: margin, fontSize: size, color: color, fontWeight: bold ? 'bold' : 'normal' }">
+		<view v-if="negative">
+			<text class="cn-money-decimal">-</text>
+		</view>
 		<view v-if="rmb">
 			<text class="cn-money-text" v-if="showUnit">{{ rmbUnit }}</text>
 			<text class="cn-money-text">{{ rmbText }}</text>
@@ -72,6 +75,10 @@ export default {
 			default: false
 		},
 		rmb: {
+			type: Boolean,
+			default: false
+		},
+		negative: {
 			type: Boolean,
 			default: false
 		}
@@ -188,7 +195,7 @@ export default {
 	}
 	
 	.cn-money-unit.icon-normal-size{
-		font-size: 1em;
+		font-size: .95em;
 	}
 
 	.cn-money-text {

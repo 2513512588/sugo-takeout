@@ -5,7 +5,10 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -17,6 +20,9 @@ import java.time.LocalDateTime;
  */
 @TableName(value ="takeout_activity")
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class TakeoutActivity implements Serializable {
     /**
      * 主键id

@@ -1,6 +1,5 @@
 package com.sugo.smart_city.bean.param;
 
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -10,7 +9,6 @@ import java.math.BigDecimal;
  * 外卖商品表
  * @TableName takeout_goods
  */
-@TableName(value ="takeout_goods")
 @Data
 public class TakeoutGoodsParam implements Serializable {
 

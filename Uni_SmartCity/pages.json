@@ -56,6 +56,13 @@
 			}
 
 		}, {
+			"path": "pages/order/pay",
+			"style": {
+				"navigationBarTitleText": "支付订单",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
 			"path": "pages/address/address",
 			"style": {
 				"navigationBarTitleText": "我的收货地址",
@@ -74,7 +81,28 @@
 			}
 
 		}
-	],
+	    ,{
+            "path" : "pages/order/remark",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "添加备注",
+                "enablePullDownRefresh": false,
+				"navigationBarBackgroundColor":"#FFFFFF",
+				"app-plus": {
+					"titleNView": {
+						"buttons": [
+							{
+								"float": "right",
+								"fontSize": "30rpx",
+								"text": "完成"
+							}
+						]
+					}
+				}
+            }
+            
+        }
+    ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarBackgroundColor": "#FFD000",

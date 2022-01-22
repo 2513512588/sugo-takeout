@@ -564,7 +564,7 @@
 				//更新是否能够购买状态
 				this.statisticsBar.hasMandatory = this.basketList.find(item => item.goods.isMandatory && item.quantity >
 					0) !== undefined
-				//是否可以购买 有必点品切大于起送金额
+				//是否可以购买 有必点品且大于起送金额
 				this.statisticsBar.canBuy = this.statisticsBar.hasMandatory && this.statisticsBar.totalPrice >= this.detail
 					.minDeliveryPrice
 

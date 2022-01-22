@@ -22,8 +22,18 @@
         condition_cost_price, condition_is_fav,`condition`,start_time,
         expiration_time,effective_duration,quantity
     </sql>
+
     <select id="findBySellerId" resultMap="BaseResultMap">
         select <include refid="Base_Column_List" />
         from takeout_coupon where seller_id = #{id} and now() between start_time and expiration_time and (quantity > 0 or quantity is null)
+    </select>
+
+    <select id="findBySellerAndUser" resultType="com.sugo.smart_city.bean.dto.TakeoutCouponDto">
+        select
+        id, price, expiration_time, `condition`
+        from takeout_coupon where seller_id = #{sellerId}
+        and id in (
+            select coupon_id from takeout_coupon_receive where user_id = #{userId} and status = 1 and now() &lt; expiration_time
+        )
     </select>
 </mapper>

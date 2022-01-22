@@ -166,9 +166,17 @@
 			if (options.id) {
 				this.$q({
 					url: '/api/takeout/address/detail/' + options.id,
-					token: true,
+					needToken: true,
 				}).then(res => {
 					this.address = res.data
+					this.location = {
+						name: this.address.name,
+						detail: this.address.address,
+						currentPosition: {
+							lat: this.address.lat,
+							lng: this.address.lng
+						}
+					}
 				})
 			}
 		},

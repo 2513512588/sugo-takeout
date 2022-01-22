@@ -5,8 +5,8 @@
 			<u-text :lines="2" :text="item.name" size="15px" color="#333" bold></u-text>
 			<u-text :lines="2" :text="item.description" size="12" color="#999"></u-text>
 			<view class="goods-info-detail">
-				<span v-if="item.salesVolume !== null">月销{{item.salesVolume}}</span>
-				<span v-if="item.score !== null">好评率{{item.score}}%</span>
+				<span v-if="item.salesVolume || item.salesVolume === 0">月销{{item.salesVolume}}</span>
+				<span v-if="item.score || item.score === 0">好评率{{item.score}}%</span>
 			</view>
 			<view class="goods-price-wrap">
 				<u-icon name="rmb" :label="item.price" color="#eb7118" labelColor="#eb7118" bold></u-icon>
@@ -92,7 +92,7 @@
 <style lang="scss">
 	.goods-item.size-mini {
 		.goods-cover {
-			width: 25%;
+			width: 25% !important;
 		}
 
 		.goods-info-wrap {

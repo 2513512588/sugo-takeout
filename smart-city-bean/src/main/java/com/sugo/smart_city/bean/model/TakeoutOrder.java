@@ -121,7 +121,7 @@ public class TakeoutOrder implements Serializable {
     /**
      * 餐具数量
      */
-    private Integer tablewareNum;
+    private String tablewareNum;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

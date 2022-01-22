@@ -23,4 +23,5 @@
         consignee,sex,name,
         address,house_number,user_id,lat,lng
     </sql>
+
 </mapper>

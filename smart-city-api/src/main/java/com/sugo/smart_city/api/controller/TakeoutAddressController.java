@@ -70,11 +70,12 @@ public class TakeoutAddressController {
     @GetMapping("/list")
     public Result list(@ParseUser Integer userId){
         QueryWrapper<TakeoutAddress> queryWrapper = new QueryWrapper<>(TakeoutAddress.builder().userId(userId).build());
-        return Result.ok().list(takeoutAddressService.list(queryWrapper));
+        List<TakeoutAddress> list = takeoutAddressService.list(queryWrapper);
+        return Result.ok().list(list);
     }
 
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "收货地址id")
+         @ApiImplicitParam(name = "id", value = "收货地址id")
     })
     @ApiOperation("当前用户根据id查询地址")
     @GetMapping("/detail/{id}")
@@ -120,8 +121,8 @@ public class TakeoutAddressController {
             @ApiImplicitParam(name = "sellerId", value = "卖家id"),
             @ApiImplicitParam(name = "addrId", value = "收货地址id")
     })
-    @ApiOperation("根据收货地址和卖家id获取送达时间")
-    @RequestMapping("/deliveryTime")
+    @ApiOperation("根据收货地址和卖家id获取送达时间和配送费")
+    @GetMapping("/deliveryTime")
     public Result deliveryTime(@ParseUser Integer userId, @RequestParam Integer sellerId, @RequestParam Integer addrId){
         QueryWrapper<TakeoutAddress> queryWrapper = new QueryWrapper<>(TakeoutAddress.builder().id(addrId).userId(userId).build());
         TakeoutAddress takeoutAddress = takeoutAddressService.getOne(queryWrapper);
@@ -131,7 +132,11 @@ public class TakeoutAddressController {
             String sellerLocation = StringUtil.parseSellerLocation(takeoutSeller.getLocation());
             Long distance = mapService.routematrixOne(addrLocation, sellerLocation);
             //todo 计算公式
-            return Result.ok().data(Math.min(Math.max(distance / 1000 * 1.5, 15), 45));
+
+            //todo 配送价格表 每公里x，最低，最高
+
+            return Result.ok().data("deliveryTime", Math.min(Math.max(distance / 1000 * 1.5, 15), 45))
+                              .data("deliveryFee", Math.min(Math.max(distance / 1000 * 2, 2), 5));
         }else {
             return Result.of(ResultCode.VALIDATE_FAILED);
         }

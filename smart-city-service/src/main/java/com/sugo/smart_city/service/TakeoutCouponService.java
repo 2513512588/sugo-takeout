@@ -1,7 +1,10 @@
 package com.sugo.smart_city.service;
 
+import com.sugo.smart_city.bean.dto.TakeoutCouponDto;
 import com.sugo.smart_city.bean.model.TakeoutCoupon;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
  *
@@ -14,4 +17,6 @@ public interface TakeoutCouponService extends IService<TakeoutCoupon> {
      * @param takeoutCoupon 优惠卷对象
      */
     void receiveCoupon(Integer userId, TakeoutCoupon takeoutCoupon);
+
+    List<TakeoutCouponDto> list(Integer sellerId, Integer userId);
 }

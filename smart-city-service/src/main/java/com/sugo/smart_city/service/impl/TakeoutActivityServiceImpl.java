@@ -7,6 +7,8 @@ import com.sugo.smart_city.mapper.TakeoutActivityMapper;
 import com.sugo.smart_city.service.TakeoutActivityService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  *
  */
@@ -14,6 +16,10 @@ import org.springframework.stereotype.Service;
 public class TakeoutActivityServiceImpl extends ServiceImpl<TakeoutActivityMapper, TakeoutActivity>
     implements TakeoutActivityService {
 
+    @Override
+    public List<TakeoutActivity> list(Integer sellerId) {
+        return baseMapper.findBySellerId(sellerId);
+    }
 }
 
 
