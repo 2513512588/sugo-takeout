@@ -64,7 +64,7 @@ public class TakeoutAddress implements Serializable {
     /**
      * 标记
      */
-    @ApiModelProperty("收货详细地址")
+    @ApiModelProperty("标记")
     private String marker;
 
 

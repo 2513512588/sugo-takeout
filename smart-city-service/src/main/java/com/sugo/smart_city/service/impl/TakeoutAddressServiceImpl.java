@@ -15,6 +15,17 @@ public class TakeoutAddressServiceImpl extends ServiceImpl<TakeoutAddressMapper,
     implements TakeoutAddressService{
 
 
+    @Override
+    public long getDeliveryTime(long distance) {
+        return new Double(Math.min(Math.max(distance / 1000 * 1.5, 15), 45)).longValue();
+    }
+
+    @Override
+    public double getDeliveryFee(long distance) {
+        //todo 计算公式
+        //todo 配送价格表 每公里x，最低，最高
+        return Math.min(Math.max(distance / 1000 * 2, 2), 5);
+    }
 }
 
 

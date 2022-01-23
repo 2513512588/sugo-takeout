@@ -53,6 +53,12 @@ public class TakeoutBasketServiceImpl extends ServiceImpl<TakeoutBasketMapper, T
 
     @Override
     public boolean updateQuantity(Integer userId, TakeoutBasketParam takeoutBasketParam) {
+        TakeoutGoods takeoutGoods = takeoutGoodsService.getById(takeoutBasketParam.getGoodsId());
+        // todo 商品卖超后的商品数量
+        if (takeoutGoods.getStock() != null && takeoutGoods.getStock() < takeoutBasketParam.getQuantity()){
+            throw new SugoException("加购数量超出库存数");
+        }
+
         //根据商品id查询对应的sku数据
         List<TakeoutGoodsSku> list = takeoutGoodsSkuService.list(new QueryWrapper<>(TakeoutGoodsSku.builder().goodsId(takeoutBasketParam.getGoodsId()).build()));
         if (list.size() > 0){
@@ -104,7 +110,6 @@ public class TakeoutBasketServiceImpl extends ServiceImpl<TakeoutBasketMapper, T
 
         TakeoutBasket takeoutBasket = mapperFacade.map(takeoutBasketParam, TakeoutBasket.class);
         takeoutBasket.setUserId(userId);
-        TakeoutGoods takeoutGoods = takeoutGoodsService.getById(takeoutBasket.getGoodsId());
         takeoutBasket.setSellerId(takeoutGoods.getSellerId());
 
         TakeoutBasket param = TakeoutBasket.builder().userId(userId).goodsId(takeoutBasket.getGoodsId()).build();
@@ -150,14 +155,18 @@ public class TakeoutBasketServiceImpl extends ServiceImpl<TakeoutBasketMapper, T
                             double totalPrice = 0;
                             //找到价格不为0选中的sku
                             List<TakeoutGoodsSku> skuActiveList = goods.getSkus().stream().map(item -> item.getChildren().stream().filter(el -> skuIdList.contains(el.getId())).findFirst().get())
-                                    .filter(item -> item.getPrice() > 0).collect(Collectors.toList());
-                            Optional<TakeoutGoodsSku> baseSku = skuActiveList.stream().filter(item -> item.getMode() == TakeoutGoodsSkuMode.INDEPENDENT_PRICE.getMode()).findFirst();
+                                                                 .collect(Collectors.toList());
+
+                            List<String> skuNameList = skuActiveList.stream().map(TakeoutGoodsSku::getName).collect(Collectors.toList());
+                            takeoutBasketDto.setSkuNameList(skuNameList);
+
+                            Optional<TakeoutGoodsSku> baseSku = skuActiveList.stream().filter(item -> item.getPrice() > 0 && item.getMode() == TakeoutGoodsSkuMode.INDEPENDENT_PRICE.getMode()).findFirst();
                             if (baseSku.isPresent()){
                                 totalPrice = baseSku.get().getPrice();
                             }else {
                                 totalPrice = goods.getPrice();
                             }
-                            Optional<Double> reduce = skuActiveList.stream().filter(item -> item.getMode() == TakeoutGoodsSkuMode.MARK_UP_PRICE.getMode()).map(TakeoutGoodsSku::getPrice).reduce(Double::sum);
+                            Optional<Double> reduce = skuActiveList.stream().filter(item -> item.getPrice() > 0 && item.getMode() == TakeoutGoodsSkuMode.MARK_UP_PRICE.getMode()).map(TakeoutGoodsSku::getPrice).reduce(Double::sum);
                             if (reduce.isPresent()){
                                 totalPrice += reduce.get();
                             }

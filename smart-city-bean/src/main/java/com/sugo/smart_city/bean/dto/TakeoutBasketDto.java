@@ -10,6 +10,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -51,6 +53,11 @@ public class TakeoutBasketDto implements Serializable {
      * skuId组 json字符串
      */
     private String skuIdGroup;
+
+    /**
+     * 选中的sku名字集合
+     */
+    private List<String> skuNameList = new ArrayList<>();
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

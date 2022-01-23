@@ -84,6 +84,11 @@ public class TakeoutCouponServiceImpl extends ServiceImpl<TakeoutCouponMapper, T
     public List<TakeoutCouponDto> list(Integer sellerId, Integer userId) {
         return baseMapper.findBySellerAndUser(sellerId, userId);
     }
+
+    @Override
+    public TakeoutCoupon getByIdAndUser(Integer couponId, Integer userId) {
+        return baseMapper.getByIdAndUser(couponId, userId);
+    }
 }
 
 

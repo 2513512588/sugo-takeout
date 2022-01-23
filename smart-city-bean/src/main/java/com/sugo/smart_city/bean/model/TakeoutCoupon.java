@@ -38,7 +38,7 @@ public class TakeoutCoupon implements Serializable {
     /**
      * 优惠卷金额
      */
-    private BigDecimal price;
+    private Double price;
 
     /**
      * 是否关注店铺才能领取
@@ -60,7 +60,7 @@ public class TakeoutCoupon implements Serializable {
      * 使用条件金额
      */
     @TableField("`condition`")
-    private BigDecimal condition;
+    private Double condition;
 
     /**
      * 开始时间

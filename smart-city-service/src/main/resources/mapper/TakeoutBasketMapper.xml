@@ -32,6 +32,6 @@
     <select id="list" resultMap="UnionGoodsMap">
         select id, quantity, goods_id, sku_id_group
         from takeout_basket
-        where user_id = #{userId} and seller_id = #{sellerId} and exists(select count(*) from takeout_goods where status = #{status})
+        where user_id = #{userId} and seller_id = #{sellerId} and exists(select * from takeout_goods where status = #{status} and id = takeout_basket.goods_id)
     </select>
 </mapper>

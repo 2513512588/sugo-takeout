@@ -8,12 +8,14 @@
             <id property="id" column="id" jdbcType="INTEGER"/>
             <result property="userId" column="user_id" jdbcType="INTEGER"/>
             <result property="sellerId" column="seller_id" jdbcType="INTEGER"/>
-            <result property="fullName" column="full_name" jdbcType="VARCHAR"/>
+            <result property="consignee" column="consignee" jdbcType="VARCHAR"/>
             <result property="phone" column="phone" jdbcType="VARCHAR"/>
-            <result property="province" column="province" jdbcType="VARCHAR"/>
-            <result property="city" column="city" jdbcType="VARCHAR"/>
-            <result property="county" column="county" jdbcType="VARCHAR"/>
-            <result property="address" column="address" jdbcType="VARCHAR"/>
+            <result property="consigneeSex" column="consignee_sex" jdbcType="TINYINT"/>
+            <result property="addrName" column="addr_name" jdbcType="VARCHAR"/>
+            <result property="addrDetail" column="addr_detail" jdbcType="VARCHAR"/>
+            <result property="addrHouseNumber" column="addr_house_number" jdbcType="VARCHAR"/>
+            <result property="addrLat" column="addr_lat" jdbcType="VARCHAR"/>
+            <result property="addrLng" column="addr_lng" jdbcType="VARCHAR"/>
             <result property="code" column="code" jdbcType="VARCHAR"/>
             <result property="arriveTime" column="arrive_time" jdbcType="TIMESTAMP"/>
             <result property="total" column="total" jdbcType="DECIMAL"/>
@@ -24,18 +26,17 @@
             <result property="status" column="status" jdbcType="INTEGER"/>
             <result property="remark" column="remark" jdbcType="VARCHAR"/>
             <result property="riderId" column="rider_id" jdbcType="INTEGER"/>
-            <result property="skuNameGroup" column="sku_name_group" jdbcType="VARCHAR"/>
             <result property="tablewareNum" column="tableware_num" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         id,user_id,seller_id,
-        full_name,phone,province,
-        city,county,address,
+        consignee,phone,consignee_sex,
+        addr_name,addr_detail,addr_house_number,addr_lat,addr_lng,
         code,arrive_time,total,
         delivery_fee,packing_fee,is_deleted,
         gmt_create,status,remark,
-        rider_id,sku_name_group,tableware_num
+        rider_id,tableware_num
     </sql>
     <select id="getAvgCostBySeller" resultType="java.lang.Double">
         select ifnull(avg(total), 0) from takeout_order where seller_id = #{sellerId}

@@ -2,7 +2,7 @@
 	<view class="pay-wrap">
 		<view class="order-info">
 			<u-gap height="8"></u-gap>
-			<u-icon name="rmb" :label="order.orderInfo.amount" size="25" labelSize="50" color="#000" labelColor="#000"
+			<u-icon name="rmb" :label="order.orderInfo.total" size="25" labelSize="50" color="#000" labelColor="#000"
 				bold>
 			</u-icon>
 			<u-gap height="8"></u-gap>
@@ -213,27 +213,12 @@
 		onLoad(options) {
 			this.type = options.type
 			this.orderNo = options.orderNo
-			if (this.type == 1) {
-				this.$q({
-					url: '/prod-api/api/takeout/order/' + this.orderNo,
-					token: true
-				}).then(res => {
-					this.order = res.data
-				})
-			} else if (this.type == 2) {
-				this.$q({
-					url: '/prod-api/api/movie/ticket/order/' + this.orderNo,
-					token: true
-				}).then(res => {
-					this.order.orderInfo.amount = res.data.price
-					this.$q({
-						url: '/prod-api/api/movie/theatre/' + res.data.theaterId
-					}).then(resp => {
-						this.order.sellerInfo.name = resp.data.name
-						this.$forceUpdate()
-					})
-				})
-			}
+			this.$q({
+				url: '/api/takeout/order/detail/' + this.orderNo,
+				needToken: true
+			}).then(res =>{
+				this.order.orderInfo = res.data
+			})
 		}
 	}
 </script>
@@ -264,7 +249,7 @@
 	}
 
 	.pay-btn {
-		width: 95%;
+		width: 95% !important;
 		margin: 0 auto;
 		margin-top: 50px;
 	}

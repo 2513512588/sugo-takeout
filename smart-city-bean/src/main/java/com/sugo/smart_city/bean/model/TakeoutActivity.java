@@ -45,12 +45,12 @@ public class TakeoutActivity implements Serializable {
      * 满足条件
      */
     @TableField("`condition`")
-    private BigDecimal condition;
+    private Double condition;
 
     /**
      * 减免金额
      */
-    private BigDecimal reduce;
+    private Double reduce;
 
     /**
      * 发行数量

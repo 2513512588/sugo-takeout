@@ -9,10 +9,12 @@
             <result property="orderCode" column="order_code" jdbcType="VARCHAR"/>
             <result property="goodsId" column="goods_id" jdbcType="INTEGER"/>
             <result property="quantity" column="quantity" jdbcType="INTEGER"/>
+            <result property="total" column="total" jdbcType="DECIMAL"/>
+            <result property="skuNameGroup" column="sku_name_group" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         id,order_code,goods_id,
-        quantity
+        quantity,total,sku_name_group
     </sql>
 </mapper>

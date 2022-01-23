@@ -19,4 +19,6 @@ public interface TakeoutCouponService extends IService<TakeoutCoupon> {
     void receiveCoupon(Integer userId, TakeoutCoupon takeoutCoupon);
 
     List<TakeoutCouponDto> list(Integer sellerId, Integer userId);
+
+    TakeoutCoupon getByIdAndUser(Integer couponId, Integer userId);
 }

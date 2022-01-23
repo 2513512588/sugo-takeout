@@ -375,19 +375,20 @@
 					if (quantity > 0) {
 						//添加时根据sku计算价格
 						let goods = this.goodsList.find(item => item.id === id)
+						let activeSkuArr = []
 						if (goods.skus && skuIdGroup) {
 							let skuIds = JSON.parse(skuIdGroup)
 							//通过skuId组获取到对应所有sku对象 通过skuIds.indexOf 重复的id不会展示 item.children.find 同一个分类下只会查找一个 如果有分类需要多选 需要修改 todo
-							let activeSkuArr = goods.skus.map(item => item.children.find(el => skuIds.indexOf(el.id) !== -
-								1)).filter(item => item.price > 0)
-							let baseSku = activeSkuArr.find(item => item.mode === 1)
+							activeSkuArr = goods.skus.map(item => item.children.find(el => skuIds.contains(el.id)))
+									
+							let baseSku = activeSkuArr.find(item => item.price > 0 && item.mode === 1)
 							let totalPrice = 0
 							if (baseSku) {
 								totalPrice = baseSku.price
 							} else {
 								totalPrice = goods.price
 							}
-							totalPrice += activeSkuArr.filter(item => item.mode === 2).map(item => item.price).concat([0,
+							totalPrice += activeSkuArr.filter(item => item.price > 0 && item.mode === 2).map(item => item.price).concat([0,
 								0
 							]).reduce((a, b) => a + b)
 							goods.price = totalPrice
@@ -396,6 +397,7 @@
 							//模拟虚拟id 唯一即可
 							id: uni.$u.guid(20),
 							skuIdGroup: skuIdGroup,
+							skuNameList: activeSkuArr.map(item => item.name),
 							quantity: quantity,
 							goods: goods
 						})
@@ -594,20 +596,14 @@
 			},
 			//将购物车数据解析成FootItem所需数据
 			formatBasketGoods(basket) {
-				let descriptionArr = []
-				if (basket.skuIdGroup) {
-					let skuIds = JSON.parse(basket.skuIdGroup)
-					// 通过skuIds.indexOf 重复的id不会展示 item.children.find 同一个分类下只会查找一个
-					descriptionArr = basket.goods.skus.map(item => item.children.find(el => skuIds.indexOf(el.id) !== -1))
-						.map(item => item.name)
-				}
 				return Object.assign(uni.$u.deepClone(basket.goods), {
 					basketNum: basket.quantity,
 					skus: [],
-					description: descriptionArr.join('、'),
+					description: basket.skuNameList.join('、'),
 					score: null,
 					salesVolume: null,
-					skuIdGroup: basket.skuIdGroup
+					skuIdGroup: basket.skuIdGroup,
+					price: basket.goods.price * basket.quantity
 				})
 			},
 			// 获取对应折扣的提示词
@@ -690,12 +686,12 @@
 				])
 
 				this.detail = res[0].data
-				//显示评论数量
+				//显示评价数量
 				this.menuList[1].badge.value = this.detail.commentNum
 
 				if (res[1].data && res[1].data.rows) {
 					//过滤有效商品
-					this.basketList = res[1].data.rows.filter(item => item.skuValid && item.goods.status === 1)
+					this.basketList = res[1].data.rows.filter(item => item.skuValid && item.goods.status === 2 && (item.goods.stock === null || item.goods.stock > 0))
 				}
 
 				this.categoryList = res[2].data.rows.sort((a, b) => a.name.length - b.name.length)

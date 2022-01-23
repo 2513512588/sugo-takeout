@@ -94,7 +94,7 @@
 
 		<view class="statistics-bar">
 			<cn-money :money="totalPrice" color="#fff" size="25px" iconNormalSize></cn-money>
-			<u-button class="purchase-btn" type="warning" @click="order">提交订单</u-button>
+			<u-button class="purchase-btn" type="warning" @click="addOrder">提交订单</u-button>
 		</view>
 
 
@@ -153,14 +153,14 @@
 						url: '/api/takeout/order/create',
 						needToken: true,
 						method: 'POST',
-						data: Object.assign({
+						data: Object.assign(this.order, {
 							addrId: this.addressList[this.addressActive].id,
 							sellerId: this.seller.id,
 							couponId: this.couponId
 						})
 					}).then(res => {
 						uni.redirectTo({
-							url: '/pages/order/pay?orderId=' + res.data.orderId
+							url: '/pages/order/pay?orderNo=' + res.data.orderNo
 						})
 					})
 				} else {
@@ -187,8 +187,10 @@
 				this.totalPrice = this.seller.packageFee + this.seller.deliveryFee +
 					this.settlementGoodsList.map(item => item.goods.price).concat([0, 0]).reduce((a, b) => a + b)
 				
+				//满减活动条件总价 不包含配送费
+				let totalPriceCondition = this.totalPrice - this.seller.deliveryFee
 				// 设置满减信息
-				let activities = this.activityList.filter(item => this.totalPrice > item.condition)
+				let activities = this.activityList.filter(item => totalPriceCondition > item.condition)
 				activities.forEach(item => {
 					// 红包减免
 					if (item.type === 1) {
@@ -204,7 +206,7 @@
 				}
 				
 				//外卖红包优惠
-				let coupons = this.couponList.filter(item => this.totalPrice > item.condition).map(item => item.price)
+				let coupons = this.couponList.filter(item => totalPriceCondition > item.condition).map(item => item.price)
 					.sort((a, b) => b - a)
 				if (coupons.length > 0) {
 					this.seller.coupon = coupons[0]

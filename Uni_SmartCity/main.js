@@ -25,7 +25,10 @@ String.prototype.format = function() {
 	for (var s = this, i = 0; i < arguments.length; i++)
 		s = s.replace(new RegExp("\\{" + i + "\\}", "g"), arguments[i]);
 	return s;
-};
+}
+Array.prototype.contains = function(el){
+	return this.indexOf(el) !== -1
+}
 
 // #ifdef VUE3
 import {

@@ -36,6 +36,16 @@ public class TakeoutOrderItem implements Serializable {
      */
     private Integer quantity;
 
+    /**
+     * 单品总价
+     */
+    private Double total;
+
+    /**
+     * 商品规格名称组 json字符串
+     */
+    private String skuNameGroup;
+
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }

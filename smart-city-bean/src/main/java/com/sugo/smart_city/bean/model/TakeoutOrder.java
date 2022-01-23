@@ -4,7 +4,10 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -16,6 +19,9 @@ import java.time.LocalDateTime;
  */
 @TableName(value ="takeout_order")
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class TakeoutOrder implements Serializable {
     /**
      * 主键id
@@ -36,7 +42,7 @@ public class TakeoutOrder implements Serializable {
     /**
      * 收货人姓名
      */
-    private String fullName;
+    private String consignee;
 
     /**
      * 收货手机号
@@ -44,24 +50,34 @@ public class TakeoutOrder implements Serializable {
     private String phone;
 
     /**
-     * 收货地址省份
+     * 收货人性别
      */
-    private String province;
+    private Integer consigneeSex;
 
     /**
-     * 收货地址市
+     * 收货地址名称
      */
-    private String city;
-
-    /**
-     * 收货地址县
-     */
-    private String county;
+    private String addrName;
 
     /**
      * 收货详细地址
      */
-    private String address;
+    private String addrDetail;
+
+    /**
+     * 收货地址门牌号
+     */
+    private String addrHouseNumber;
+
+    /**
+     * 收货地址纬度
+     */
+    private String addrLat;
+
+    /**
+     * 收货地址经度
+     */
+    private String addrLng;
 
     /**
      * 订单编号
@@ -76,17 +92,17 @@ public class TakeoutOrder implements Serializable {
     /**
      * 商品订单总价
      */
-    private BigDecimal total;
+    private Double total;
 
     /**
      * 配送费
      */
-    private BigDecimal deliveryFee;
+    private Double deliveryFee;
 
     /**
      * 打包费
      */
-    private BigDecimal packingFee;
+    private Double packingFee;
 
     /**
      * 是否删除
@@ -112,11 +128,6 @@ public class TakeoutOrder implements Serializable {
      * 接单骑手id
      */
     private Integer riderId;
-
-    /**
-     * 商品规格名称组 json字符串
-     */
-    private String skuNameGroup;
 
     /**
      * 餐具数量

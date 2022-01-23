@@ -36,4 +36,9 @@
             select coupon_id from takeout_coupon_receive where user_id = #{userId} and status = 1 and now() &lt; expiration_time
         )
     </select>
+    <select id="getByIdAndUser" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List" />
+        from takeout_coupon where id = #{couponId}
+        and exists( select coupon_id from takeout_coupon_receive where user_id = #{userId} and status = 1 and now() &lt; expiration_time )
+    </select>
 </mapper>

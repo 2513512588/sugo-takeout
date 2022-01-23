@@ -75,7 +75,7 @@ public class TakeoutGoodsBasketDto implements Serializable {
     private Integer stock;
 
     /**
-     * 是否上架 0 未上架 1已上架
+     * 商品状态 1 未上架 2已上架 3 售罄
      */
     private Integer status;
 

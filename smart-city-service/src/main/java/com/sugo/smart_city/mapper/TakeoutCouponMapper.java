@@ -15,6 +15,8 @@ public interface TakeoutCouponMapper extends BaseMapper<TakeoutCoupon> {
     List<TakeoutCoupon> findBySellerId(Integer id);
 
     List<TakeoutCouponDto> findBySellerAndUser(@Param("sellerId") Integer sellerId, @Param("userId") Integer userId);
+
+    TakeoutCoupon getByIdAndUser(@Param("couponId") Integer couponId, @Param("userId") Integer userId);
 }
 
 

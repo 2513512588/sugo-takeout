@@ -131,12 +131,8 @@ public class TakeoutAddressController {
             String addrLocation = StringUtil.formatLatLngStr(takeoutAddress.getLat() + "," + takeoutAddress.getLng());
             String sellerLocation = StringUtil.parseSellerLocation(takeoutSeller.getLocation());
             Long distance = mapService.routematrixOne(addrLocation, sellerLocation);
-            //todo 计算公式
-
-            //todo 配送价格表 每公里x，最低，最高
-
-            return Result.ok().data("deliveryTime", Math.min(Math.max(distance / 1000 * 1.5, 15), 45))
-                              .data("deliveryFee", Math.min(Math.max(distance / 1000 * 2, 2), 5));
+            return Result.ok().data("deliveryTime", takeoutAddressService.getDeliveryFee(distance))
+                              .data("deliveryFee", takeoutAddressService.getDeliveryFee(distance));
         }else {
             return Result.of(ResultCode.VALIDATE_FAILED);
         }
