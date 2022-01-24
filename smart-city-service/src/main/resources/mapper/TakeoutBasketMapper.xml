@@ -14,7 +14,7 @@
     </resultMap>
 
     <resultMap id="UnionGoodsMap" type="com.sugo.smart_city.bean.dto.TakeoutBasketDto" extends="BaseResultMap">
-        <association property="goods" javaType="com.sugo.smart_city.bean.dto.TakeoutGoodsBasketDto"
+        <association property="goods" javaType="com.sugo.smart_city.bean.vo.TakeoutBasketGoodsItemVo"
            column="goods_id" jdbcType="INTEGER" select="com.sugo.smart_city.mapper.TakeoutGoodsMapper.findById"
         />
     </resultMap>

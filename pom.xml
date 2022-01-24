@@ -26,12 +26,14 @@
         <hutool.version>5.7.18</hutool.version>
         <jjwt.version>0.9.1</jjwt.version>
         <aliyun.version>3.10.2</aliyun.version>
+        <alipay.version>4.5.0.ALL</alipay.version>
         <fastjson.version>1.2.78</fastjson.version>
         <joda.time.version>2.10.1</joda.time.version>
         <mybatis-typehandlers.version>1.0.2</mybatis-typehandlers.version>
         <java.version>1.8</java.version>
         <mysql.driver.version>8.0.27</mysql.driver.version>
         <orika.version>1.5.4</orika.version>
+        <redisson.version>3.10.6</redisson.version>
         <maven.compiler.plugin.version>2.3.6.RELEASE</maven.compiler.plugin.version>
     </properties>
 
@@ -52,11 +54,6 @@
                 <version>${mysql.driver.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-test</artifactId>
-                <scope>test</scope>
-            </dependency>
 
             <dependency>
                 <groupId>com.baomidou</groupId>
@@ -94,6 +91,12 @@
             </dependency>
 
             <dependency>
+                <groupId>com.alipay.sdk</groupId>
+                <artifactId>alipay-sdk-java</artifactId>
+                <version>${alipay.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
                 <version>${joda.time.version}</version>
@@ -115,6 +118,12 @@
                 <groupId>ma.glasnost.orika</groupId>
                 <artifactId>orika-core</artifactId>
                 <version>${orika.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.redisson</groupId>
+                <artifactId>redisson-spring-boot-starter</artifactId>
+                <version>${redisson.version}</version>
             </dependency>
 
         </dependencies>

@@ -1,6 +1,8 @@
 package com.sugo.smart_city.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.sugo.smart_city.bean.dto.TakeoutOrderListDto;
 import com.sugo.smart_city.bean.model.TakeoutAddress;
 import com.sugo.smart_city.bean.model.TakeoutCoupon;
 import com.sugo.smart_city.bean.model.TakeoutOrder;
@@ -33,4 +35,13 @@ public interface TakeoutOrderService extends IService<TakeoutOrder> {
      * @return 订单号
      */
     String createOrder(TakeoutCoupon takeoutCoupon, TakeoutAddress takeoutAddress, TakeoutSeller takeoutSeller, TakeoutOrderParam takeoutOrderParam, Integer userId);
+
+    /**
+     * @param page 分页信息
+     * @param userId 用户id
+     * @param statuses 订单状态列表
+     * @return 订单列表
+     */
+    IPage<TakeoutOrderListDto> getList(IPage<TakeoutOrder> page, Integer userId, Integer[] statuses);
+
 }

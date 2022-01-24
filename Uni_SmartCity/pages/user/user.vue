@@ -22,19 +22,21 @@
 		</view>
 		<u-gap height="10px"></u-gap>
 		<view class="card">
-			<u-gap height="5px"></u-gap>
+			<u-gap height="4px"></u-gap>
 			<view class="wrap u-flex">
 				<u-text class="section-title" text="我的订单" bold size="15px"></u-text>
-				<u-icon name="arrow-right" label="全部订单" labelPos="left" color="#999" labelColor="#999" size="13px" labelSize="13px"></u-icon>
+				<navigator url="/pages/order/order">
+					<u-icon name="arrow-right" label="全部订单" labelPos="left" color="#999" labelColor="#999" size="13px" labelSize="13px"></u-icon>
+				</navigator>
 			</view>
-			<u-gap height="5px"></u-gap>
+			<u-gap height="8px"></u-gap>
 			<u-grid :border="false" :col="4">
 				<u-grid-item v-for="(item, index) in orderMenuList" :key="index">
 					<u-icon :name="item.icon" size="36px"></u-icon>
 					<u-text :text="item.name" color="#333" size="13px"></u-text>
 				</u-grid-item>
 			</u-grid>
-			<u-gap height="5px"></u-gap>
+			<u-gap height="4px"></u-gap>
 		</view>
 		
 		<u-gap height="10px"></u-gap>

@@ -2,8 +2,8 @@
 	<view class="takeout">
 
 		<u-navbar safeAreaInsetTop fixed placeholder height="55px" bgColor="#FFD000">
-			<u-icon slot="left" labelPos="left" bold name="arrow-down" :size="18" :label="address.address && address.address.city" color="#333"
-				labelColor="#333"></u-icon>
+			<u-icon slot="left" labelPos="left" bold name="arrow-down" :size="18"
+				:label="address.address && address.address.city" color="#333" labelColor="#333"></u-icon>
 			<view slot="center">
 				<u-search :animation="true" v-model="keyword" disabled></u-search>
 			</view>
@@ -14,11 +14,10 @@
 		</u-navbar>
 
 
-		<u-swiper :list="carouselList" height="350rpx" indicator indicatorMode="dot"
-			radius="0"></u-swiper>
+		<u-swiper :list="carouselList" height="350rpx" indicator indicatorMode="dot" radius="0"></u-swiper>
 
 		<u-gap height="5px"></u-gap>
-		<view class="menu card">
+		<view class="menu">
 			<u-grid :border="false" :col="4">
 				<u-grid-item v-for="(item, index) in menuList" :key="index">
 					<u-icon :customStyle="{paddingTop:20+'rpx'}" :name="item.icon" size="42px"></u-icon>
@@ -29,7 +28,8 @@
 
 		<u-tabs :list="tabsList" @change="loadData" lineColor="#FFD000"></u-tabs>
 
-		<WaterfallFlow v-if="sellerList.length > 0 && current === 2" :list="sellerList" coverKeyName="avatar" primaryKeyName="id" @clickItem="goSellerDetail">
+		<WaterfallFlow v-if="sellerList.length > 0 && current === 2" :list="sellerList" coverKeyName="avatar"
+			primaryKeyName="id" @clickItem="goSellerDetail">
 			<template v-slot:item="{item}">
 				<view class="seller_body">
 					<u-text :text="item.name" color="#333" size="15" bold></u-text>
@@ -39,16 +39,19 @@
 						<span>{{(item.additionalData.distance / 1000).toFixed(1)}}km</span>
 					</view>
 					<view class="seller_info">
-						<cn-money :money="item.additionalData.avgCost" color="#f76343" size="18" iconNormalSize></cn-money>
-						<u-tag size="mini" plain :text="'配送时间' + (item.additionalData.avgDeliveryTime) + '分'" type="warning"
-							color="#f76343" style="margin-left: auto; transform-origin: right center; transform: scale(.8);"></u-tag>
+						<cn-money :money="item.additionalData.avgCost" color="#f76343" size="18" iconNormalSize>
+						</cn-money>
+						<u-tag size="mini" plain :text="'配送时间' + (item.additionalData.avgDeliveryTime) + '分'"
+							type="warning" color="#f76343"
+							style="margin-left: auto; transform-origin: right center; transform: scale(.8);"></u-tag>
 					</view>
 					<u-gap height="3px"></u-gap>
 				</view>
 			</template>
 		</WaterfallFlow>
-		
-		<WaterfallFlow v-if="sellerList.length > 0 && current !== 2" :list="sellerList" coverKeyName="cover" primaryKeyName="sellerId" @clickItem="goSellerDetail">
+
+		<WaterfallFlow v-if="sellerList.length > 0 && current !== 2" :list="sellerList" coverKeyName="cover"
+			primaryKeyName="sellerId" @clickItem="goSellerDetail">
 			<template v-slot:item="{item}">
 				<view class="seller_body">
 					<u-text :text="item.name" color="#333" size="15" bold></u-text>
@@ -59,8 +62,9 @@
 					</view>
 					<view class="seller_info">
 						<cn-money :money="item.price" color="#f76343" size="18" iconNormalSize></cn-money>
-						<u-tag size="mini" plain :text="'配送时间' + (item.additionalData.avgDeliveryTime) + '分'" type="warning"
-							color="#f76343" style="margin-left: auto; transform-origin: right center; transform: scale(.8);"></u-tag>
+						<u-tag size="mini" plain :text="'配送时间' + (item.additionalData.avgDeliveryTime) + '分'"
+							type="warning" color="#f76343"
+							style="margin-left: auto; transform-origin: right center; transform: scale(.8);"></u-tag>
 					</view>
 					<u-gap height="3px"></u-gap>
 				</view>
@@ -72,8 +76,8 @@
 
 <script>
 	import WaterfallFlow from '@/components/WaterfallFlow.vue'
-	import CnMoney from '@/components/cn-money/cn-money.vue';	
-	
+	import CnMoney from '@/components/cn-money/cn-money.vue';
+
 	export default {
 		data() {
 			return {
@@ -92,13 +96,12 @@
 					pageSize: 20
 				},
 				tabsList: [{
-						name: '猜你喜欢'
-					},{
-						name: '今日特价'
-					},{
-						name: '发现好店'
-					}					
-				],
+					name: '猜你喜欢'
+				}, {
+					name: '今日特价'
+				}, {
+					name: '发现好店'
+				}],
 				current: 0
 			}
 		},
@@ -107,15 +110,15 @@
 			CnMoney
 		},
 		methods: {
-			loadData(e){
+			loadData(e) {
 				let index = this.current = e.index
-				if(this.orginData[index]){
+				if (this.orginData[index]) {
 					this.sellerList = []
-					this.$nextTick(()=>{
+					this.$nextTick(() => {
 						this.sellerList = this.orginData[index]
 					})
-				}else {
-					if(index === 2){  //发现好店
+				} else {
+					if (index === 2) { //发现好店
 						this.$q({
 							url: '/api/takeout/seller/near/list' + uni.$u.queryParams(this.pageInfo),
 							method: 'POST',
@@ -126,12 +129,12 @@
 							},
 						}).then(res => {
 							this.sellerList = []
-							this.$nextTick(()=>{
+							this.$nextTick(() => {
 								this.sellerList = res.data.rows
 								this.orginData[index] = this.sellerList
 							})
 						})
-					}else {
+					} else {
 						this.$q({
 							url: '/api/takeout/goods/near/list',
 							method: 'POST',
@@ -141,9 +144,9 @@
 								myLocation: [this.address.latitude, this.address.longitude].join(','),
 								type: index + 1
 							}
-						}).then(res =>{
+						}).then(res => {
 							this.sellerList = []
-							this.$nextTick(()=>{
+							this.$nextTick(() => {
 								this.sellerList = res.data.rows
 								this.orginData[index] = this.sellerList
 							})
@@ -151,7 +154,7 @@
 					}
 				}
 			},
-			goSellerDetail(id){
+			goSellerDetail(id) {
 				uni.navigateTo({
 					url: '/pages/shop/shop?id=' + id
 				})
@@ -270,7 +273,7 @@
 		}
 
 	}
-	
+
 	// .takeout {
 	// 	.u-tabbar {
 	// 		::v-deep .u-tabbar__content__item-wrapper{
@@ -282,6 +285,4 @@
 	// 		}
 	// 	}
 	// }
-	
-	
 </style>

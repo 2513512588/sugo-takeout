@@ -46,7 +46,7 @@
 			<!-- </view> -->
 		</u-keyboard>
 
-		<u-button type="warning" class="pay-btn" @click="show = true">确定支付</u-button>
+		<u-button type="warning" class="pay-btn" @click="alipay">确定支付</u-button>
 	</view>
 </template>
 
@@ -64,10 +64,29 @@
 				show: false,
 				password: '',
 				// 支付类型 1外卖 2电影票
-				type: 1
+				type: 1,
+				payInfo: ''
 			}
 		},
 		methods: {
+			alipay() {
+				//#ifdef APP
+					uni.requestPayment({
+						provider: 'alipay',
+						orderInfo: this.payInfo, //微信、支付宝订单数据 【注意微信的订单信息，键值应该全部是小写，不能采用驼峰命名】
+						success: function(res) {
+							console.log('success:' + JSON.stringify(res));
+						},
+						fail: function(err) {
+							console.log('fail:' + JSON.stringify(err));
+						}
+					})
+				//#endif
+				
+				//#ifdef H5
+					location.href = this.payInfo
+				//#endif
+			},
 			pay() {
 				uni.showLoading({
 					title: '支付中...'
@@ -216,8 +235,14 @@
 			this.$q({
 				url: '/api/takeout/order/detail/' + this.orderNo,
 				needToken: true
-			}).then(res =>{
-				this.order.orderInfo = res.data
+			}).then(res => {
+				this.order.orderInfo = res.data.order
+				//#ifdef APP 
+					this.payInfo = res.data.payInfo
+				//#endif
+				//#ifdef H5
+					this.payInfo = res.data.payURL
+				//#endif
 			})
 		}
 	}

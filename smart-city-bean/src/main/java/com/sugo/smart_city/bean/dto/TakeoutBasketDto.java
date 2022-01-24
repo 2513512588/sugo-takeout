@@ -1,9 +1,7 @@
 package com.sugo.smart_city.bean.dto;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sugo.smart_city.bean.vo.TakeoutBasketGoodsItemVo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,13 +23,12 @@ public class TakeoutBasketDto implements Serializable {
     /**
      * 主键id
      */
-    @TableId(type = IdType.AUTO)
     private Integer id;
 
     /**
      * 商品信息
      */
-    private TakeoutGoodsBasketDto goods;
+    private TakeoutBasketGoodsItemVo goods;
 
     /**
      * 商品id
@@ -59,6 +56,4 @@ public class TakeoutBasketDto implements Serializable {
      */
     private List<String> skuNameList = new ArrayList<>();
 
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
 }

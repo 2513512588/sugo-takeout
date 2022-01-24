@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sugo.smart_city.bean.dto.TakeoutBasketDto;
-import com.sugo.smart_city.bean.dto.TakeoutGoodsBasketDto;
+import com.sugo.smart_city.bean.vo.TakeoutBasketGoodsItemVo;
 import com.sugo.smart_city.bean.dto.TakeoutGoodsSkuDto;
 import com.sugo.smart_city.bean.enums.TakeoutGoodsSkuMode;
 import com.sugo.smart_city.bean.model.TakeoutBasket;
@@ -151,7 +151,7 @@ public class TakeoutBasketServiceImpl extends ServiceImpl<TakeoutBasketMapper, T
 
                         //sku有效的话计算sku价格
                         if (takeoutBasketDto.getSkuValid()){
-                            TakeoutGoodsBasketDto goods = takeoutBasketDto.getGoods();
+                            TakeoutBasketGoodsItemVo goods = takeoutBasketDto.getGoods();
                             double totalPrice = 0;
                             //找到价格不为0选中的sku
                             List<TakeoutGoodsSku> skuActiveList = goods.getSkus().stream().map(item -> item.getChildren().stream().filter(el -> skuIdList.contains(el.getId())).findFirst().get())

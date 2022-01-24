@@ -23,6 +23,7 @@
             <result property="packingFee" column="packing_fee" jdbcType="DECIMAL"/>
             <result property="isDeleted" column="is_deleted" jdbcType="BOOLEAN"/>
             <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
+            <result property="payTime" column="pay_time" jdbcType="TIMESTAMP"/>
             <result property="status" column="status" jdbcType="INTEGER"/>
             <result property="remark" column="remark" jdbcType="VARCHAR"/>
             <result property="riderId" column="rider_id" jdbcType="INTEGER"/>
@@ -36,13 +37,13 @@
         code,arrive_time,total,
         delivery_fee,packing_fee,is_deleted,
         gmt_create,status,remark,
-        rider_id,tableware_num
+        rider_id,tableware_num,pay_time
     </sql>
     <select id="getAvgCostBySeller" resultType="java.lang.Double">
-        select ifnull(avg(total), 0) from takeout_order where seller_id = #{sellerId}
+        select ifnull(avg(total), 0) from takeout_order where seller_id = #{sellerId} and status = 2
     </select>
     <select id="getAvgCostBySellerList" resultType="java.lang.Double">
-        select (select ifnull(avg(total), 0) from takeout_order where takeout_order.seller_id = takeout_seller.id) from takeout_seller where takeout_seller.id in
+        select (select ifnull(avg(total), 0) from takeout_order where status = 2 and takeout_order.seller_id = takeout_seller.id) from takeout_seller where takeout_seller.id in
         (
         <foreach collection="sellerIds" separator="," close="," item="item">
             #{item}
@@ -51,10 +52,10 @@
         )
     </select>
     <select id="getAvgMonthOrderNumBySeller" resultType="java.lang.Integer">
-        select count(*) from takeout_order where seller_id = #{sellerId} and date_sub(curdate(), INTERVAL 30 DAY) &lt;= date(`gmt_create`)
+        select count(*) from takeout_order where seller_id = #{sellerId} and date_sub(curdate(), INTERVAL 30 DAY) &lt;= date(`gmt_create`)  and status = 2
     </select>
     <select id="getAvgMonthOrderNumBySellerList" resultType="java.lang.Integer">
-        select (select count(*) from takeout_order where date_sub(curdate(), INTERVAL 30 DAY) &lt;= date(`gmt_create`) and takeout_order.seller_id = takeout_seller.id)
+        select (select count(*) from takeout_order where date_sub(curdate(), INTERVAL 30 DAY) &lt;= date(`gmt_create`) and takeout_order.seller_id = takeout_seller.id and takeout_order.status = 2)
         from takeout_seller
         where takeout_seller.id in (
         <foreach collection="sellerIds" separator="," close="," item="item">
@@ -65,5 +66,26 @@
     </select>
     <select id="getTotalPriceByUserAndSeller" resultType="java.lang.Double">
         select ifnull(sum(total), 0) from takeout_order where user_id = #{userId} and seller_id = #{sellerId}
+    </select>
+
+
+    <resultMap id="UnionSellerAndOrderItem" type="com.sugo.smart_city.bean.dto.TakeoutOrderListDto" >
+        <result property="code" column="code" />
+        <collection property="orderItemList" column="code" javaType="java.util.List"
+                    ofType="com.sugo.smart_city.bean.vo.TakeoutOrderGoodsItemVo" select="com.sugo.smart_city.mapper.TakeoutOrderItemMapper.findByCode" />
+    </resultMap>
+
+    <select id="list" resultMap="UnionSellerAndOrderItem">
+        select `code`, gmt_create createTime, name sellerName, ts.id sellerId, delivery_time_start deliveryTimeStart, delivery_time_end deliveryTimeEnd,
+        total, takeout_order.status
+        from takeout_order left join takeout_seller ts on takeout_order.seller_id = ts.id
+        where takeout_order.user_id = #{userId}
+        <if test="statuses != null and statuses.length > 0" >
+            and takeout_order.status in
+            <foreach collection="statuses" item="item" separator="," open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+        order by createTime desc
     </select>
 </mapper>

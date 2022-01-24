@@ -1,17 +1,21 @@
 package com.sugo.smart_city.service.impl;
 
 import cn.hutool.core.lang.ObjectId;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sugo.smart_city.bean.dto.TakeoutBasketDto;
-import com.sugo.smart_city.bean.dto.TakeoutGoodsBasketDto;
+import com.sugo.smart_city.bean.dto.TakeoutOrderListDto;
+import com.sugo.smart_city.bean.vo.TakeoutBasketGoodsItemVo;
 import com.sugo.smart_city.bean.enums.TakeoutGoodsStatus;
 import com.sugo.smart_city.bean.model.*;
 import com.sugo.smart_city.bean.param.TakeoutOrderParam;
 import com.sugo.smart_city.common.exception.SugoException;
+import com.sugo.smart_city.common.util.RedisUtil;
 import com.sugo.smart_city.common.util.StringUtil;
 import com.sugo.smart_city.mapper.TakeoutOrderMapper;
 import com.sugo.smart_city.service.*;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,16 +29,28 @@ import java.util.stream.Collectors;
 /**
  *
  */
-@AllArgsConstructor
 @Service
 public class TakeoutOrderServiceImpl extends ServiceImpl<TakeoutOrderMapper, TakeoutOrder>
     implements TakeoutOrderService{
 
-    private TakeoutBasketService takeoutBasketService;
-    private TakeoutAddressService takeoutAddressService;
-    private MapService mapService;
-    private TakeoutOrderItemService takeoutOrderItemService;
-    private TakeoutActivityService takeoutActivityService;
+    private final TakeoutBasketService takeoutBasketService;
+    private final TakeoutAddressService takeoutAddressService;
+    private final MapService mapService;
+    private final TakeoutOrderItemService takeoutOrderItemService;
+    private final TakeoutActivityService takeoutActivityService;
+
+    @Autowired
+    public TakeoutOrderServiceImpl(TakeoutBasketService takeoutBasketService, TakeoutAddressService takeoutAddressService, MapService mapService, TakeoutOrderItemService takeoutOrderItemService, TakeoutActivityService takeoutActivityService) {
+        this.takeoutBasketService = takeoutBasketService;
+        this.takeoutAddressService = takeoutAddressService;
+        this.mapService = mapService;
+        this.takeoutOrderItemService = takeoutOrderItemService;
+        this.takeoutActivityService = takeoutActivityService;
+    }
+
+    @Autowired
+    @Qualifier("alipayServiceImpl")
+    private PaymentService paymentService;
 
     @Override
     public double getAvgCostBySeller(Integer sellerId) {
@@ -101,7 +117,7 @@ public class TakeoutOrderServiceImpl extends ServiceImpl<TakeoutOrderMapper, Tak
 
         for (TakeoutBasketDto takeoutBasketDto : list) {
             if (takeoutBasketDto.getSkuValid()) {
-                TakeoutGoodsBasketDto goods = takeoutBasketDto.getGoods();
+                TakeoutBasketGoodsItemVo goods = takeoutBasketDto.getGoods();
                 //确定库存足够
                 if (goods.getStock() == null || takeoutBasketDto.getQuantity() <= goods.getStock()){
                     if (goods.getMaxPurchaseNum() != null && takeoutBasketDto.getQuantity() > goods.getMaxPurchaseNum()) {
@@ -162,10 +178,18 @@ public class TakeoutOrderServiceImpl extends ServiceImpl<TakeoutOrderMapper, Tak
             throw new SugoException("结算异常");
         }
 
+        String result = paymentService.create(code, String.valueOf(total), "", 1);
+
+        RedisUtil.set(code, result, 1000 * 60 * 15);
         //todo 定时任务 15分钟关闭订单
         // todo 骑手获取订单时要判断是否在配送范围时间内
         // todo 判断是否超出配送范围
         return code;
+    }
+
+    @Override
+    public IPage<TakeoutOrderListDto> getList(IPage<TakeoutOrder> page, Integer userId, @Nullable Integer[] statuses) {
+        return baseMapper.list(page, userId, statuses);
     }
 
 }

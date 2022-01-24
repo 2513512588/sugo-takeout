@@ -28,7 +28,7 @@
                     select="com.sugo.smart_city.mapper.TakeoutGoodsSkuMapper.findByGoodsId" />
     </resultMap>
 
-    <resultMap id="UnionBasketSkuMap" type="com.sugo.smart_city.bean.dto.TakeoutGoodsBasketDto" extends="BaseResultMap">
+    <resultMap id="UnionBasketSkuMap" type="com.sugo.smart_city.bean.vo.TakeoutBasketGoodsItemVo" extends="BaseResultMap">
         <collection property="skus" ofType="com.sugo.smart_city.bean.model.TakeoutGoodsSku" javaType="java.util.ArrayList" column="id" jdbcType="INTEGER"
                     select="com.sugo.smart_city.mapper.TakeoutGoodsSkuMapper.findByGoodsId" />
     </resultMap>

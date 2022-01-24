@@ -115,7 +115,7 @@ public class TakeoutOrder implements Serializable {
     private LocalDateTime gmtCreate;
 
     /**
-     * 订单状态 1 待支付 2 已支付  3 完成 4 取消 5 退款中
+     * 订单状态 1 待支付 2 已支付  3 完成 4 取消 5 退款中 6 已评价
      */
     private Integer status;
 
@@ -133,6 +133,11 @@ public class TakeoutOrder implements Serializable {
      * 餐具数量
      */
     private String tablewareNum;
+
+    /**
+     * 订单支付时间
+     */
+    private LocalDateTime payTime;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
