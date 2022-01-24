@@ -143,12 +143,6 @@
 				}
 				this.loadingStatus = 2
 			},
-			pay(code) {
-				uni.navigateTo({
-					url: '/pages/takeout/pay?type=' + (orderType === 'takeout' ? 1 : 2) + '&orderNo=' + (
-						orderType === 'takeout' ? orderInfo.orderNo : orderInfo.id)
-				})
-			},
 			goDetail(code) {
 				uni.navigateTo({
 					url: '/pages/takeout/orderDetail?orderNo=' + orderInfo.orderNo
