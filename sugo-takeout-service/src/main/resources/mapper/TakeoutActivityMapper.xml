@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sugo.takeout.mapper.TakeoutActivityMapper">
+
+    <resultMap id="BaseResultMap" type="com.sugo.takeout.bean.model.TakeoutActivity">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="sellerId" column="seller_id" jdbcType="INTEGER"/>
+            <result property="condition" column="condition" jdbcType="DECIMAL"/>
+            <result property="reduce" column="reduce" jdbcType="DECIMAL"/>
+            <result property="quantity" column="quantity" jdbcType="INTEGER"/>
+            <result property="type" column="type" jdbcType="TINYINT"/>
+            <result property="startTime" column="start_time" jdbcType="TIMESTAMP"/>
+            <result property="expirationTime" column="expiration_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,seller_id,`condition`,
+        reduce,quantity,expiration_time,start_time,type
+    </sql>
+
+    <select id="findBySellerId" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List" /> from takeout_activity where seller_id = #{id}  and now() between start_time and expiration_time and (quantity > 0 or quantity is null)
+    </select>
+
+</mapper>

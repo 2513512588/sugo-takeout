@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sugo.takeout.mapper.TakeoutOrderMapper">
+
+    <resultMap id="BaseResultMap" type="com.sugo.takeout.bean.model.TakeoutOrder">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="userId" column="user_id" jdbcType="INTEGER"/>
+            <result property="sellerId" column="seller_id" jdbcType="INTEGER"/>
+            <result property="consignee" column="consignee" jdbcType="VARCHAR"/>
+            <result property="phone" column="phone" jdbcType="VARCHAR"/>
+            <result property="consigneeSex" column="consignee_sex" jdbcType="TINYINT"/>
+            <result property="addrName" column="addr_name" jdbcType="VARCHAR"/>
+            <result property="addrDetail" column="addr_detail" jdbcType="VARCHAR"/>
+            <result property="addrHouseNumber" column="addr_house_number" jdbcType="VARCHAR"/>
+            <result property="addrLat" column="addr_lat" jdbcType="VARCHAR"/>
+            <result property="addrLng" column="addr_lng" jdbcType="VARCHAR"/>
+            <result property="code" column="code" jdbcType="VARCHAR"/>
+            <result property="arriveTime" column="arrive_time" jdbcType="TIMESTAMP"/>
+            <result property="total" column="total" jdbcType="DECIMAL"/>
+            <result property="deliveryFee" column="delivery_fee" jdbcType="DECIMAL"/>
+            <result property="packingFee" column="packing_fee" jdbcType="DECIMAL"/>
+            <result property="isDeleted" column="is_deleted" jdbcType="BOOLEAN"/>
+            <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
+            <result property="payTime" column="pay_time" jdbcType="TIMESTAMP"/>
+            <result property="status" column="status" jdbcType="INTEGER"/>
+            <result property="remark" column="remark" jdbcType="VARCHAR"/>
+            <result property="riderId" column="rider_id" jdbcType="INTEGER"/>
+            <result property="couponDiscount" column="coupon_discount" jdbcType="DECIMAL"/>
+            <result property="activityDiscount" column="activity_discount" jdbcType="DECIMAL"/>
+            <result property="tablewareNum" column="tableware_num" jdbcType="VARCHAR"/>
+            <result property="paymentType" column="payment_type" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,user_id,seller_id,
+        consignee,phone,consignee_sex,
+        addr_name,addr_detail,addr_house_number,addr_lat,addr_lng,
+        code,arrive_time,total,
+        delivery_fee,packing_fee,is_deleted,
+        gmt_create,status,remark,
+        rider_id,tableware_num,pay_time,coupon_discount,activity_discount,payment_type
+    </sql>
+    <select id="getAvgCostBySeller" resultType="java.lang.Double">
+        select ifnull(avg(total), 0) from takeout_order where seller_id = #{sellerId} and status = 2
+    </select>
+    <select id="getAvgCostBySellerList" resultType="java.lang.Double">
+        select (select ifnull(avg(total), 0) from takeout_order where status = 2 and takeout_order.seller_id = takeout_seller.id) from takeout_seller where takeout_seller.id in
+        (
+        <foreach collection="sellerIds" separator="," close="," item="item">
+            #{item}
+        </foreach>
+        0
+        )
+    </select>
+    <select id="getAvgMonthOrderNumBySeller" resultType="java.lang.Integer">
+        select count(*) from takeout_order where seller_id = #{sellerId} and date_sub(curdate(), INTERVAL 30 DAY) &lt;= date(`gmt_create`)  and status = 2
+    </select>
+    <select id="getAvgMonthOrderNumBySellerList" resultType="java.lang.Integer">
+        select (select count(*) from takeout_order where date_sub(curdate(), INTERVAL 30 DAY) &lt;= date(`gmt_create`) and takeout_order.seller_id = takeout_seller.id and takeout_order.status = 2)
+        from takeout_seller
+        where takeout_seller.id in (
+        <foreach collection="sellerIds" separator="," close="," item="item">
+            #{item}
+        </foreach>
+        0
+        )
+    </select>
+    <select id="getTotalPriceByUserAndSeller" resultType="java.lang.Double">
+        select ifnull(sum(total), 0) from takeout_order where user_id = #{userId} and seller_id = #{sellerId}
+    </select>
+
+
+    <resultMap id="UnionSellerAndOrderItem" type="com.sugo.takeout.bean.dto.TakeoutOrderListDto" >
+        <result property="code" column="code" />
+        <collection property="orderItemList" column="code" javaType="java.util.List"
+                    ofType="com.sugo.takeout.bean.vo.TakeoutOrderGoodsItemVo" select="com.sugo.takeout.mapper.TakeoutOrderItemMapper.findByCode" />
+    </resultMap>
+
+    <resultMap id="UnionSellerAndOrderItemAndRider" type="com.sugo.takeout.bean.dto.TakeoutOrderDetailDto" >
+        <result property="code" column="code" />
+        <collection property="orderItemList" column="code" javaType="java.util.List"
+                    ofType="com.sugo.takeout.bean.vo.TakeoutOrderGoodsItemVo" select="com.sugo.takeout.mapper.TakeoutOrderItemMapper.findByCode" />
+    </resultMap>
+
+    <select id="list" resultMap="UnionSellerAndOrderItem">
+        select `code`, gmt_create createTime, name sellerName, ts.id sellerId, delivery_time_start deliveryTimeStart, delivery_time_end deliveryTimeEnd,
+        total, takeout_order.status
+        from takeout_order left join takeout_seller ts on takeout_order.seller_id = ts.id
+        where takeout_order.user_id = #{userId} and is_deleted = 0
+        <if test="statuses != null and statuses.length > 0" >
+            and takeout_order.status in
+            <foreach collection="statuses" item="item" separator="," open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+        order by createTime desc
+    </select>
+
+    <select id="getDetail" resultMap="UnionSellerAndOrderItemAndRider">
+        select `code`, gmt_create createTime, name sellerName, ts.id sellerId, delivery_time_start deliveryTimeStart, delivery_time_end deliveryTimeEnd,
+               total, takeout_order.status, ts.phone sellerPhone, delivery_fee deliveryFee, packing_fee, coupon_discount,
+               activity_discount, consignee, takeout_order.phone consigneePhone, consignee_sex, addr_name, addr_detail, addr_house_number, remark,
+               rider_id, tableware_num, real_name riderName, avatar sellerLogo, pay_time, payment_type
+        from takeout_order left join takeout_seller ts on takeout_order.seller_id = ts.id
+        left join takeout_rider tr on takeout_order.rider_id = tr.id
+        where takeout_order.code = #{orderCode} and takeout_order.user_id = #{userId} and is_deleted = 0
+    </select>
+
+</mapper>

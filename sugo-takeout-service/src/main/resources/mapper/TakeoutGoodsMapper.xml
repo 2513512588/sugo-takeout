@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sugo.takeout.mapper.TakeoutGoodsMapper">
+
+    <resultMap id="BaseResultMap" type="com.sugo.takeout.bean.model.TakeoutGoods">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="description" column="description" jdbcType="VARCHAR"/>
+            <result property="cover" column="cover" jdbcType="VARCHAR"/>
+            <result property="categoryId" column="category_id" jdbcType="INTEGER"/>
+            <result property="salesVolume" column="sales_volume" jdbcType="INTEGER"/>
+            <result property="sellerId" column="seller_id" jdbcType="INTEGER"/>
+            <result property="price" column="price" jdbcType="DECIMAL"/>
+            <result property="isDeleted" column="is_deleted" jdbcType="BOOLEAN"/>
+            <result property="isMandatory" column="is_mandatory" jdbcType="BOOLEAN"/>
+            <result property="status" column="status" jdbcType="TINYINT"/>
+            <result property="minPurchaseNum" column="min_purchase_num" jdbcType="INTEGER"/>
+            <result property="packingFee" column="packing_fee" jdbcType="DECIMAL"/>
+            <result property="stock" column="stock" jdbcType="INTEGER"/>
+            <result property="originPrice" column="origin_price" jdbcType="DECIMAL"/>
+            <result property="maxPurchaseNum" column="max_purchase_num" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap id="UnionSkuMap" type="com.sugo.takeout.bean.dto.TakeoutGoodsDetailDto" extends="BaseResultMap">
+        <collection property="skus" ofType="com.sugo.takeout.bean.model.TakeoutGoodsSku" javaType="java.util.ArrayList" column="id" jdbcType="INTEGER"
+                    select="com.sugo.takeout.mapper.TakeoutGoodsSkuMapper.findByGoodsId" />
+    </resultMap>
+
+    <resultMap id="UnionBasketSkuMap" type="com.sugo.takeout.bean.vo.TakeoutBasketGoodsItemVo" extends="BaseResultMap">
+        <collection property="skus" ofType="com.sugo.takeout.bean.model.TakeoutGoodsSku" javaType="java.util.ArrayList" column="id" jdbcType="INTEGER"
+                    select="com.sugo.takeout.mapper.TakeoutGoodsSkuMapper.findByGoodsId" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, name, description, category_id, seller_id,
+        cover,sales_volume, status,min_purchase_num,max_purchase_num,
+        price, origin_price,is_deleted,is_mandatory,packing_fee,stock
+    </sql>
+    <select id="getListByCity" resultType="com.sugo.takeout.bean.dto.TakeoutGoodsListDto">
+        select
+        tg.id,
+        tg.name, tg.description, category_id, seller_id,
+        tg.cover, sales_volume,
+        price, location
+        from takeout_goods as tg
+        join takeout_seller ts on ts.id = tg.seller_id
+        where province = #{province} and city = #{city} and tg.id = (select id from takeout_goods where tg.seller_id = seller_id
+        and price != 0 and status = 2 and is_deleted = 0
+        <choose>
+            <when test="type == 1">
+                order by (select ifnull(avg(score), 0) from takeout_goods_evaluate where goods_id = id) desc
+            </when>
+            <otherwise>
+                order by price asc
+            </otherwise>
+        </choose>
+        LIMIT 1)
+    </select>
+
+    <select id="getListBySeller" resultMap="UnionSkuMap">
+        select id, name, description, category_id, cover, price, origin_price, is_mandatory, packing_fee, stock, max_purchase_num, min_purchase_num,
+        ifnull((select avg(score) from takeout_goods_evaluate where takeout_goods_evaluate.goods_id = takeout_goods.id) / 5 * 100, 0) as score,
+        ifnull(sales_volume, ifnull((select SUM(quantity) from takeout_order_item where order_code in (select code from takeout_order where takeout_order.seller_id = takeout_goods.seller_id)), 0)) as sales_volume
+        from takeout_goods
+        where status = 2 and is_deleted = 0
+        and seller_id = #{sellerId}
+        <if test="goodsCategoryId != null">
+            and category_id = #{goodsCategoryId}
+        </if>
+    </select>
+
+    <select id="findById" resultMap="UnionBasketSkuMap">
+        select
+            id, name, description, category_id, cover, price, origin_price, min_purchase_num, max_purchase_num, packing_fee, stock, status, is_mandatory
+        from takeout_goods where id = #{id} and is_deleted = 0
+    </select>
+
+
+</mapper>

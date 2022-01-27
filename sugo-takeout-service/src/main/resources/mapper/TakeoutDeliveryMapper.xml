@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sugo.takeout.mapper.TakeoutDeliveryMapper">
+
+    <resultMap id="BaseResultMap" type="com.sugo.takeout.bean.model.TakeoutDelivery">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="orderId" column="order_id" jdbcType="INTEGER"/>
+            <result property="riderId" column="rider_id" jdbcType="INTEGER"/>
+            <result property="sellerId" column="seller_id" jdbcType="INTEGER"/>
+            <result property="status" column="status" jdbcType="TINYINT"/>
+            <result property="gmtUpdate" column="gmt_update" jdbcType="TIMESTAMP"/>
+            <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,order_id,rider_id,
+        seller_id,status,gmt_update,gmt_create
+    </sql>
+    <select id="getAvgDeliveryTimeBySellerList" resultType="java.lang.Long">
+        select ifnull(
+            (select TIMESTAMPDIFF(minute, gmt_create, gmt_update) from takeout_delivery where status = 4 and seller_id =
+                takeout_seller.id)
+        , 0) from takeout_seller
+        where takeout_seller.id in
+        (
+            <foreach collection="sellerIds" separator="," close="," item="item">
+                #{item}
+            </foreach>
+            0
+        )
+    </select>
+    <select id="getAvgDeliveryTimeBySeller" resultType="java.lang.Long">
+        select ifnull(TIMESTAMPDIFF(minute, gmt_create, gmt_update), 0) from takeout_delivery where status = 4 and seller_id = #{sellerId}
+    </select>
+</mapper>

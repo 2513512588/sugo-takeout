@@ -4,22 +4,23 @@
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
     <modules>
-        <module>smart-city-api</module>
-        <module>smart-city-security</module>
-        <module>smart-city-common</module>
-        <module>smart-city-admin</module>
-        <module>smart-city-bean</module>
-        <module>smart-city-service</module>
+        <module>sugo-takeout-api</module>
+        <module>sugo-takeout-security</module>
+        <module>sugo-takeout-common</module>
+        <module>sugo-takeout-admin</module>
+        <module>sugo-takeout-bean</module>
+        <module>sugo-takeout-service</module>
+        <module>sugo-takeout-rider</module>
     </modules>
 
-    <groupId>com.smart_city</groupId>
-    <artifactId>SmartCity</artifactId>
+    <groupId>com.sugo.takeout</groupId>
+    <artifactId>sugo-takeout</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>SmartCity</name>
-    <description>SmartCity</description>
+    <name>sugo-takeout</name>
+    <description>sugo-takeout</description>
 
     <properties>
-        <smart.city.version>0.0.1-SNAPSHOT</smart.city.version>
+        <sugo.takeout.version>0.0.1-SNAPSHOT</sugo.takeout.version>
         <spring-boot.version>2.3.6.RELEASE</spring-boot.version>
         <swagger2.version>2.9.2</swagger2.version>
         <mybatis-plus.version>3.4.3.4</mybatis-plus.version>

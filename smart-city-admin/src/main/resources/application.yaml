@@ -1,8 +1,0 @@
-server:
-  port: 8081
-spring:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://120.26.60.197:3306/smart_city?characterEncoding=utf-8&serverTimezone=GMT%2b8&useSSL=false
-    username: smart_city
-    password: smartCity123
