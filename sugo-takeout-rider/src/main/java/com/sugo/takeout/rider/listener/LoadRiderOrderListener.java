@@ -16,6 +16,9 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 项目启动时加载需要配送的订单
+ */
 @Component
 public class LoadRiderOrderListener implements ApplicationRunner {
 
@@ -39,6 +42,6 @@ public class LoadRiderOrderListener implements ApplicationRunner {
         for (TakeoutOrder order : list) {
             applicationContext.publishEvent(new RiderOrderEvent(orderDtoList, order));
         }
-        RedisUtil.set("riderOrder", list);
+        RedisUtil.set("riderOrder", orderDtoList);
     }
 }

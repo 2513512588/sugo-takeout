@@ -1,20 +1,19 @@
 package com.sugo.takeout.rider.controller;
 
 
-import com.sugo.takeout.bean.model.TakeoutOrder;
 import com.sugo.takeout.common.annotation.Delay;
 import com.sugo.takeout.common.util.RedisUtil;
 import com.sugo.takeout.common.util.Result;
+import com.sugo.takeout.common.util.StringUtil;
+import com.sugo.takeout.rider.dto.TakeoutOrderDto;
 import com.sugo.takeout.security.annotation.ParseUser;
 import com.sugo.takeout.security.enums.Role;
+import com.sugo.takeout.service.MapService;
 import com.sugo.takeout.service.TakeoutOrderService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -28,13 +27,19 @@ import java.util.List;
 public class RiderOrderController {
 
     private TakeoutOrderService takeoutOrderService;
+    private MapService mapService;
 
     @Delay
     @ApiOperation("获取订单列表")
     @GetMapping("/list")
-    public Result list(){
-        List<TakeoutOrder> list = RedisUtil.get("riderOrder");
-        return Result.ok();
+    public Result list(@RequestParam String location){
+        List<TakeoutOrderDto> list = RedisUtil.get("riderOrder");
+        for (TakeoutOrderDto takeoutOrderDto : list) {
+            List<Long> longs = mapService.routematrixList(StringUtil.formatLatLngStr(location), takeoutOrderDto.getOriginLatLng() + "|" + takeoutOrderDto.getTargetLatLng());
+            takeoutOrderDto.setOriginDistance(longs.get(0));
+            takeoutOrderDto.setTargetDistance(longs.get(1));
+        }
+        return Result.ok().list(list);
     }
 
 

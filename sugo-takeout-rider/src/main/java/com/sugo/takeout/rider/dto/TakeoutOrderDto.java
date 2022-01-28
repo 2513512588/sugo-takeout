@@ -2,8 +2,13 @@ package com.sugo.takeout.rider.dto;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
+/**
+ * @author hehaoyang
+ */
 @Data
-public class TakeoutOrderDto {
+public class TakeoutOrderDto implements Serializable {
 
     /**
      * 订单编号
@@ -11,9 +16,9 @@ public class TakeoutOrderDto {
     private String code;
 
     /**
-     * 起点地址名称
+     * 起点店铺名称
      */
-    private String originAddrName;
+    private String shopName;
 
     /**
      * 起点地址详情
@@ -28,7 +33,7 @@ public class TakeoutOrderDto {
     /**
      * 起点经纬度
      */
-    private String [] originLatLng;
+    private String originLatLng;
 
     /**
      * 目标地址名称
@@ -36,19 +41,9 @@ public class TakeoutOrderDto {
     private String targetAddrName;
 
     /**
-     * 目标地址详情
-     */
-    private String targetAddrDesc;
-
-    /**
-     * 目标地址门牌号
-     */
-    private String addrHouseNumber;
-
-    /**
      * 目标地址经纬度
      */
-    private String [] targetLatLng;
+    private String targetLatLng;
 
     /**
      * 距离目标地址距离

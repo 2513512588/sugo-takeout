@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.sugo.takeout.common.exception.SugoException;
 import lombok.experimental.UtilityClass;
 
+import java.util.regex.Pattern;
+
 @UtilityClass
 public class StringUtil {
 
@@ -16,8 +18,14 @@ public class StringUtil {
             String[] split = location.split(",");
             //纬度
             String lat = String.format("%.6f", Double.parseDouble(split[0]));
+            if (!Pattern.matches("^[\\-+]?((0|([1-8]\\d?))(\\.\\d{1,10})?|90(\\.0{1,10})?)$", lat)){
+                throw new SugoException("纬度格式不正确");
+            }
             //经度
             String lng = String.format("%.6f", Double.parseDouble(split[1]));
+            if (!Pattern.matches("^[\\-+]?(0(\\.\\d{1,10})?|([1-9](\\d)?)(\\.\\d{1,10})?|1[0-7]\\d{1}(\\.\\d{1,10})?|180\\.0{1,10})$", lng)){
+                throw new SugoException("经度格式不正确");
+            }
             return String.format("%s,%s", lat, lng);
         }catch (Exception e){
             throw new SugoException("位置信息异常，坐标信息需为（纬度,经度）");
