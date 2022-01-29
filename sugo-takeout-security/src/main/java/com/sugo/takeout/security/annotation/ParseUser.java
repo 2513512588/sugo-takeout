@@ -1,10 +1,6 @@
 package com.sugo.takeout.security.annotation;
 
 
-
-
-
-
 import com.sugo.takeout.security.enums.Role;
 
 import java.lang.annotation.Documented;

@@ -1,9 +1,9 @@
 package com.sugo.takeout.api.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sugo.takeout.bean.dto.TakeoutOrderDetailDto;
-import com.sugo.takeout.bean.enums.TakeoutSellerStatus;
+import com.sugo.takeout.bean.enums.SellerStatus;
 import com.sugo.takeout.bean.model.TakeoutAddress;
 import com.sugo.takeout.bean.model.TakeoutCoupon;
 import com.sugo.takeout.bean.model.TakeoutOrder;
@@ -71,7 +71,7 @@ public class TakeoutOrderController {
         if (takeoutSeller == null) {
             return Result.error().message("商家不存在");
         } else {
-            if (takeoutSeller.getStatus() != TakeoutSellerStatus.NORMAL.getStatus()) {
+            if (takeoutSeller.getStatus() != SellerStatus.NORMAL.getStatus()) {
                 return Result.error().message("店铺尚未开通或已封禁");
             }
         }
@@ -117,7 +117,7 @@ public class TakeoutOrderController {
     @ApiOperation("获取当前用户订单列表")
     @GetMapping("/list")
     public Result list(@ParseUser Integer userId,
-                       @ParsePage IPage<TakeoutOrder> page,
+                       @ParsePage Page<TakeoutOrder> page,
                        @RequestParam(required = false) Integer[] status){
         return Result.ok().pageList(takeoutOrderService.getList(page, userId, status));
     }

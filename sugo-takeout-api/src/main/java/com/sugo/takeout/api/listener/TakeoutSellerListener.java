@@ -34,7 +34,7 @@ public class TakeoutSellerListener {
         List<TakeoutSeller> takeoutSellerList = takeoutSellerEvent.getTakeoutSeller();
 
         for (TakeoutSeller item : takeoutSellerList) {
-            String s = StringUtil.parseSellerLocation(item.getLocation());
+            String s = StringUtil.formatSellerLocation(item.getLocation());
             item.setLocation(s);
         }
 

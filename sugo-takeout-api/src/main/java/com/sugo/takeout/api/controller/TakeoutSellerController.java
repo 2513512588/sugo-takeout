@@ -2,16 +2,17 @@ package com.sugo.takeout.api.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sugo.takeout.bean.dto.TakeoutSellerBaseInfoDto;
 import com.sugo.takeout.bean.dto.TakeoutSellerListDto;
-import com.sugo.takeout.bean.enums.TakeoutSellerStatus;
+import com.sugo.takeout.bean.enums.SellerStatus;
 import com.sugo.takeout.bean.event.TakeoutSellerEvent;
 import com.sugo.takeout.bean.model.TakeoutGoodsCategory;
 import com.sugo.takeout.bean.model.TakeoutSeller;
 import com.sugo.takeout.bean.model.User;
 import com.sugo.takeout.bean.param.TakeoutSellerAddParam;
 import com.sugo.takeout.common.aspect.annotation.ParsePage;
-import com.sugo.takeout.common.aspect.annotation.ParseParam;
+import com.sugo.takeout.common.aspect.annotation.RequestBody;
 import com.sugo.takeout.common.aspect.annotation.RequestSingleParam;
 import com.sugo.takeout.common.exception.SugoException;
 import com.sugo.takeout.common.util.Result;
@@ -58,16 +59,16 @@ public class TakeoutSellerController {
 
     @ApiOperation("申请注册商家")
     @PostMapping("/settled/apply")
-    public Result settledApply(@ParseUser User user, @RequestBody @Validated(Groups.Add.class) TakeoutSellerAddParam takeoutSellerAddVo){
+    public Result settledApply(@ParseUser User user, @org.springframework.web.bind.annotation.RequestBody @Validated(Groups.Add.class) TakeoutSellerAddParam takeoutSellerAddVo){
         TakeoutSeller isExists = takeoutSellerService.getOne(new QueryWrapper<>(TakeoutSeller.builder().userId(user.getId()).build()));
         //判断是否提交过申请
         if (isExists != null){
-            if (isExists.getStatus().equals(TakeoutSellerStatus.UNDER_REVIEW.getStatus())){
-                return Result.error().message(TakeoutSellerStatus.UNDER_REVIEW.getMessage());
-            }else if (isExists.getStatus().equals(TakeoutSellerStatus.FORBIDDEN.getStatus())){
-                return Result.error().message(TakeoutSellerStatus.FORBIDDEN.getMessage());
-            }else if (isExists.getStatus().equals(TakeoutSellerStatus.NORMAL.getStatus())){
-                return Result.error().message(TakeoutSellerStatus.NORMAL.getMessage());
+            if (isExists.getStatus().equals(SellerStatus.UNDER_REVIEW.getStatus())){
+                return Result.error().message(SellerStatus.UNDER_REVIEW.getMessage());
+            }else if (isExists.getStatus().equals(SellerStatus.FORBIDDEN.getStatus())){
+                return Result.error().message(SellerStatus.FORBIDDEN.getMessage());
+            }else if (isExists.getStatus().equals(SellerStatus.NORMAL.getStatus())){
+                return Result.error().message(SellerStatus.NORMAL.getMessage());
             }else {
                 throw new SugoException("错误的店铺状态: " + isExists);
             }
@@ -78,7 +79,7 @@ public class TakeoutSellerController {
             takeoutSeller.setPhone(user.getPhone());
 
             // todo modify dev 自动审核
-//            takeoutSeller.setStatus(TakeoutSellerStatus.NORMAL.getStatus());
+//            takeoutSeller.setStatus(SellerStatus.NORMAL.getStatus());
 //            userService.updateById(User.builder().id(user.getId()).roleId(Role.ROLE_TAKEOUT_SELLER.getId()).build());
 
             return Result.auto(takeoutSellerService.save(takeoutSeller));
@@ -99,13 +100,13 @@ public class TakeoutSellerController {
          @ApiImplicitParam(name = "province", value = "我的省份"),
          @ApiImplicitParam(name = "city", value = "我的城市"),
     })
-    @ParseParam
-    public Result list(@ParsePage IPage<TakeoutSeller> takeoutSellerPage,
+    @RequestBody
+    public Result list(@ParsePage Page<TakeoutSeller> page,
                        @RequestSingleParam("myLocation") String myLocation,
                        @RequestSingleParam("province") String province,
                        @RequestSingleParam("city") String city){
-        IPage<TakeoutSeller> iPage = takeoutSellerService.getBaseMapper().selectPage(takeoutSellerPage,
-                new QueryWrapper<>(TakeoutSeller.builder().province(province).city(city).status(TakeoutSellerStatus.NORMAL.getStatus()).build()));
+        IPage<TakeoutSeller> iPage = takeoutSellerService.getBaseMapper().selectPage(page,
+                new QueryWrapper<>(TakeoutSeller.builder().province(province).city(city).status(SellerStatus.NORMAL.getStatus()).build()));
         List<TakeoutSeller> records = iPage.getRecords();
         List<TakeoutSellerListDto> takeoutSellerListDtos = new ArrayList<>();
         String location = StringUtil.formatLatLngStr(myLocation);

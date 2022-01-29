@@ -12,6 +12,7 @@ import com.sugo.takeout.service.RoleService;
 import com.sugo.takeout.service.TakeoutRiderService;
 import com.sugo.takeout.service.TakeoutSellerService;
 import com.sugo.takeout.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ import static com.sugo.takeout.security.enums.Role.ROLE_TAKEOUT_SELLER;
  * @author hehaoyang
  */
 @Service
+@Slf4j
 public class UserSecurityServiceImpl implements UserSecurityService {
 
     @Resource
@@ -58,6 +60,7 @@ public class UserSecurityServiceImpl implements UserSecurityService {
             TakeoutRider takeoutRider = takeoutRiderService.getOne(new QueryWrapper<>(TakeoutRider.builder().userId(user.getId()).build()));
             attachData.put(ROLE_TAKEOUT_RIDER.getName(), takeoutRider.getId());
         }
+        log.debug("attachData => {}", attachData);
         return new JwtUser(user, roleService.getById(user.getRoleId()), attachData);
     }
 }

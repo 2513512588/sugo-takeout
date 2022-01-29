@@ -1,7 +1,9 @@
 package com.sugo.takeout.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.sugo.takeout.bean.dto.AcceptedRiderOrderDto;
 import com.sugo.takeout.bean.dto.TakeoutOrderDetailDto;
 import com.sugo.takeout.bean.dto.TakeoutOrderListDto;
 import com.sugo.takeout.bean.model.TakeoutAddress;
@@ -9,6 +11,7 @@ import com.sugo.takeout.bean.model.TakeoutCoupon;
 import com.sugo.takeout.bean.model.TakeoutOrder;
 import com.sugo.takeout.bean.model.TakeoutSeller;
 import com.sugo.takeout.bean.param.TakeoutOrderParam;
+import org.springframework.lang.Nullable;
 
 import java.util.List;
 
@@ -43,7 +46,7 @@ public interface TakeoutOrderService extends IService<TakeoutOrder> {
      * @param statuses 订单状态列表
      * @return 订单列表
      */
-    IPage<TakeoutOrderListDto> getList(IPage<TakeoutOrder> page, Integer userId, Integer[] statuses);
+    IPage<TakeoutOrderListDto> getList(Page<TakeoutOrder> page, Integer userId, Integer[] statuses);
 
     /**
      * 根据编码
@@ -52,4 +55,29 @@ public interface TakeoutOrderService extends IService<TakeoutOrder> {
      * @return 订单详情信息
      */
     TakeoutOrderDetailDto getDetail(Integer userId, String orderCode);
+
+    /**
+     * 骑手接受订单
+     * @param riderId 骑手id
+     * @param orderCode 订单编号
+     */
+    void receiveOrder(Integer riderId, String orderCode);
+
+
+    /**
+     * 获取骑手订单编号
+     * @param page 分页信息
+     * @return 订单编号集合
+     */
+    IPage<String> getRiderOrderCodeList(Page<?> page);
+
+
+    /**
+     * 查询骑手已接受的订单
+     * @param page 分页信息
+     * @param riderId 骑手id
+     * @param status 订单状态 1 待取餐 2 配送中
+     * @return 订单信息集合
+     */
+    IPage<AcceptedRiderOrderDto> getAcceptedRiderOrderList(Page<?> page, Integer riderId, @Nullable Integer status);
 }

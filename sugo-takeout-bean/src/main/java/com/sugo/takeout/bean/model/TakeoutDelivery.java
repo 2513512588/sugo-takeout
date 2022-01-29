@@ -6,7 +6,11 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 外卖订单配送表
@@ -14,6 +18,9 @@ import lombok.Data;
  */
 @TableName(value ="takeout_delivery")
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class TakeoutDelivery implements Serializable {
     /**
      * 主键id
@@ -22,9 +29,9 @@ public class TakeoutDelivery implements Serializable {
     private Integer id;
 
     /**
-     * 订单id
+     * 订单编号
      */
-    private Integer orderId;
+    private String orderCode;
 
     /**
      * 骑手id

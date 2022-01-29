@@ -46,7 +46,7 @@ public class TakeoutSellerServiceImpl extends ServiceImpl<TakeoutSellerMapper, T
         TakeoutSellerDetailDto detail = getDetailById(id);
         if (!StringUtils.isEmpty(location)){
             String myLocation = StringUtil.formatLatLngStr(location);
-            String sellerLocation = StringUtil.parseSellerLocation(detail.getLocation());
+            String sellerLocation = StringUtil.formatSellerLocation(detail.getLocation());
             Long distance = mapService.routematrixOne(myLocation, sellerLocation);
             //todo 配送价格表 每公里x，最低，最高
             @SuppressWarnings("all")

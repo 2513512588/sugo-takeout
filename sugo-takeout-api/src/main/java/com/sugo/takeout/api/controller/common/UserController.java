@@ -3,7 +3,7 @@ package com.sugo.takeout.api.controller.common;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
 import com.sugo.takeout.bean.model.User;
-import com.sugo.takeout.common.aspect.annotation.ParseParam;
+import com.sugo.takeout.common.aspect.annotation.RequestBody;
 import com.sugo.takeout.common.aspect.annotation.RequestSingleParam;
 import com.sugo.takeout.common.util.Result;
 import com.sugo.takeout.security.annotation.ParseUser;
@@ -40,7 +40,7 @@ public class UserController {
 
     @ApiOperation(value = "绑定邮箱")
     @PostMapping("/bindEmail")
-    @ParseParam
+    @RequestBody
     public Result bindEmail(@RequestSingleParam("email") String email){
         // 构建一个邮件对象
         SimpleMailMessage message = new SimpleMailMessage();
@@ -62,7 +62,7 @@ public class UserController {
 
     @ApiOperation(value = "用户注册")
     @PostMapping("/register")
-    public Result register(@Validated @RequestBody User user){
+    public Result register(@Validated @org.springframework.web.bind.annotation.RequestBody User user){
         user.setRoleId(1);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
@@ -89,7 +89,7 @@ public class UserController {
 
     @ApiOperation(value = "用户修改资料")
     @PostMapping("/updateInfo")
-    public Result updateInfo(@RequestBody User user, @ParseUser Integer userId){
+    public Result updateInfo(@org.springframework.web.bind.annotation.RequestBody User user, @ParseUser Integer userId){
         User user1 = new User();
         user1.setNickname(user.getNickname());
         user1.setId(userId);
@@ -106,7 +106,7 @@ public class UserController {
 
     @ApiOperation(value = "修改密码")
     @PostMapping("/updatePwd")
-    @ParseParam
+    @RequestBody
     public Result updatePwd(@RequestSingleParam("oldPassword") String oldPassword,
                             @RequestSingleParam("newPassword") String newPassword,
                             @ParseUser User user){
@@ -126,7 +126,7 @@ public class UserController {
      */
     @ApiOperation(value = "改绑手机号")
     @PostMapping("/updatePhone")
-    @ParseParam
+    @RequestBody
     public Result updatePhone(@ParseUser Integer userId, @RequestSingleParam("phone") String phone){
         return Result.ok();
     }

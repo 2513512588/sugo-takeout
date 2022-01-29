@@ -19,7 +19,7 @@ public enum Role {
     /**
      * 外卖骑手
      */
-    ROLE_TAKEOUT_RIDER(2, "ROLE_TOKEOUT_RIDER", "外卖骑手");
+    ROLE_TAKEOUT_RIDER(3, "ROLE_TOKEOUT_RIDER", "外卖骑手");
 
     private final Integer id;
     private final String name;

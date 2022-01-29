@@ -2,6 +2,7 @@ package com.sugo.takeout.admin.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.google.common.annotations.Beta;
 import com.sugo.takeout.bean.model.TakeoutActivity;
 import com.sugo.takeout.bean.model.TakeoutGoods;
 import com.sugo.takeout.bean.model.TakeoutGoodsCategory;
@@ -28,6 +29,7 @@ import javax.annotation.Resource;
 /**
  * @author hehaoyang
  */
+@Beta
 @Slf4j
 @RestController
 @Api(tags = "外卖商铺接口")

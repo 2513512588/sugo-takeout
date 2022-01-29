@@ -1,6 +1,7 @@
 package com.sugo.takeout.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sugo.takeout.bean.dto.TakeoutGoodsDetailDto;
 import com.sugo.takeout.bean.dto.TakeoutGoodsListDto;
@@ -21,7 +22,7 @@ public class TakeoutGoodsServiceImpl extends ServiceImpl<TakeoutGoodsMapper, Tak
 
 
     @Override
-    public IPage<TakeoutGoodsListDto> getListByCity(String province, String city, Integer type, IPage<TakeoutGoods> page) {
+    public IPage<TakeoutGoodsListDto> getListByCity(String province, String city, Integer type, Page<TakeoutGoods> page) {
         return baseMapper.getListByCity(page, province, city, type);
     }
 

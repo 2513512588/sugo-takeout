@@ -24,7 +24,7 @@ import java.util.Objects;
 @Component
 public class ParseParamAspect {
 
-    @Pointcut("@annotation(com.sugo.takeout.common.aspect.annotation.ParseParam)")
+    @Pointcut("@annotation(com.sugo.takeout.common.aspect.annotation.RequestBody)")
     public void pointCut(){}
 
     @Around("pointCut()")

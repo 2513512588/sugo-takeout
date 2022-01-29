@@ -10,7 +10,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sugo.takeout.bean.dto.TakeoutBasketDto;
 import com.sugo.takeout.bean.vo.TakeoutBasketGoodsItemVo;
 import com.sugo.takeout.bean.dto.TakeoutGoodsSkuDto;
-import com.sugo.takeout.bean.enums.TakeoutGoodsSkuMode;
+import com.sugo.takeout.bean.enums.GoodsSkuMode;
 import com.sugo.takeout.bean.model.TakeoutBasket;
 import com.sugo.takeout.bean.model.TakeoutGoods;
 import com.sugo.takeout.bean.model.TakeoutGoodsSku;
@@ -160,13 +160,13 @@ public class TakeoutBasketServiceImpl extends ServiceImpl<TakeoutBasketMapper, T
                             List<String> skuNameList = skuActiveList.stream().map(TakeoutGoodsSku::getName).collect(Collectors.toList());
                             takeoutBasketDto.setSkuNameList(skuNameList);
 
-                            Optional<TakeoutGoodsSku> baseSku = skuActiveList.stream().filter(item -> item.getPrice() > 0 && item.getMode() == TakeoutGoodsSkuMode.INDEPENDENT_PRICE.getMode()).findFirst();
+                            Optional<TakeoutGoodsSku> baseSku = skuActiveList.stream().filter(item -> item.getPrice() > 0 && item.getMode() == GoodsSkuMode.INDEPENDENT_PRICE.getMode()).findFirst();
                             if (baseSku.isPresent()){
                                 totalPrice = baseSku.get().getPrice();
                             }else {
                                 totalPrice = goods.getPrice();
                             }
-                            Optional<Double> reduce = skuActiveList.stream().filter(item -> item.getPrice() > 0 && item.getMode() == TakeoutGoodsSkuMode.MARK_UP_PRICE.getMode()).map(TakeoutGoodsSku::getPrice).reduce(Double::sum);
+                            Optional<Double> reduce = skuActiveList.stream().filter(item -> item.getPrice() > 0 && item.getMode() == GoodsSkuMode.MARK_UP_PRICE.getMode()).map(TakeoutGoodsSku::getPrice).reduce(Double::sum);
                             if (reduce.isPresent()){
                                 totalPrice += reduce.get();
                             }

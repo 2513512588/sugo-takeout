@@ -3,7 +3,7 @@ package com.sugo.takeout.api.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.sugo.takeout.bean.model.TakeoutCollection;
 import com.sugo.takeout.bean.model.TakeoutGoods;
-import com.sugo.takeout.common.aspect.annotation.ParseParam;
+import com.sugo.takeout.common.aspect.annotation.RequestBody;
 import com.sugo.takeout.common.aspect.annotation.RequestSingleParam;
 import com.sugo.takeout.common.util.Result;
 import com.sugo.takeout.security.annotation.ParseUser;
@@ -38,7 +38,7 @@ public class TakeoutCollectionController {
     })
     @ApiOperation("添加店铺或者商品收藏")
     @PostMapping("/add")
-    @ParseParam
+    @RequestBody
     public Result add(@ParseUser Integer userId,
                       @RequestSingleParam("sellerId") Integer sellerId,
                       @RequestSingleParam(value = "goodsId", required = false) Integer goodsId){

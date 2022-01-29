@@ -2,6 +2,7 @@ package com.sugo.takeout.common.util;
 
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+
 import com.sugo.takeout.common.enums.ResultCode;
 import com.sugo.takeout.common.exception.SugoException;
 import lombok.Data;
@@ -59,6 +60,7 @@ public class Result {
 
     public Result data(String key, Object value){
         if (data instanceof Map){
+            @SuppressWarnings("unchecked")
             Map<String, Object> map = (Map<String, Object>) data;
             map.put(key, value);
         }else {

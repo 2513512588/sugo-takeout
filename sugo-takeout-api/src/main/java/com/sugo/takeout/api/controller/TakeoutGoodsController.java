@@ -2,13 +2,14 @@ package com.sugo.takeout.api.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sugo.takeout.bean.dto.TakeoutGoodsListDto;
 import com.sugo.takeout.bean.event.TakeoutSellerEvent;
 import com.sugo.takeout.bean.model.TakeoutGoods;
 import com.sugo.takeout.bean.model.TakeoutGoodsCategory;
 import com.sugo.takeout.bean.model.TakeoutSeller;
 import com.sugo.takeout.common.aspect.annotation.ParsePage;
-import com.sugo.takeout.common.aspect.annotation.ParseParam;
+import com.sugo.takeout.common.aspect.annotation.RequestBody;
 import com.sugo.takeout.common.aspect.annotation.RequestSingleParam;
 import com.sugo.takeout.common.util.Result;
 import com.sugo.takeout.common.util.StringUtil;
@@ -51,14 +52,14 @@ public class TakeoutGoodsController {
             @ApiImplicitParam(name = "city", value = "我的城市"),
             @ApiImplicitParam(name = "type", value = "1 发现好物  2 今日特价")
     })
-    @ParseParam
-    public Result list(@ParsePage IPage<TakeoutGoods> takeoutGoodsPage,
+    @RequestBody
+    public Result list(@ParsePage Page<TakeoutGoods> page,
                        @RequestSingleParam("myLocation") String myLocation,
                        @RequestSingleParam("province") String province,
                        @RequestSingleParam("city") String city,
                        @RequestSingleParam("type") Integer type){
 
-        IPage<TakeoutGoodsListDto> iPage = takeoutGoodsService.getListByCity(province, city, type, takeoutGoodsPage);
+        IPage<TakeoutGoodsListDto> iPage = takeoutGoodsService.getListByCity(province, city, type, page);
         List<TakeoutGoodsListDto> records = iPage.getRecords();
         List<TakeoutSeller> sellerList = new ArrayList<>();
         for (TakeoutGoodsListDto record : records) {

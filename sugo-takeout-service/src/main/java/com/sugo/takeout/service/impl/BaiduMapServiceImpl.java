@@ -53,7 +53,7 @@ public class BaiduMapServiceImpl implements MapService {
     @SneakyThrows
     @Override
     public String directionlite(String origin, String destination) {
-        HttpGet get = new HttpGet(String.format("https://api.map.baidu.com/directionlite/v1/driving?origin=%s&destination=%s&ak=%s", origin, destination, baiduMapProperties.getAk()));
+        HttpGet get = new HttpGet(String.format("https://api.map.baidu.com/directionlite/v1/riding?origin=%s&destination=%s&ak=%s", origin, destination, baiduMapProperties.getAk()));
         HttpResponse response = client.execute(get);
         return EntityUtils.toString(response.getEntity());
     }
@@ -62,7 +62,7 @@ public class BaiduMapServiceImpl implements MapService {
     @SneakyThrows
     @Override
     public String routematrix(String origin, String destination) {
-        HttpGet get = new HttpGet(String.format("http://api.map.baidu.com/routematrix/v2/driving?output=json&origins=%s&destinations=%s&ak=%s", URLEncoder.encode(origin, "UTF-8"), URLEncoder.encode(destination, "UTF-8"), baiduMapProperties.getAk()));
+        HttpGet get = new HttpGet(String.format("http://api.map.baidu.com/routematrix/v2/riding?output=json&origins=%s&destinations=%s&ak=%s", URLEncoder.encode(origin, "UTF-8"), URLEncoder.encode(destination, "UTF-8"), baiduMapProperties.getAk()));
         HttpResponse response = client.execute(get);
         return EntityUtils.toString(response.getEntity());
     }

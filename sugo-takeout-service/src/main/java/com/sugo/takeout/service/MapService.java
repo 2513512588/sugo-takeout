@@ -26,10 +26,10 @@ public interface MapService {
     String routematrix(String origin, String destination);
 
     /**
-     *
+     * 获取两地的距离
      * @param origin 开始坐标
      * @param destination 目的坐标
-     * @return distance
+     * @return distance 距离（米）
      */
     Long routematrixOne(String origin, String destination);
 

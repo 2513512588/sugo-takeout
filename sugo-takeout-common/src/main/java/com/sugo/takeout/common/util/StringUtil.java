@@ -32,6 +32,17 @@ public class StringUtil {
         }
     }
 
+
+    /**
+     * 格式化商家度位置信息
+     * @param json 位置json字符串
+     * @return 纬度,经度
+     */
+    public String formatSellerLocation(String json){
+        return formatLatLngStr(parseSellerLocation(json));
+    }
+
+
     /**
      * 解析商家度位置信息
      * @param json 位置json字符串
@@ -42,7 +53,7 @@ public class StringUtil {
         int status = jsonObject.getIntValue("status");
         if (status == 0) {
             JSONObject result = jsonObject.getJSONObject("result").getJSONObject("location");
-            return formatLatLngStr(result.getString("lat") + "," + result.getString("lng"));
+            return result.getString("lat") + "," + result.getString("lng");
         }
         return null;
     }

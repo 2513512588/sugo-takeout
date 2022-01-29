@@ -2,7 +2,7 @@ package com.sugo.takeout.service.impl;
 
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.sugo.takeout.bean.enums.TakeoutActivityType;
+import com.sugo.takeout.bean.enums.ActivityType;
 import com.sugo.takeout.bean.model.TakeoutActivity;
 import com.sugo.takeout.mapper.TakeoutActivityMapper;
 import com.sugo.takeout.service.TakeoutActivityService;
@@ -29,9 +29,9 @@ public class TakeoutActivityServiceImpl extends ServiceImpl<TakeoutActivityMappe
     public double reduction(Integer sellerId, double total) {
         List<TakeoutActivity> activities = list(sellerId);
         Optional<Double> activityPrice = activities.stream().filter(item -> total >= item.getCondition()).collect(Collectors.toList()).stream().map(item -> {
-            if (item.getType() == TakeoutActivityType.REDUCTION.getType()) {
+            if (item.getType() == ActivityType.REDUCTION.getType()) {
                 return total - item.getReduce();
-            } else if (item.getType() == TakeoutActivityType.DISCOUNT.getType()) {
+            } else if (item.getType() == ActivityType.DISCOUNT.getType()) {
                 return total * item.getReduce();
             }
             return total;

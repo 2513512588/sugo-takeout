@@ -2,19 +2,23 @@ package com.sugo.takeout.service.impl;
 
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.sugo.takeout.bean.dto.AcceptedRiderOrderDto;
 import com.sugo.takeout.bean.dto.TakeoutBasketDto;
 import com.sugo.takeout.bean.dto.TakeoutOrderDetailDto;
 import com.sugo.takeout.bean.dto.TakeoutOrderListDto;
 import com.sugo.takeout.bean.model.*;
 import com.sugo.takeout.bean.vo.TakeoutBasketGoodsItemVo;
-import com.sugo.takeout.bean.enums.TakeoutGoodsStatus;
+import com.sugo.takeout.bean.enums.GoodsStatus;
 import com.sugo.takeout.bean.param.TakeoutOrderParam;
 import com.sugo.takeout.common.exception.SugoException;
 import com.sugo.takeout.common.util.RedisUtil;
 import com.sugo.takeout.common.util.StringUtil;
 import com.sugo.takeout.mapper.TakeoutCouponMapper;
+import com.sugo.takeout.mapper.TakeoutDeliveryMapper;
 import com.sugo.takeout.mapper.TakeoutOrderMapper;
 import com.sugo.takeout.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,17 +46,17 @@ public class TakeoutOrderServiceImpl extends ServiceImpl<TakeoutOrderMapper, Tak
     private final TakeoutOrderItemService takeoutOrderItemService;
     private final TakeoutActivityService takeoutActivityService;
     private final TakeoutCouponMapper takeoutCouponMapper;
+    private final TakeoutDeliveryMapper takeoutDeliveryMapper;
 
-    @Autowired
-    public TakeoutOrderServiceImpl(TakeoutBasketService takeoutBasketService, TakeoutAddressService takeoutAddressService, MapService mapService, TakeoutOrderItemService takeoutOrderItemService, TakeoutActivityService takeoutActivityService, TakeoutCouponMapper takeoutCouponMapper) {
+    public TakeoutOrderServiceImpl(TakeoutBasketService takeoutBasketService, TakeoutAddressService takeoutAddressService, MapService mapService, TakeoutOrderItemService takeoutOrderItemService, TakeoutActivityService takeoutActivityService, TakeoutCouponMapper takeoutCouponMapper, TakeoutDeliveryMapper takeoutDeliveryMapper) {
         this.takeoutBasketService = takeoutBasketService;
         this.takeoutAddressService = takeoutAddressService;
         this.mapService = mapService;
         this.takeoutOrderItemService = takeoutOrderItemService;
         this.takeoutActivityService = takeoutActivityService;
         this.takeoutCouponMapper = takeoutCouponMapper;
+        this.takeoutDeliveryMapper = takeoutDeliveryMapper;
     }
-
 
     @Autowired
     @Qualifier("alipayServiceImpl")
@@ -86,7 +90,7 @@ public class TakeoutOrderServiceImpl extends ServiceImpl<TakeoutOrderMapper, Tak
     @Transactional(rollbackFor = SugoException.class)
     @Override
     public String createOrder(@Nullable TakeoutCoupon takeoutCoupon, TakeoutAddress takeoutAddress, TakeoutSeller takeoutSeller, TakeoutOrderParam takeoutOrderParam, Integer userId) {
-        List<TakeoutBasketDto> list = takeoutBasketService.list(userId, takeoutOrderParam.getSellerId(), TakeoutGoodsStatus.ON_SHELF.getStatus());
+        List<TakeoutBasketDto> list = takeoutBasketService.list(userId, takeoutOrderParam.getSellerId(), GoodsStatus.ON_SHELF.getStatus());
         TakeoutOrder takeoutOrder = new TakeoutOrder();
         takeoutOrder.setUserId(userId);
         takeoutOrder.setSellerId(takeoutOrderParam.getSellerId());
@@ -109,7 +113,7 @@ public class TakeoutOrderServiceImpl extends ServiceImpl<TakeoutOrderMapper, Tak
         Snowflake snowflake = IdUtil.getSnowflake(1, 1);
         String code = String.valueOf(snowflake.nextId());
         String addrLocation = StringUtil.formatLatLngStr(takeoutAddress.getLat() + "," + takeoutAddress.getLng());
-        String sellerLocation = StringUtil.parseSellerLocation(takeoutSeller.getLocation());
+        String sellerLocation = StringUtil.formatSellerLocation(takeoutSeller.getLocation());
         Long distance = mapService.routematrixOne(addrLocation, sellerLocation);
         double deliveryFee = takeoutAddressService.getDeliveryFee(distance);
         long deliveryTime = takeoutAddressService.getDeliveryTime(distance);
@@ -209,13 +213,48 @@ public class TakeoutOrderServiceImpl extends ServiceImpl<TakeoutOrderMapper, Tak
     }
 
     @Override
-    public IPage<TakeoutOrderListDto> getList(IPage<TakeoutOrder> page, Integer userId, @Nullable Integer[] statuses) {
+    public IPage<TakeoutOrderListDto> getList(Page<TakeoutOrder> page, Integer userId, @Nullable Integer[] statuses) {
         return baseMapper.list(page, userId, statuses);
     }
 
     @Override
     public TakeoutOrderDetailDto getDetail(Integer userId, String orderCode) {
         return baseMapper.getDetail(userId, orderCode);
+    }
+
+    @Transactional(rollbackFor = SugoException.class)
+    @Override
+    public void receiveOrder(Integer riderId, String orderCode) {
+        QueryWrapper<TakeoutOrder> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("seller_id");
+        queryWrapper.eq("code", orderCode);
+        TakeoutOrder takeoutOrder = baseMapper.selectOne(queryWrapper);
+        int insert = takeoutDeliveryMapper.insert(TakeoutDelivery.builder().orderCode(orderCode).sellerId(takeoutOrder.getSellerId()).riderId(riderId).build());
+        if (insert != 1){
+            throw new SugoException("接单失败！");
+        }
+        int update = baseMapper.receiveOrder(riderId, orderCode);
+        if (update != 1){
+            throw new SugoException("订单已被别人抢走了");
+        }
+    }
+
+    @Override
+    public IPage<String> getRiderOrderCodeList(Page<?> page) {
+        return baseMapper.getAllRiderOrderCodeList(page);
+    }
+
+    @Override
+    public IPage<AcceptedRiderOrderDto> getAcceptedRiderOrderList(Page<?> page, Integer riderId, Integer status) {
+        @SuppressWarnings("unused")
+        IPage<AcceptedRiderOrderDto> acceptedRiderOrderList = baseMapper.getAcceptedRiderOrderList(page, riderId, status);
+        List<AcceptedRiderOrderDto> records = acceptedRiderOrderList.getRecords();
+        for (AcceptedRiderOrderDto record : records) {
+//            LocalDateTime acceptOrderTime = takeoutDeliveryMapper.getAcceptOrderTime(record.getCode());
+            record.setSellerLatLng(StringUtil.parseSellerLocation(record.getSellerLatLng()));
+        }
+        acceptedRiderOrderList.setRecords(records);
+        return acceptedRiderOrderList;
     }
 
 }

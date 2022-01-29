@@ -42,6 +42,9 @@
         gmt_create,status,remark,
         rider_id,tableware_num,pay_time,coupon_discount,activity_discount,payment_type
     </sql>
+    <update id="receiveOrder">
+        update takeout_order set rider_id = #{riderId} where code = #{orderCode} and rider_id is null
+    </update>
     <select id="getAvgCostBySeller" resultType="java.lang.Double">
         select ifnull(avg(total), 0) from takeout_order where seller_id = #{sellerId} and status = 2
     </select>
@@ -107,5 +110,36 @@
         left join takeout_rider tr on takeout_order.rider_id = tr.id
         where takeout_order.code = #{orderCode} and takeout_order.user_id = #{userId} and is_deleted = 0
     </select>
+
+
+    <select id="getAllRiderOrderCodeList" resultType="java.lang.String">
+        select code from takeout_order where rider_id is null and status = 2
+        and exists(select takeout_seller.id from takeout_seller where now() between delivery_time_start and delivery_time_end and takeout_seller.id = takeout_order.seller_id)
+    </select>
+
+
+
+    <select id="getAcceptedRiderOrderList" resultType="com.sugo.takeout.bean.dto.AcceptedRiderOrderDto">
+        select code, name shopName, enterprise_address sellerAddrDesc,
+               addr_name consigneeAddrName, addr_detail consigneeAddrDesc,
+               addr_house_number consigneeAddrHouseNumber, delivery_fee price,
+               location sellerLatLng, concat(addr_lat, ',', addr_lng) consigneeLatLng,
+               ts.phone sellerPhone, consignee consigneeName, consignee_sex consigneeSex,
+               takeout_order.phone consigneePhone, arrive_time arriveTime
+               from takeout_order
+        left join takeout_seller ts on takeout_order.seller_id = ts.id
+        where takeout_order.code in (
+            select order_code from takeout_delivery where rider_id = #{riderId}
+                <choose>
+                    <when test="status == 1">
+                        and status &lt; 3
+                    </when>
+                    <when test="status == 2">
+                        and status = 3
+                    </when>
+                </choose>
+        )
+    </select>
+
 
 </mapper>

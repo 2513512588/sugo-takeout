@@ -129,7 +129,7 @@ public class TakeoutAddressController {
         TakeoutSeller takeoutSeller = takeoutSellerService.getById(TakeoutSeller.builder().id(sellerId).build());
         if (takeoutAddress != null && takeoutSeller != null){
             String addrLocation = StringUtil.formatLatLngStr(takeoutAddress.getLat() + "," + takeoutAddress.getLng());
-            String sellerLocation = StringUtil.parseSellerLocation(takeoutSeller.getLocation());
+            String sellerLocation = StringUtil.formatSellerLocation(takeoutSeller.getLocation());
             Long distance = mapService.routematrixOne(addrLocation, sellerLocation);
             return Result.ok().data("deliveryTime", takeoutAddressService.getDeliveryTime(distance))
                               .data("deliveryFee", takeoutAddressService.getDeliveryFee(distance));
