@@ -55,12 +55,6 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     /**
      * 成功验证后调用的方法
      * 如果验证成功，就生成token并返回
-     * @param request
-     * @param response
-     * @param chain
-     * @param authResult
-     * @throws IOException
-     * @throws ServletException
      */
     @Override
     protected void successfulAuthentication(HttpServletRequest request,
@@ -70,11 +64,10 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         JwtUser jwtUser = (JwtUser) authResult.getPrincipal();
 
-        String role = "";
         Collection<? extends GrantedAuthority> authorities = jwtUser.getAuthorities();
-        for (GrantedAuthority authority : authorities){
-            role = authority.getAuthority();
-        }
+        @SuppressWarnings("all")
+        GrantedAuthority[] grantedAuthorities = authorities.toArray(new GrantedAuthority[authorities.size()]);
+        String role = grantedAuthorities[0].getAuthority();
 
         String token = JwtTokenUtils.createToken(jwtUser.getUsername(), role, jwtUser.getId(), true, jwtUser.getAttachData());
         // 返回创建成功的token

@@ -37,8 +37,7 @@
 					<u-col span="4">
 						<p style="display: flex; align-orders: center; justify-content: flex-end;">
 							<u-text text="合计" size="13" color="#666"></u-text>
-							<u-icon name="rmb" color="#333" :label="order.total" size="13" labelSize="18"
-								labelColor="#000"></u-icon>
+							<u-text color="#000" :text="order.total" size="18" mode="price"></u-text>
 						</p>
 					</u-col>
 				</u-row>

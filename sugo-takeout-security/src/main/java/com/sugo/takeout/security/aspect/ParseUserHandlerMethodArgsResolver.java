@@ -18,6 +18,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Objects;
 
 /**
  * 注入当前用户参数
@@ -48,20 +49,22 @@ public class ParseUserHandlerMethodArgsResolver implements HandlerMethodArgument
             if (StringUtils.isEmpty(token) && !parseUser.required()){
                 return null;
             }
-            Integer userId = JwtTokenUtils.getUserId(token);
+            String role = JwtTokenUtils.getUserRole(token);
             Class<?> type = methodParameter.getParameter().getType();
-            if (type == User.class){
-                if (parseUser.value() == Role.ROLE_USER){
-                    return userService.getById(userId);
-                }else {
-                    throw new SugoException("解析数据类型不一致");
-                }
-            }else if (type == Integer.class){
-                if (parseUser.value() == Role.ROLE_USER){
-                    return userId;
-                }else {
+            Role roleParam = parseUser.value();
+            if (Objects.equals(role, roleParam.getName())){
+                if (type == User.class){
+                    if (roleParam == Role.ROLE_USER){
+                        Integer userId = JwtTokenUtils.getUserId(token);
+                        return userService.getById(userId);
+                    }else {
+                        throw new SugoException("解析数据类型不一致");
+                    }
+                }else if (type == Integer.class){
                     return JwtTokenUtils.getAttachData(token, parseUser.value().getName());
                 }
+            }else {
+                throw new SugoException("当前登录身份与接口不一致");
             }
         }catch (JwtException | NullPointerException | IllegalArgumentException e){
             if (parseUser.required()){

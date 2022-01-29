@@ -16,4 +16,14 @@
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
 
+    <dependencies>
+
+        <dependency>
+            <groupId>com.sugo.takeout</groupId>
+            <artifactId>sugo-takeout-security</artifactId>
+            <version>${sugo.takeout.version}</version>
+        </dependency>
+
+    </dependencies>
+
 </project>

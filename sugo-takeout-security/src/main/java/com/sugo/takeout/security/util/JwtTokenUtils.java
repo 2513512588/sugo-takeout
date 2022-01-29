@@ -2,6 +2,7 @@ package com.sugo.takeout.security.util;
 
 
 
+import com.sugo.takeout.security.enums.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -25,7 +26,7 @@ public class JwtTokenUtils {
 
     // 角色的key
     private static final String ROLE_CLAIMS = "rol";
-    private static final String USER_ID_CLAIMS = "userId";
+    private static final String USER_ID_CLAIMS = Role.ROLE_USER.getName();
 
     /**
      * 过期时间是3600秒，既是1个小时
