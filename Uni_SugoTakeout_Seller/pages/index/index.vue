@@ -149,6 +149,7 @@
 <style lang="scss">
 	.seller-wrap{
 		background-image: linear-gradient(to bottom, #f9c630, #fff 60%);
+		min-height: 100vh;
 	}
 	
 	.card{
