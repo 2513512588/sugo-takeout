@@ -13,8 +13,8 @@
             <result property="skuIdGroup" column="sku_id_group" jdbcType="VARCHAR"/>
     </resultMap>
 
-    <resultMap id="UnionGoodsMap" type="com.sugo.takeout.bean.dto.TakeoutBasketDto" extends="BaseResultMap">
-        <association property="goods" javaType="com.sugo.takeout.bean.vo.TakeoutBasketGoodsItemVo"
+    <resultMap id="UnionGoodsMap" type="com.sugo.takeout.bean.dto.BasketDto" extends="BaseResultMap">
+        <association property="goods" javaType="com.sugo.takeout.bean.vo.BasketGoodsItemVo"
            column="goods_id" jdbcType="INTEGER" select="com.sugo.takeout.mapper.TakeoutGoodsMapper.findById"
         />
     </resultMap>

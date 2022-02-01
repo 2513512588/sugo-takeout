@@ -6,14 +6,11 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.sugo.takeout.bean.dto.AcceptedRiderOrderDto;
-import com.sugo.takeout.bean.dto.TakeoutBasketDto;
-import com.sugo.takeout.bean.dto.TakeoutOrderDetailDto;
-import com.sugo.takeout.bean.dto.TakeoutOrderListDto;
+import com.sugo.takeout.bean.dto.*;
 import com.sugo.takeout.bean.model.*;
-import com.sugo.takeout.bean.vo.TakeoutBasketGoodsItemVo;
+import com.sugo.takeout.bean.vo.BasketGoodsItemVo;
 import com.sugo.takeout.bean.enums.GoodsStatus;
-import com.sugo.takeout.bean.param.TakeoutOrderParam;
+import com.sugo.takeout.bean.param.OrderParam;
 import com.sugo.takeout.common.exception.SugoException;
 import com.sugo.takeout.common.util.RedisUtil;
 import com.sugo.takeout.common.util.StringUtil;
@@ -89,11 +86,11 @@ public class TakeoutOrderServiceImpl extends ServiceImpl<TakeoutOrderMapper, Tak
 
     @Transactional(rollbackFor = SugoException.class)
     @Override
-    public String createOrder(@Nullable TakeoutCoupon takeoutCoupon, TakeoutAddress takeoutAddress, TakeoutSeller takeoutSeller, TakeoutOrderParam takeoutOrderParam, Integer userId) {
-        List<TakeoutBasketDto> list = takeoutBasketService.list(userId, takeoutOrderParam.getSellerId(), GoodsStatus.ON_SHELF.getStatus());
+    public String createOrder(@Nullable TakeoutCoupon takeoutCoupon, TakeoutAddress takeoutAddress, TakeoutSeller takeoutSeller, OrderParam orderParam, Integer userId) {
+        List<BasketDto> list = takeoutBasketService.list(userId, orderParam.getSellerId(), GoodsStatus.ON_SHELF.getStatus());
         TakeoutOrder takeoutOrder = new TakeoutOrder();
         takeoutOrder.setUserId(userId);
-        takeoutOrder.setSellerId(takeoutOrderParam.getSellerId());
+        takeoutOrder.setSellerId(orderParam.getSellerId());
         takeoutOrder.setConsignee(takeoutAddress.getConsignee());
         takeoutOrder.setPhone(takeoutAddress.getPhone());
         takeoutOrder.setConsigneeSex(takeoutAddress.getSex());
@@ -102,8 +99,8 @@ public class TakeoutOrderServiceImpl extends ServiceImpl<TakeoutOrderMapper, Tak
         takeoutOrder.setAddrHouseNumber(takeoutAddress.getHouseNumber());
         takeoutOrder.setAddrLat(takeoutAddress.getLat());
         takeoutOrder.setAddrLng(takeoutAddress.getLng());
-        takeoutOrder.setRemark(takeoutOrderParam.getRemark());
-        takeoutOrder.setTablewareNum(takeoutOrderParam.getTablewareNum());
+        takeoutOrder.setRemark(orderParam.getRemark());
+        takeoutOrder.setTablewareNum(orderParam.getTablewareNum());
 
         double total = 0;
         double packingFee = 0;
@@ -124,33 +121,33 @@ public class TakeoutOrderServiceImpl extends ServiceImpl<TakeoutOrderMapper, Tak
 
         List<TakeoutOrderItem> orderItems = new ArrayList<>();
 
-        Optional<TakeoutBasketDto> hasMandatory = list.stream().filter(item -> item.getGoods().getIsMandatory()).findFirst();
+        Optional<BasketDto> hasMandatory = list.stream().filter(item -> item.getGoods().getIsMandatory()).findFirst();
         if (!hasMandatory.isPresent()) {
             throw new SugoException("没有必点品！");
         }
 
-        for (TakeoutBasketDto takeoutBasketDto : list) {
-            if (takeoutBasketDto.getSkuValid()) {
-                TakeoutBasketGoodsItemVo goods = takeoutBasketDto.getGoods();
+        for (BasketDto basketDto : list) {
+            if (basketDto.getSkuValid()) {
+                BasketGoodsItemVo goods = basketDto.getGoods();
                 //确定库存足够
-                if (goods.getStock() == null || takeoutBasketDto.getQuantity() <= goods.getStock()) {
-                    if (goods.getMaxPurchaseNum() != null && takeoutBasketDto.getQuantity() > goods.getMaxPurchaseNum()) {
+                if (goods.getStock() == null || basketDto.getQuantity() <= goods.getStock()) {
+                    if (goods.getMaxPurchaseNum() != null && basketDto.getQuantity() > goods.getMaxPurchaseNum()) {
                         throw new SugoException(String.format("[%s]超出限购数量%d个", goods.getName(), goods.getMaxPurchaseNum()));
                     }
-                    if (goods.getMinPurchaseNum() != null && takeoutBasketDto.getQuantity() < goods.getMinPurchaseNum()) {
+                    if (goods.getMinPurchaseNum() != null && basketDto.getQuantity() < goods.getMinPurchaseNum()) {
                         throw new SugoException(String.format("[%s]低于最低购买数量%d个", goods.getName(), goods.getMinPurchaseNum()));
                     }
                     TakeoutOrderItem takeoutOrderItem = new TakeoutOrderItem();
-                    takeoutOrderItem.setSkuNameGroup(org.apache.commons.lang3.StringUtils.join(takeoutBasketDto.getSkuNameList(), "、"));
+                    takeoutOrderItem.setSkuNameGroup(org.apache.commons.lang3.StringUtils.join(basketDto.getSkuNameList(), "、"));
                     takeoutOrderItem.setOrderCode(code);
-                    takeoutOrderItem.setGoodsId(takeoutBasketDto.getGoodsId());
-                    takeoutOrderItem.setQuantity(takeoutBasketDto.getQuantity());
-                    takeoutOrderItem.setTotal((goods.getPackingFee() + goods.getPrice()) * takeoutBasketDto.getQuantity());
+                    takeoutOrderItem.setGoodsId(basketDto.getGoodsId());
+                    takeoutOrderItem.setQuantity(basketDto.getQuantity());
+                    takeoutOrderItem.setTotal((goods.getPackingFee() + goods.getPrice()) * basketDto.getQuantity());
                     orderItems.add(takeoutOrderItem);
 
-                    packingFee += goods.getPackingFee() * takeoutBasketDto.getQuantity();
+                    packingFee += goods.getPackingFee() * basketDto.getQuantity();
                     total += takeoutOrderItem.getTotal();
-                } else if (takeoutBasketDto.getQuantity() > goods.getStock()) {
+                } else if (basketDto.getQuantity() > goods.getStock()) {
                     throw new SugoException(String.format("[%s]结算数量超出限制", goods.getName()));
                 }
             }
@@ -164,7 +161,7 @@ public class TakeoutOrderServiceImpl extends ServiceImpl<TakeoutOrderMapper, Tak
         double totalPriceCondition = total;
         // 满减
         //活动价格
-        total = takeoutActivityService.reduction(takeoutOrderParam.getSellerId(), totalPriceCondition);
+        total = takeoutActivityService.reduction(orderParam.getSellerId(), totalPriceCondition);
 
         // 活动减免金额
         if (totalPriceCondition > total) {
@@ -198,7 +195,7 @@ public class TakeoutOrderServiceImpl extends ServiceImpl<TakeoutOrderMapper, Tak
             }
         }
         // 清除购物车
-        boolean remove = takeoutBasketService.removeByIds(list.stream().map(TakeoutBasketDto::getId).collect(Collectors.toList()));
+        boolean remove = takeoutBasketService.removeByIds(list.stream().map(BasketDto::getId).collect(Collectors.toList()));
         if (!remove) {
             throw new SugoException("结算异常");
         }
@@ -213,12 +210,12 @@ public class TakeoutOrderServiceImpl extends ServiceImpl<TakeoutOrderMapper, Tak
     }
 
     @Override
-    public IPage<TakeoutOrderListDto> getList(Page<TakeoutOrder> page, Integer userId, @Nullable Integer[] statuses) {
+    public IPage<OrderListDto> getList(Page<TakeoutOrder> page, Integer userId, @Nullable Integer[] statuses) {
         return baseMapper.list(page, userId, statuses);
     }
 
     @Override
-    public TakeoutOrderDetailDto getDetail(Integer userId, String orderCode) {
+    public OrderDetailDto getDetail(Integer userId, String orderCode) {
         return baseMapper.getDetail(userId, orderCode);
     }
 
@@ -255,6 +252,11 @@ public class TakeoutOrderServiceImpl extends ServiceImpl<TakeoutOrderMapper, Tak
         }
         acceptedRiderOrderList.setRecords(records);
         return acceptedRiderOrderList;
+    }
+
+    @Override
+    public IPage<SellerOrderDto> getSellerOrderList(Page<TakeoutOrder> page, Integer sellerId, Integer status) {
+        return baseMapper.getSellerOrderList(page, sellerId, status);
     }
 
 }

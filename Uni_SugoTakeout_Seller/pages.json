@@ -4,7 +4,8 @@
 			"path": "pages/index/index",
 			"style": {
 				"navigationStyle": "custom",
-				"backgroundColor":"#f9c630"
+				"backgroundColor":"#f9c630",
+				"enablePullDownRefresh": true
 			}
 		},
 		{
@@ -15,7 +16,16 @@
 			}
 		
 		}
-	],
+	    ,{
+            "path" : "pages/order/order",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "订单管理",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+    ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",

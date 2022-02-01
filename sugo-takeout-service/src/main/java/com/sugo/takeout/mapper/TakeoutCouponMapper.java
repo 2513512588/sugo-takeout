@@ -1,6 +1,6 @@
 package com.sugo.takeout.mapper;
 
-import com.sugo.takeout.bean.dto.TakeoutCouponDto;
+import com.sugo.takeout.bean.dto.CouponDto;
 import com.sugo.takeout.bean.model.TakeoutCoupon;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
@@ -14,7 +14,7 @@ public interface TakeoutCouponMapper extends BaseMapper<TakeoutCoupon> {
 
     List<TakeoutCoupon> findBySellerId(Integer id);
 
-    List<TakeoutCouponDto> findBySellerAndUser(@Param("sellerId") Integer sellerId, @Param("userId") Integer userId);
+    List<CouponDto> findBySellerAndUser(@Param("sellerId") Integer sellerId, @Param("userId") Integer userId);
 
     TakeoutCoupon getByIdAndUser(@Param("couponId") Integer couponId, @Param("userId") Integer userId);
 

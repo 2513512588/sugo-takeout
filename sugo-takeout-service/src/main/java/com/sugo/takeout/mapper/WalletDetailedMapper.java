@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.sugo.takeout.bean.model.WalletDetailed;
 
 /**
- * @Entity com.takeout.smartcity.entity.WalletDetailed
+ * @Entity com.sugo.takeout.model.WalletDetailed
  */
 public interface WalletDetailedMapper extends BaseMapper<WalletDetailed> {
 

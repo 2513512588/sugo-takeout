@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.sugo.takeout.bean.model.TakeoutGoodsCategory;
 
 /**
- * @Entity com.takeout.smartcity.entity.TakeoutGoodsCategory
+ * @Entity com.sugo.takeout.model.TakeoutGoodsCategory
  */
 public interface TakeoutGoodsCategoryMapper extends BaseMapper<TakeoutGoodsCategory> {
 

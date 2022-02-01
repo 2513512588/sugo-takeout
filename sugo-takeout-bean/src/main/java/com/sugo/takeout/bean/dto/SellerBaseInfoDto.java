@@ -1,15 +1,25 @@
-package com.sugo.takeout.bean.param;
+package com.sugo.takeout.bean.dto;
 
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.time.LocalTime;
 
+
 @Data
-@ApiModel("卖家更新资料vo对象")
-public class TakeoutSellerUpdateParam implements Serializable {
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class SellerBaseInfoDto implements Serializable {
+    /**
+     * 主键id
+     */
+    @ApiModelProperty("卖家id")
+    private Integer id;
 
     /**
      * 店铺名称
@@ -24,10 +34,22 @@ public class TakeoutSellerUpdateParam implements Serializable {
     private String cover;
 
     /**
+     * 店铺介绍
+     */
+    @ApiModelProperty("店铺介绍")
+    private String description;
+
+    /**
      * 店铺logo
      */
     @ApiModelProperty("店铺logo")
     private String avatar;
+
+    /**
+     * 店铺类型id
+     */
+    @ApiModelProperty("店铺类型id")
+    private Integer typeId;
 
     /**
      * 店铺联系电话
@@ -40,18 +62,6 @@ public class TakeoutSellerUpdateParam implements Serializable {
      */
     @ApiModelProperty("备用联系电话")
     private String phoneAdditional;
-
-    /**
-     * 店铺介绍
-     */
-    @ApiModelProperty("店铺介绍")
-    private String description;
-
-    /**
-     * 店铺公告
-     */
-    @ApiModelProperty("店铺公告")
-    private String notice;
 
     /**
      * 开始配送时间
@@ -69,12 +79,19 @@ public class TakeoutSellerUpdateParam implements Serializable {
      * 起送金额
      */
     @ApiModelProperty("起送金额")
-    private Double startDelivery;
+    private Double minDeliveryPrice;
 
     /**
-     * 店铺位置信息经纬度json字符串
+     * 店铺状态 1 审核中 2 封禁 3 正常
      */
-    @ApiModelProperty("店铺位置信息经纬度json字符串")
-    private String location;
+    @ApiModelProperty("店铺状态 1 审核中 2 封禁 3 正常")
+    private Integer status;
+
+    /**
+     * 店铺公告
+     */
+    @ApiModelProperty("店铺公告")
+    private String notice;
+
 
 }

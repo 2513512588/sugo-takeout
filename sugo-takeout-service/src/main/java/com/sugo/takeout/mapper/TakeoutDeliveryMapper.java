@@ -10,6 +10,8 @@ import java.util.List;
 /**
  * @author hehaoyang
  * @Entity TakeoutDelivery
+ *
+ * todo delivery 改成列表
  */
 public interface TakeoutDeliveryMapper extends BaseMapper<TakeoutDelivery> {
 

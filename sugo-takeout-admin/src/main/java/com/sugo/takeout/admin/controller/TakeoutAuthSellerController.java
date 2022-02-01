@@ -7,8 +7,8 @@ import com.sugo.takeout.bean.model.TakeoutActivity;
 import com.sugo.takeout.bean.model.TakeoutGoods;
 import com.sugo.takeout.bean.model.TakeoutGoodsCategory;
 import com.sugo.takeout.bean.model.TakeoutSeller;
-import com.sugo.takeout.bean.param.TakeoutGoodsParam;
-import com.sugo.takeout.bean.param.TakeoutSellerUpdateParam;
+import com.sugo.takeout.bean.param.GoodsParam;
+import com.sugo.takeout.bean.param.SellerUpdateParam;
 import com.sugo.takeout.common.util.Result;
 import com.sugo.takeout.common.valid.Groups;
 import com.sugo.takeout.security.annotation.ParseUser;
@@ -48,7 +48,7 @@ public class TakeoutAuthSellerController {
     @ApiOperation("卖家发布商品")
     @PostMapping("/goods/add")
     public Result settledApply(@ParseUser(Role.ROLE_TAKEOUT_SELLER) Integer sellerId,
-                               @RequestBody @Validated(Groups.Add.class) TakeoutGoodsParam takeoutGoodsVo){
+                               @RequestBody @Validated(Groups.Add.class) GoodsParam takeoutGoodsVo){
          TakeoutGoods takeoutGoods = new TakeoutGoods();
          BeanUtils.copyProperties(takeoutGoodsVo, takeoutGoods);
          takeoutGoods.setSellerId(sellerId);
@@ -59,7 +59,7 @@ public class TakeoutAuthSellerController {
     @ApiOperation("卖家完善资料")
     @PostMapping("/info/edit")
     public Result editInfo(@ParseUser(Role.ROLE_TAKEOUT_SELLER) Integer sellerId,
-                           @RequestBody TakeoutSellerUpdateParam takeoutSellerUpdateVo){
+                           @RequestBody SellerUpdateParam takeoutSellerUpdateVo){
         TakeoutSeller takeoutSeller = new TakeoutSeller();
         BeanUtils.copyProperties(takeoutSellerUpdateVo, takeoutSeller);
         takeoutSeller.setId(sellerId);
@@ -70,7 +70,7 @@ public class TakeoutAuthSellerController {
 
     @ApiOperation("卖家完善资料")
     @PostMapping("/info/edit/dev/{sellerId}")
-    public Result editInfo(@RequestBody TakeoutSellerUpdateParam takeoutSellerUpdateVo, @PathVariable Integer sellerId){
+    public Result editInfo(@RequestBody SellerUpdateParam takeoutSellerUpdateVo, @PathVariable Integer sellerId){
         TakeoutSeller takeoutSeller = new TakeoutSeller();
         BeanUtils.copyProperties(takeoutSellerUpdateVo, takeoutSeller);
         takeoutSeller.setId(sellerId);

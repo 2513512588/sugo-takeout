@@ -18,7 +18,7 @@
         quantity,total,sku_name_group
     </sql>
 
-    <select id="findByCode" resultType="com.sugo.takeout.bean.vo.TakeoutOrderGoodsItemVo">
+    <select id="findByCode" resultType="com.sugo.takeout.bean.vo.OrderGoodsItemVo">
         select name, cover, quantity, sku_name_group, total from takeout_order_item
         left join takeout_goods tg on takeout_order_item.goods_id = tg.id
         where order_code = #{code}

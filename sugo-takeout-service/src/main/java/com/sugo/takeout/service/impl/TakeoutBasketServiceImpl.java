@@ -7,14 +7,14 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.sugo.takeout.bean.dto.TakeoutBasketDto;
-import com.sugo.takeout.bean.vo.TakeoutBasketGoodsItemVo;
-import com.sugo.takeout.bean.dto.TakeoutGoodsSkuDto;
+import com.sugo.takeout.bean.dto.BasketDto;
+import com.sugo.takeout.bean.vo.BasketGoodsItemVo;
+import com.sugo.takeout.bean.dto.GoodsSkuDto;
 import com.sugo.takeout.bean.enums.GoodsSkuMode;
 import com.sugo.takeout.bean.model.TakeoutBasket;
 import com.sugo.takeout.bean.model.TakeoutGoods;
 import com.sugo.takeout.bean.model.TakeoutGoodsSku;
-import com.sugo.takeout.bean.param.TakeoutBasketParam;
+import com.sugo.takeout.bean.param.BasketParam;
 import com.sugo.takeout.common.enums.ResultCode;
 import com.sugo.takeout.common.exception.SugoException;
 import com.sugo.takeout.mapper.TakeoutBasketMapper;
@@ -47,26 +47,26 @@ public class TakeoutBasketServiceImpl extends ServiceImpl<TakeoutBasketMapper, T
     private final TakeoutGoodsSkuService takeoutGoodsSkuService;
 
     @Override
-    public IPage<TakeoutBasketDto> selectPage(Page<TakeoutBasketDto> basketPage, Integer userId) {
+    public IPage<BasketDto> selectPage(Page<BasketDto> basketPage, Integer userId) {
         return baseMapper.selectBasketListByUser(basketPage, userId);
     }
 
     @Override
-    public boolean updateQuantity(Integer userId, TakeoutBasketParam takeoutBasketParam) {
-        TakeoutGoods takeoutGoods = takeoutGoodsService.getById(takeoutBasketParam.getGoodsId());
+    public boolean updateQuantity(Integer userId, BasketParam basketParam) {
+        TakeoutGoods takeoutGoods = takeoutGoodsService.getById(basketParam.getGoodsId());
         // todo 商品卖超后的商品数量
-        if (takeoutGoods.getStock() != null && takeoutGoods.getStock() < takeoutBasketParam.getQuantity()){
+        if (takeoutGoods.getStock() != null && takeoutGoods.getStock() < basketParam.getQuantity()){
             throw new SugoException("加购数量超出库存数");
         }
 
         //根据商品id查询对应的sku数据
-        List<TakeoutGoodsSku> list = takeoutGoodsSkuService.list(new QueryWrapper<>(TakeoutGoodsSku.builder().goodsId(takeoutBasketParam.getGoodsId()).build()));
+        List<TakeoutGoodsSku> list = takeoutGoodsSkuService.list(new QueryWrapper<>(TakeoutGoodsSku.builder().goodsId(basketParam.getGoodsId()).build()));
         if (list.size() > 0){
             List<Integer> skuIds = list.stream().map(TakeoutGoodsSku::getId).collect(Collectors.toList());
-            if (!StringUtils.isEmpty(takeoutBasketParam.getSkuIdGroup())){
+            if (!StringUtils.isEmpty(basketParam.getSkuIdGroup())){
                 try {
                     //json格式化id组
-                    List<Integer> skuIdGroup = JSONArray.parseArray(takeoutBasketParam.getSkuIdGroup(), Integer.class);
+                    List<Integer> skuIdGroup = JSONArray.parseArray(basketParam.getSkuIdGroup(), Integer.class);
                     if (skuIds.containsAll(skuIdGroup)){
                         //找出该商品所有sku的分类数量
                         long count = list.stream().map(TakeoutGoodsSku::getType).distinct().count();
@@ -83,7 +83,7 @@ public class TakeoutBasketServiceImpl extends ServiceImpl<TakeoutBasketMapper, T
                             // 总数量一致 且没有分类提交了重复的
                             // 如果要有分类多选的话 应该遍历商品的sku分类 判断 提交上来的分类 单选的有一个 多选的至少有一个
                             if (typeList.stream().distinct().count() == count){
-                                takeoutBasketParam.setSkuIdGroup(JSONArray.toJSONString(skuIdGroup));
+                                basketParam.setSkuIdGroup(JSONArray.toJSONString(skuIdGroup));
                             }else {
                                 throw new SugoException("sku参数错误", ResultCode.VALIDATE_FAILED);
                             }
@@ -103,12 +103,12 @@ public class TakeoutBasketServiceImpl extends ServiceImpl<TakeoutBasketMapper, T
                 throw new SugoException("缺少sku参数", ResultCode.VALIDATE_FAILED);
             }
         }else {
-            if (!StringUtils.isEmpty(takeoutBasketParam.getSkuIdGroup())) {
+            if (!StringUtils.isEmpty(basketParam.getSkuIdGroup())) {
                 throw new SugoException("sku参数非法");
             }
         }
 
-        TakeoutBasket takeoutBasket = mapperFacade.map(takeoutBasketParam, TakeoutBasket.class);
+        TakeoutBasket takeoutBasket = mapperFacade.map(basketParam, TakeoutBasket.class);
         takeoutBasket.setUserId(userId);
         takeoutBasket.setSellerId(takeoutGoods.getSellerId());
 
@@ -131,34 +131,34 @@ public class TakeoutBasketServiceImpl extends ServiceImpl<TakeoutBasketMapper, T
     }
 
     @Override
-    public List<TakeoutBasketDto> list(Integer userId, Integer sellerId, Integer goodsStatus) {
-        List<TakeoutBasketDto> list = baseMapper.list(userId, sellerId, goodsStatus);
-        for (TakeoutBasketDto takeoutBasketDto : list) {
-            List<TakeoutGoodsSkuDto> skus = takeoutBasketDto.getGoods().getSkus();
+    public List<BasketDto> list(Integer userId, Integer sellerId, Integer goodsStatus) {
+        List<BasketDto> list = baseMapper.list(userId, sellerId, goodsStatus);
+        for (BasketDto basketDto : list) {
+            List<GoodsSkuDto> skus = basketDto.getGoods().getSkus();
             //如果商品存在sku 则对加购数据对sku进行校验
             if (!CollectionUtils.isEmpty(skus)){
-                String skuIdGroup = takeoutBasketDto.getSkuIdGroup();
+                String skuIdGroup = basketDto.getSkuIdGroup();
                 if (!StringUtils.isEmpty(skuIdGroup)){
                     try {
                         List<Integer> skuIdList = JSONArray.parseArray(skuIdGroup, Integer.class);
-                        List<List<TakeoutGoodsSku>> collect = skus.stream().map(TakeoutGoodsSkuDto::getChildren).collect(Collectors.toList());
+                        List<List<TakeoutGoodsSku>> collect = skus.stream().map(GoodsSkuDto::getChildren).collect(Collectors.toList());
                         List<TakeoutGoodsSku> temp = new ArrayList<>();
                         for (List<TakeoutGoodsSku> takeoutGoodsSkus : collect) {
                             temp.addAll(takeoutGoodsSkus);
                         }
                         List<Integer> collect1 = temp.stream().map(TakeoutGoodsSku::getId).collect(Collectors.toList());
-                        takeoutBasketDto.setSkuValid(collect1.containsAll(skuIdList));
+                        basketDto.setSkuValid(collect1.containsAll(skuIdList));
 
                         //sku有效的话计算sku价格
-                        if (takeoutBasketDto.getSkuValid()){
-                            TakeoutBasketGoodsItemVo goods = takeoutBasketDto.getGoods();
+                        if (basketDto.getSkuValid()){
+                            BasketGoodsItemVo goods = basketDto.getGoods();
                             double totalPrice = 0;
                             //找到价格不为0选中的sku
                             List<TakeoutGoodsSku> skuActiveList = goods.getSkus().stream().map(item -> item.getChildren().stream().filter(el -> skuIdList.contains(el.getId())).findFirst().get())
                                                                  .collect(Collectors.toList());
 
                             List<String> skuNameList = skuActiveList.stream().map(TakeoutGoodsSku::getName).collect(Collectors.toList());
-                            takeoutBasketDto.setSkuNameList(skuNameList);
+                            basketDto.setSkuNameList(skuNameList);
 
                             Optional<TakeoutGoodsSku> baseSku = skuActiveList.stream().filter(item -> item.getPrice() > 0 && item.getMode() == GoodsSkuMode.INDEPENDENT_PRICE.getMode()).findFirst();
                             if (baseSku.isPresent()){
@@ -173,15 +173,15 @@ public class TakeoutBasketServiceImpl extends ServiceImpl<TakeoutBasketMapper, T
                             goods.setPrice(totalPrice);
                         }
                     }catch (JSONException e){
-                        takeoutBasketDto.setSkuValid(false);
+                        basketDto.setSkuValid(false);
                         e.printStackTrace();
                     }
                 }else {
-                    takeoutBasketDto.setSkuValid(false);
+                    basketDto.setSkuValid(false);
                     //todo 加购数据异常
                 }
             }else {
-                takeoutBasketDto.setSkuValid(true);
+                basketDto.setSkuValid(true);
             }
         }
         return list;

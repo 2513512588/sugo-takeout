@@ -5,7 +5,7 @@ import com.sugo.takeout.bean.model.TakeoutAddress;
 
 
 /**
- * @Entity com.takeout.smartcity.entity.TakeoutAddress
+ * @Entity com.sugo.takeout.model.TakeoutAddress
  */
 public interface TakeoutAddressMapper extends BaseMapper<TakeoutAddress> {
 

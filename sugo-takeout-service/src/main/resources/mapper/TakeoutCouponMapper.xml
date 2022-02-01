@@ -28,7 +28,7 @@
         from takeout_coupon where seller_id = #{id} and now() between start_time and expiration_time and (quantity > 0 or quantity is null)
     </select>
 
-    <select id="findBySellerAndUser" resultType="com.sugo.takeout.bean.dto.TakeoutCouponDto">
+    <select id="findBySellerAndUser" resultType="com.sugo.takeout.bean.dto.CouponDto">
         select
         id, price, expiration_time, `condition`
         from takeout_coupon where seller_id = #{sellerId}

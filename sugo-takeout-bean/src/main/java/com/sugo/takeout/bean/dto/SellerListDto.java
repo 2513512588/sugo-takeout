@@ -16,7 +16,7 @@ import java.io.Serializable;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TakeoutSellerListDto implements Serializable {
+public class SellerListDto implements Serializable {
     /**
      * 主键id
      */
@@ -59,7 +59,7 @@ public class TakeoutSellerListDto implements Serializable {
     @ApiModelProperty("店铺公告")
     private String notice;
 
-    private TakeoutSellerAdditionalDto additionalData = new TakeoutSellerAdditionalDto();
+    private SellerAdditionalDto additionalData = new SellerAdditionalDto();
 
 
 }

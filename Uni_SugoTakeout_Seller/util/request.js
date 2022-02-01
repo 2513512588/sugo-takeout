@@ -1,5 +1,5 @@
 
-const baseURL = 'http://192.168.1.40:8081'
+const baseURL = 'http://192.168.240.131:8081'
 
 const baseRequest = ops =>{
 	uni.showLoading({

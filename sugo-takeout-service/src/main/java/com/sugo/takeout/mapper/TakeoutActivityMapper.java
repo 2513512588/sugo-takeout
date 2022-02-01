@@ -6,7 +6,7 @@ import com.sugo.takeout.bean.model.TakeoutActivity;
 import java.util.List;
 
 /**
- * @Entity com.takeout.smartcity.entity.TakeoutActivity
+ * @Entity com.sugo.takeout.model.TakeoutActivity
  */
 public interface TakeoutActivityMapper extends BaseMapper<TakeoutActivity> {
 

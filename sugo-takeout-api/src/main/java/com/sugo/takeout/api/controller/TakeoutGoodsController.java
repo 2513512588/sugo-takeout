@@ -3,8 +3,8 @@ package com.sugo.takeout.api.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.sugo.takeout.bean.dto.TakeoutGoodsListDto;
-import com.sugo.takeout.bean.event.TakeoutSellerEvent;
+import com.sugo.takeout.bean.dto.GoodsListDto;
+import com.sugo.takeout.bean.event.SellerEvent;
 import com.sugo.takeout.bean.model.TakeoutGoods;
 import com.sugo.takeout.bean.model.TakeoutGoodsCategory;
 import com.sugo.takeout.bean.model.TakeoutSeller;
@@ -59,20 +59,20 @@ public class TakeoutGoodsController {
                        @RequestSingleParam("city") String city,
                        @RequestSingleParam("type") Integer type){
 
-        IPage<TakeoutGoodsListDto> iPage = takeoutGoodsService.getListByCity(province, city, type, page);
-        List<TakeoutGoodsListDto> records = iPage.getRecords();
+        IPage<GoodsListDto> iPage = takeoutGoodsService.getListByCity(province, city, type, page);
+        List<GoodsListDto> records = iPage.getRecords();
         List<TakeoutSeller> sellerList = new ArrayList<>();
-        for (TakeoutGoodsListDto record : records) {
+        for (GoodsListDto record : records) {
             TakeoutSeller takeoutSeller = new TakeoutSeller();
             takeoutSeller.setLocation(record.getLocation());
             takeoutSeller.setId(record.getSellerId());
             sellerList.add(takeoutSeller);
         }
 
-        TakeoutSellerEvent takeoutSellerEvent = new TakeoutSellerEvent(sellerList, StringUtil.formatLatLngStr(myLocation));
-        applicationContext.publishEvent(takeoutSellerEvent);
-        for (TakeoutGoodsListDto takeoutGoodsDto : records) {
-            takeoutGoodsDto.setAdditionalData(takeoutSellerEvent.getAdditionalData().get(takeoutGoodsDto.getSellerId()));
+        SellerEvent sellerEvent = new SellerEvent(sellerList, StringUtil.formatLatLngStr(myLocation));
+        applicationContext.publishEvent(sellerEvent);
+        for (GoodsListDto takeoutGoodsDto : records) {
+            takeoutGoodsDto.setAdditionalData(sellerEvent.getAdditionalData().get(takeoutGoodsDto.getSellerId()));
         }
         iPage.setRecords(records);
         return Result.ok().pageList(iPage);

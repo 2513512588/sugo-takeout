@@ -15,7 +15,7 @@
     </resultMap>
 
 
-    <resultMap id="GroupSkuMap" type="com.sugo.takeout.bean.dto.TakeoutGoodsSkuDto" >
+    <resultMap id="GroupSkuMap" type="com.sugo.takeout.bean.dto.GoodsSkuDto" >
         <result property="type" column="type" jdbcType="VARCHAR"/>
         <collection property="children" javaType="java.util.List" ofType="com.sugo.takeout.bean.model.TakeoutGoodsSku" column="{goodsId=goods_id, type=type}"
                     select="findByType"/>

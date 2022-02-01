@@ -1,6 +1,6 @@
 package com.sugo.takeout.bean.dto;
 
-import com.sugo.takeout.bean.vo.TakeoutBasketGoodsItemVo;
+import com.sugo.takeout.bean.vo.BasketGoodsItemVo;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -11,7 +11,7 @@ import java.util.List;
  * @author hehaoyang
  */
 @Data
-public class TakeoutOrderDetailDto {
+public class OrderDetailDto {
 
     /**
      * 订单编号
@@ -21,7 +21,7 @@ public class TakeoutOrderDetailDto {
     /**
      * 订单项
      */
-    private List<TakeoutBasketGoodsItemVo> orderItemList;
+    private List<BasketGoodsItemVo> orderItemList;
 
     /**
      * 订单创建时间

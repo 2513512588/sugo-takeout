@@ -1,7 +1,8 @@
 package com.sugo.takeout.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.sugo.takeout.bean.dto.TakeoutSellerDetailDto;
+import com.sugo.takeout.bean.dto.SellerDataDto;
+import com.sugo.takeout.bean.dto.SellerDetailDto;
 import com.sugo.takeout.bean.model.TakeoutSeller;
 import com.sugo.takeout.common.enums.ResultCode;
 import com.sugo.takeout.common.exception.SugoException;
@@ -27,8 +28,8 @@ public class TakeoutSellerServiceImpl extends ServiceImpl<TakeoutSellerMapper, T
     private MapService mapService;
 
     @Override
-    public TakeoutSellerDetailDto getDetailById(Integer id) {
-        TakeoutSellerDetailDto detail = baseMapper.getDetailById(id);
+    public SellerDetailDto getDetailById(Integer id) {
+        SellerDetailDto detail = baseMapper.getDetailById(id);
         Integer avgMonthOrderNumBySeller = takeoutOrderService.getAvgMonthOrderNumBySeller(id);
         detail.setMonthOrderNum(avgMonthOrderNumBySeller);
         Double avgScoreBySeller = takeoutGoodsEvaluateService.getAvgScoreBySeller(id);
@@ -42,8 +43,8 @@ public class TakeoutSellerServiceImpl extends ServiceImpl<TakeoutSellerMapper, T
     }
 
     @Override
-    public TakeoutSellerDetailDto getDetailById(Integer id, String location) {
-        TakeoutSellerDetailDto detail = getDetailById(id);
+    public SellerDetailDto getDetailById(Integer id, String location) {
+        SellerDetailDto detail = getDetailById(id);
         if (!StringUtils.isEmpty(location)){
             String myLocation = StringUtil.formatLatLngStr(location);
             String sellerLocation = StringUtil.formatSellerLocation(detail.getLocation());
@@ -58,6 +59,11 @@ public class TakeoutSellerServiceImpl extends ServiceImpl<TakeoutSellerMapper, T
             throw new SugoException("请传入位置信息", ResultCode.VALIDATE_FAILED);
         }
         return detail;
+    }
+
+    @Override
+    public SellerDataDto getDataById(Integer sellerId) {
+        return baseMapper.getDataById(sellerId);
     }
 }
 

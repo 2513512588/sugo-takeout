@@ -8,7 +8,7 @@ import java.io.Serializable;
  * 卖家 商品 附加信息
  */
 @Data
-public class TakeoutSellerAdditionalDto implements Serializable {
+public class SellerAdditionalDto implements Serializable {
 
     /**
      * 卖家距离你的距离

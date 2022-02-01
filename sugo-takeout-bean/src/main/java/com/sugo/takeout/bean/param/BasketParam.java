@@ -16,7 +16,7 @@ import java.io.Serializable;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class TakeoutBasketParam implements Serializable {
+public class BasketParam implements Serializable {
 
     /**
      * 商品id

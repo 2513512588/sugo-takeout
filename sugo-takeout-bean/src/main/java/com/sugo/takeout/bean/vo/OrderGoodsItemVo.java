@@ -3,7 +3,7 @@ package com.sugo.takeout.bean.vo;
 import lombok.Data;
 
 @Data
-public class TakeoutOrderGoodsItemVo {
+public class OrderGoodsItemVo {
 
     /**
      * 商品图片

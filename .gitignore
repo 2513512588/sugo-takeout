@@ -4,6 +4,10 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+### hbuilder ###
+!**/unpackage/
+!**/.hbuilderx/
+
 ### STS ###
 .apt_generated
 .classpath

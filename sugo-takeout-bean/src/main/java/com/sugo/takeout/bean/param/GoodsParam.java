@@ -10,7 +10,7 @@ import java.math.BigDecimal;
  * @TableName takeout_goods
  */
 @Data
-public class TakeoutGoodsParam implements Serializable {
+public class GoodsParam implements Serializable {
 
     /**
      * 商品名称

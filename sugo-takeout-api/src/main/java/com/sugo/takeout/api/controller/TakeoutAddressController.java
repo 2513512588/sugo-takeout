@@ -3,7 +3,7 @@ package com.sugo.takeout.api.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.sugo.takeout.bean.model.TakeoutAddress;
 import com.sugo.takeout.bean.model.TakeoutSeller;
-import com.sugo.takeout.bean.param.TakeoutAddressParam;
+import com.sugo.takeout.bean.param.AddressParam;
 import com.sugo.takeout.common.enums.ResultCode;
 import com.sugo.takeout.common.util.Result;
 import com.sugo.takeout.common.util.StringUtil;
@@ -88,8 +88,8 @@ public class TakeoutAddressController {
     @ApiOperation("添加收货地址")
     @PostMapping("/add")
     public Result add(@ParseUser Integer userId,
-                      @RequestBody @Validated(Groups.Add.class) TakeoutAddressParam takeoutAddressParam){
-        TakeoutAddress takeoutAddress = mapperFacade.map(takeoutAddressParam, TakeoutAddress.class);
+                      @RequestBody @Validated(Groups.Add.class) AddressParam addressParam){
+        TakeoutAddress takeoutAddress = mapperFacade.map(addressParam, TakeoutAddress.class);
         takeoutAddress.setUserId(userId);
         return Result.auto(takeoutAddressService.save(takeoutAddress));
     }
@@ -99,8 +99,8 @@ public class TakeoutAddressController {
     @ApiOperation("修改收货地址")
     @PutMapping("/update")
     public Result update(@ParseUser Integer userId,
-                         @RequestBody @Validated(Groups.Update.class) TakeoutAddressParam takeoutAddressParam){
-        TakeoutAddress takeoutAddress = mapperFacade.map(takeoutAddressParam, TakeoutAddress.class);
+                         @RequestBody @Validated(Groups.Update.class) AddressParam addressParam){
+        TakeoutAddress takeoutAddress = mapperFacade.map(addressParam, TakeoutAddress.class);
         takeoutAddress.setUserId(userId);
         return Result.auto(takeoutAddressService.updateById(takeoutAddress));
     }

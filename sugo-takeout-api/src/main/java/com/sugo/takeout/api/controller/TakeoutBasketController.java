@@ -2,10 +2,10 @@ package com.sugo.takeout.api.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.sugo.takeout.bean.dto.TakeoutBasketDto;
+import com.sugo.takeout.bean.dto.BasketDto;
 import com.sugo.takeout.bean.enums.GoodsStatus;
 import com.sugo.takeout.bean.model.TakeoutBasket;
-import com.sugo.takeout.bean.param.TakeoutBasketParam;
+import com.sugo.takeout.bean.param.BasketParam;
 import com.sugo.takeout.common.aspect.annotation.ParsePage;
 import com.sugo.takeout.common.aspect.annotation.RequestBody;
 import com.sugo.takeout.common.aspect.annotation.RequestSingleParam;
@@ -42,7 +42,7 @@ public class TakeoutBasketController {
     @ApiOperation("根据用户查询购物车")
     @GetMapping("/list")
     public Result list(@ParseUser Integer userId,
-                       @ParsePage Page<TakeoutBasketDto> basketPage){
+                       @ParsePage Page<BasketDto> basketPage){
        return Result.ok().pageList(takeoutBasketService.selectPage(basketPage, userId));
     }
 
@@ -72,8 +72,8 @@ public class TakeoutBasketController {
     @ApiOperation("修改购物车商品数量")
     @PostMapping("/update")
     public Result update(@ParseUser Integer userId,
-                         @org.springframework.web.bind.annotation.RequestBody @Validated(Groups.Add.class) TakeoutBasketParam takeoutBasketParam)  {
-        return Result.auto(takeoutBasketService.updateQuantity(userId, takeoutBasketParam));
+                         @org.springframework.web.bind.annotation.RequestBody @Validated(Groups.Add.class) BasketParam basketParam)  {
+        return Result.auto(takeoutBasketService.updateQuantity(userId, basketParam));
     }
 
 
@@ -84,9 +84,9 @@ public class TakeoutBasketController {
     @ApiOperation("查询当前用户某个商品的加购详情")
     @PostMapping("/detail")
     public Result detail(@ParseUser(required = false) Integer userId,
-                         @org.springframework.web.bind.annotation.RequestBody @Validated(Groups.Query.class) TakeoutBasketParam takeoutBasketParam){
+                         @org.springframework.web.bind.annotation.RequestBody @Validated(Groups.Query.class) BasketParam basketParam){
         if (userId != null){
-            TakeoutBasket takeoutBasket = mapperFacade.map(takeoutBasketParam, TakeoutBasket.class);
+            TakeoutBasket takeoutBasket = mapperFacade.map(basketParam, TakeoutBasket.class);
             takeoutBasket.setUserId(userId);
             return Result.ok().data(takeoutBasketService.getOne(new QueryWrapper<>(takeoutBasket)));
         }else {

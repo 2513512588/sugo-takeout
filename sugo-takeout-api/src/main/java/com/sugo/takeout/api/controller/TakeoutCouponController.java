@@ -1,7 +1,7 @@
 package com.sugo.takeout.api.controller;
 
 
-import com.sugo.takeout.bean.dto.TakeoutCouponDto;
+import com.sugo.takeout.bean.dto.CouponDto;
 import com.sugo.takeout.bean.model.TakeoutCoupon;
 import com.sugo.takeout.common.util.Result;
 import com.sugo.takeout.security.annotation.ParseUser;
@@ -49,7 +49,7 @@ public class TakeoutCouponController {
     @GetMapping("/list")
     public Result list(@ParseUser Integer userId,
                        @RequestParam Integer sellerId){
-        List<TakeoutCouponDto> list = takeoutCouponService.list(sellerId, userId);
+        List<CouponDto> list = takeoutCouponService.list(sellerId, userId);
         return Result.ok().list(list);
     }
 

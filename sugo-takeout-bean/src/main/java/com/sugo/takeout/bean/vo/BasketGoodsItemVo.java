@@ -2,7 +2,7 @@ package com.sugo.takeout.bean.vo;
 
 
 
-import com.sugo.takeout.bean.dto.TakeoutGoodsSkuDto;
+import com.sugo.takeout.bean.dto.GoodsSkuDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,7 +19,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TakeoutBasketGoodsItemVo implements Serializable {
+public class BasketGoodsItemVo implements Serializable {
     /**
      * 主键id
      */
@@ -88,6 +88,6 @@ public class TakeoutBasketGoodsItemVo implements Serializable {
     /**
      * 商品sku
      */
-    private List<TakeoutGoodsSkuDto> skus;
+    private List<GoodsSkuDto> skus;
 
 }

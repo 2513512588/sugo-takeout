@@ -23,12 +23,12 @@
             <result property="maxPurchaseNum" column="max_purchase_num" jdbcType="INTEGER"/>
     </resultMap>
 
-    <resultMap id="UnionSkuMap" type="com.sugo.takeout.bean.dto.TakeoutGoodsDetailDto" extends="BaseResultMap">
+    <resultMap id="UnionSkuMap" type="com.sugo.takeout.bean.dto.GoodsDetailDto" extends="BaseResultMap">
         <collection property="skus" ofType="com.sugo.takeout.bean.model.TakeoutGoodsSku" javaType="java.util.ArrayList" column="id" jdbcType="INTEGER"
                     select="com.sugo.takeout.mapper.TakeoutGoodsSkuMapper.findByGoodsId" />
     </resultMap>
 
-    <resultMap id="UnionBasketSkuMap" type="com.sugo.takeout.bean.vo.TakeoutBasketGoodsItemVo" extends="BaseResultMap">
+    <resultMap id="UnionBasketSkuMap" type="com.sugo.takeout.bean.vo.BasketGoodsItemVo" extends="BaseResultMap">
         <collection property="skus" ofType="com.sugo.takeout.bean.model.TakeoutGoodsSku" javaType="java.util.ArrayList" column="id" jdbcType="INTEGER"
                     select="com.sugo.takeout.mapper.TakeoutGoodsSkuMapper.findByGoodsId" />
     </resultMap>
@@ -38,7 +38,7 @@
         cover,sales_volume, status,min_purchase_num,max_purchase_num,
         price, origin_price,is_deleted,is_mandatory,packing_fee,stock
     </sql>
-    <select id="getListByCity" resultType="com.sugo.takeout.bean.dto.TakeoutGoodsListDto">
+    <select id="getListByCity" resultType="com.sugo.takeout.bean.dto.GoodsListDto">
         select
         tg.id,
         tg.name, tg.description, category_id, seller_id,

@@ -27,7 +27,7 @@
             <result property="location" column="location" jdbcType="VARCHAR"/>
     </resultMap>
 
-    <resultMap id="UnionCouponMap" type="com.sugo.takeout.bean.dto.TakeoutSellerDetailDto" extends="BaseResultMap" >
+    <resultMap id="UnionCouponMap" type="com.sugo.takeout.bean.dto.SellerDetailDto" extends="BaseResultMap" >
         <collection property="activities" ofType="com.sugo.takeout.bean.model.TakeoutActivity" javaType="java.util.ArrayList" column="id" jdbcType="INTEGER"
                     select="com.sugo.takeout.mapper.TakeoutActivityMapper.findBySellerId" />
         <collection property="coupons" ofType="com.sugo.takeout.bean.model.TakeoutCoupon" javaType="java.util.ArrayList" column="id" jdbcType="INTEGER"
@@ -49,6 +49,25 @@
                location,
                (select count(*) from takeout_goods_evaluate where seller_id = id) as commentNum
        from takeout_seller where id = #{id}
+    </select>
+
+    <select id="getDataById" resultType="com.sugo.takeout.bean.dto.SellerDataDto">
+        select *, (amount / numberOfPayers) as customerUnitPrice,
+               (numberOfPaymentOrders - refundQuantity) effectiveOrderQuantity,
+               (amount - (select ifnull(sum(total), 0) from takeout_order where takeout_order.status in (4 , 5) and seller_id = #{sellerId})) estimatedIncome
+               from (
+                  select id sellerId, avatar logo,
+                         name sellerName,
+                         (select count(*) from takeout_order where takeout_seller.status = 1 and seller_id = takeout_seller.id) quantityToBePaid,
+                         (select count(*) from takeout_delivery where takeout_delivery.status = 1 and seller_id = takeout_seller.id) numberOfMealsToBeServed,
+                         (select count(*) from takeout_order where takeout_order.status = 5 and seller_id = takeout_seller.id) refundQuantity,
+                         (select ifnull(avg(score), 0) from takeout_goods_evaluate where seller_id = takeout_seller.id) score,
+                         (select ifnull(sum(total), 0) from takeout_order where takeout_order.status in (2, 3, 5, 6) and seller_id = takeout_seller.id) amount,
+                         (select count(distinct takeout_order.user_id) from takeout_order where takeout_order.status in (2, 3, 5, 6) and seller_id = takeout_seller.id) numberOfPayers,
+                         (select count(*) from takeout_order where takeout_order.status in (2, 3, 5, 6) and seller_id = takeout_seller.id) numberOfPaymentOrders,
+                         (select count(*) from takeout_footprint where seller_id = takeout_seller.id) numberOfVisitors
+                  from takeout_seller where id = #{sellerId}
+                 ) as temp
     </select>
 
 </mapper>

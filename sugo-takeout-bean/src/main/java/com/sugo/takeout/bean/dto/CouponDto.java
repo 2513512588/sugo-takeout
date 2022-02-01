@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class TakeoutCouponDto implements Serializable {
+public class CouponDto implements Serializable {
     /**
      * 主键id
      */

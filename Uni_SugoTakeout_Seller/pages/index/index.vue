@@ -4,8 +4,8 @@
 			<u-text slot="center" text="店铺运营中心" bold size="17"></u-text>
 		</u-navbar>
 		<view class="u-flex u-flex-row-start">
-			<u-avatar src="https://cdn.uviewui.com/uview/album/3.jpg" shape="square" ></u-avatar>
-			<u-text text="团好货饮料专营店" bold margin="0 5px"></u-text>
+			<u-avatar :src="seller.logo" shape="square" ></u-avatar>
+			<u-text :text="seller.sellerName" bold margin="0 5px"></u-text>
 		</view>
 		<u-gap height="15px"></u-gap>
 		<view class="card">
@@ -26,7 +26,7 @@
 			</view>
 			<u-gap height="8px"></u-gap>
 			<u-grid :border="false" :col="4">
-				<u-grid-item v-for="(item, index) in menuList" :key="index">
+				<u-grid-item v-for="(item, index) in menuList" :key="index" @click="clickMenuItem(item)">
 					<u-icon :name="item.icon" size="36px" :color="item.color"></u-icon>
 					<u-text :text="item.name" color="#333" size="13px"></u-text>
 				</u-grid-item>
@@ -56,7 +56,7 @@
 	export default {
 		data() {
 			return {
-				user: {},
+				seller: {},
 				storeData: [
 					{
 						name: '待支付',
@@ -83,7 +83,7 @@
 						value: 320
 					},
 					{
-						name: '支付人订单数',
+						name: '支付订单数',
 						value: 325
 					},
 					{
@@ -114,7 +114,8 @@
 					{
 						name: '订单管理',
 						icon: 'file-text-fill',
-						color: '#f7ba2e'
+						color: '#f7ba2e',
+						url: '/pages/order/order'
 					},
 					{
 						name: '数据中心',
@@ -130,7 +131,13 @@
 			}
 		},
 		methods: {
-			
+			clickMenuItem(item){
+				if(item.url){
+					uni.navigateTo({
+						url: item.url
+					})
+				}
+			}
 		},
 		onLoad() {
 			// uni.removeStorageSync('token')
@@ -139,9 +146,30 @@
 					url: '/pages/login/login'
 				})
 			}
+			this.$q({
+				url: '/seller/takeout/total-data',
+				needToken: true
+			}).then(res =>{
+				this.seller = res.data
+				this.storeData[0].value = this.seller.quantityToBePaid
+				this.storeData[1].value = this.seller.numberOfMealsToBeServed
+				this.storeData[2].value = this.seller.refundQuantity
+				this.storeData[3].value = this.seller.score
+				this.storeData[4].value = this.seller.amount
+				this.storeData[5].value = this.seller.numberOfPayers
+				this.storeData[6].value = this.seller.numberOfPaymentOrders
+				this.storeData[7].value = this.seller.customerUnitPrice
+				
+				this.yesterdayStoreData[0].value = this.seller.estimatedIncome
+				this.yesterdayStoreData[1].value = this.seller.effectiveOrderQuantity
+				this.yesterdayStoreData[2].value = this.seller.numberOfVisitors
+			})
 		},
 		onShow() {
 			
+		},
+		onPullDownRefresh() {
+			uni.stopPullDownRefresh()
 		}
 	}
 </script>

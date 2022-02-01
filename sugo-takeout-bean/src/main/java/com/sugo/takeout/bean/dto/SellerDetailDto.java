@@ -14,7 +14,7 @@ import java.util.List;
  * @author hehaoyang
  */
 @Data
-public class TakeoutSellerDetailDto {
+public class SellerDetailDto {
 
     /**
      * 主键id

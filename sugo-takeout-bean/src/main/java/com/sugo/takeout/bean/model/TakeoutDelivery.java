@@ -37,7 +37,6 @@ public class TakeoutDelivery implements Serializable {
      * 骑手id
      */
     private Integer riderId;
-
     /**
      * 商家id
      */
@@ -47,11 +46,6 @@ public class TakeoutDelivery implements Serializable {
      * 订单状态 1 骑手已接单 2 商家已出餐 3骑手已取餐 4 已送达
      */
     private Integer status;
-
-    /**
-     * 更新时间
-     */
-    private LocalDateTime gmtUpdate;
 
     /**
      * 创建时间

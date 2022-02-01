@@ -1,6 +1,6 @@
 package com.sugo.takeout.bean.event;
 
-import com.sugo.takeout.bean.dto.TakeoutSellerAdditionalDto;
+import com.sugo.takeout.bean.dto.SellerAdditionalDto;
 import com.sugo.takeout.bean.model.TakeoutSeller;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,16 +17,16 @@ import java.util.Map;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TakeoutSellerEvent {
+public class SellerEvent {
 
     private List<TakeoutSeller> takeoutSeller;
     /**
      * <SellerId, AdditionDto>
      */
-    private Map<Integer, TakeoutSellerAdditionalDto> additionalData;
+    private Map<Integer, SellerAdditionalDto> additionalData;
     private String currentLocation;
 
-    public TakeoutSellerEvent(List<TakeoutSeller> takeoutSeller, String currentLocation) {
+    public SellerEvent(List<TakeoutSeller> takeoutSeller, String currentLocation) {
         this.takeoutSeller = takeoutSeller;
         this.currentLocation = currentLocation;
         additionalData = new HashMap<>(takeoutSeller.size());

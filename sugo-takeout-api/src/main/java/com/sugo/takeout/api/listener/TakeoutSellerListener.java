@@ -1,8 +1,8 @@
 package com.sugo.takeout.api.listener;
 
 
-import com.sugo.takeout.bean.dto.TakeoutSellerAdditionalDto;
-import com.sugo.takeout.bean.event.TakeoutSellerEvent;
+import com.sugo.takeout.bean.dto.SellerAdditionalDto;
+import com.sugo.takeout.bean.event.SellerEvent;
 import com.sugo.takeout.bean.model.TakeoutSeller;
 import com.sugo.takeout.common.util.StringUtil;
 import com.sugo.takeout.service.MapService;
@@ -29,9 +29,9 @@ public class TakeoutSellerListener {
     private TakeoutDeliveryService takeoutDeliveryService;
 
 
-    @EventListener(TakeoutSellerEvent.class)
-    public void takeoutSellerEvent(TakeoutSellerEvent takeoutSellerEvent){
-        List<TakeoutSeller> takeoutSellerList = takeoutSellerEvent.getTakeoutSeller();
+    @EventListener(SellerEvent.class)
+    public void takeoutSellerEvent(SellerEvent sellerEvent){
+        List<TakeoutSeller> takeoutSellerList = sellerEvent.getTakeoutSeller();
 
         for (TakeoutSeller item : takeoutSellerList) {
             String s = StringUtil.formatSellerLocation(item.getLocation());
@@ -56,10 +56,10 @@ public class TakeoutSellerListener {
             List<Long> avgDeliveryTimeBySellerList = takeoutDeliveryService.getAvgDeliveryTimeBySellerList(collect);
             log.debug("avgDeliveryTimeBySellerList => {}", avgDeliveryTimeBySellerList);
             //计算距离
-            Map<Integer, TakeoutSellerAdditionalDto> additionalData = takeoutSellerEvent.getAdditionalData();
-            List<Long> longs = mapService.routematrixList(takeoutSellerEvent.getCurrentLocation(), join);
+            Map<Integer, SellerAdditionalDto> additionalData = sellerEvent.getAdditionalData();
+            List<Long> longs = mapService.routematrixList(sellerEvent.getCurrentLocation(), join);
             for (int i = 0; i < longs.size(); i++) {
-                TakeoutSellerAdditionalDto additionalDto = new TakeoutSellerAdditionalDto();
+                SellerAdditionalDto additionalDto = new SellerAdditionalDto();
                 additionalDto.setDistance(longs.get(i));
                 additionalDto.setAvgCost(avgCostList.get(i));
                 additionalDto.setAvgScore(avgScoreList.get(i));

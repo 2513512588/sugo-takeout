@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 /**
- * @Entity com.takeout.smartcity.entity.TakeoutGoodsEvaluate
+ * @Entity com.sugo.takeout.model.TakeoutGoodsEvaluate
  */
 public interface TakeoutGoodsEvaluateMapper extends BaseMapper<TakeoutGoodsEvaluate> {
 

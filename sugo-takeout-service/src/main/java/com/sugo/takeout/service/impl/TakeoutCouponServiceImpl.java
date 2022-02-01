@@ -1,7 +1,7 @@
 package com.sugo.takeout.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.sugo.takeout.bean.dto.TakeoutCouponDto;
+import com.sugo.takeout.bean.dto.CouponDto;
 import com.sugo.takeout.bean.model.TakeoutCollection;
 import com.sugo.takeout.bean.model.TakeoutCoupon;
 import com.sugo.takeout.bean.model.TakeoutCouponReceive;
@@ -81,7 +81,7 @@ public class TakeoutCouponServiceImpl extends ServiceImpl<TakeoutCouponMapper, T
     }
 
     @Override
-    public List<TakeoutCouponDto> list(Integer sellerId, Integer userId) {
+    public List<CouponDto> list(Integer sellerId, Integer userId) {
         return baseMapper.findBySellerAndUser(sellerId, userId);
     }
 

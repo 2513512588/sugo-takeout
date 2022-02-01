@@ -12,7 +12,7 @@ import java.util.List;
  * 商品Sku数据模型
  */
 @Data
-public class TakeoutGoodsSkuDto implements Serializable{
+public class GoodsSkuDto implements Serializable{
 
     /**
      * 库存类型

@@ -3,14 +3,14 @@ package com.sugo.takeout.api.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.sugo.takeout.bean.dto.TakeoutSellerBaseInfoDto;
-import com.sugo.takeout.bean.dto.TakeoutSellerListDto;
+import com.sugo.takeout.bean.dto.SellerBaseInfoDto;
+import com.sugo.takeout.bean.dto.SellerListDto;
 import com.sugo.takeout.bean.enums.SellerStatus;
-import com.sugo.takeout.bean.event.TakeoutSellerEvent;
+import com.sugo.takeout.bean.event.SellerEvent;
 import com.sugo.takeout.bean.model.TakeoutGoodsCategory;
 import com.sugo.takeout.bean.model.TakeoutSeller;
 import com.sugo.takeout.bean.model.User;
-import com.sugo.takeout.bean.param.TakeoutSellerAddParam;
+import com.sugo.takeout.bean.param.SellerAddParam;
 import com.sugo.takeout.common.aspect.annotation.ParsePage;
 import com.sugo.takeout.common.aspect.annotation.RequestBody;
 import com.sugo.takeout.common.aspect.annotation.RequestSingleParam;
@@ -59,7 +59,7 @@ public class TakeoutSellerController {
 
     @ApiOperation("申请注册商家")
     @PostMapping("/settled/apply")
-    public Result settledApply(@ParseUser User user, @org.springframework.web.bind.annotation.RequestBody @Validated(Groups.Add.class) TakeoutSellerAddParam takeoutSellerAddVo){
+    public Result settledApply(@ParseUser User user, @org.springframework.web.bind.annotation.RequestBody @Validated(Groups.Add.class) SellerAddParam takeoutSellerAddVo){
         TakeoutSeller isExists = takeoutSellerService.getOne(new QueryWrapper<>(TakeoutSeller.builder().userId(user.getId()).build()));
         //判断是否提交过申请
         if (isExists != null){
@@ -108,17 +108,17 @@ public class TakeoutSellerController {
         IPage<TakeoutSeller> iPage = takeoutSellerService.getBaseMapper().selectPage(page,
                 new QueryWrapper<>(TakeoutSeller.builder().province(province).city(city).status(SellerStatus.NORMAL.getStatus()).build()));
         List<TakeoutSeller> records = iPage.getRecords();
-        List<TakeoutSellerListDto> takeoutSellerListDtos = new ArrayList<>();
+        List<SellerListDto> sellerListDtos = new ArrayList<>();
         String location = StringUtil.formatLatLngStr(myLocation);
-        TakeoutSellerEvent takeoutSellerEvent = new TakeoutSellerEvent(records, location);
-        applicationContext.publishEvent(takeoutSellerEvent);
+        SellerEvent sellerEvent = new SellerEvent(records, location);
+        applicationContext.publishEvent(sellerEvent);
         for (TakeoutSeller record : records) {
-            TakeoutSellerListDto takeoutSellerListDto = new TakeoutSellerListDto();
-            BeanUtils.copyProperties(record, takeoutSellerListDto);
-            takeoutSellerListDto.setAdditionalData(takeoutSellerEvent.getAdditionalData().get(record.getId()));
-            takeoutSellerListDtos.add(takeoutSellerListDto);
+            SellerListDto sellerListDto = new SellerListDto();
+            BeanUtils.copyProperties(record, sellerListDto);
+            sellerListDto.setAdditionalData(sellerEvent.getAdditionalData().get(record.getId()));
+            sellerListDtos.add(sellerListDto);
         }
-        return Result.ok().pageList(iPage, takeoutSellerListDtos);
+        return Result.ok().pageList(iPage, sellerListDtos);
     }
 
     /**
@@ -138,7 +138,7 @@ public class TakeoutSellerController {
     @GetMapping("/baseInfo/{sellerId}")
     public Result baseInfo(@PathVariable Integer sellerId){
         TakeoutSeller takeoutSeller = takeoutSellerService.getById(sellerId);
-        TakeoutSellerBaseInfoDto baseInfoDto = mapperFacade.map(takeoutSeller, TakeoutSellerBaseInfoDto.class);
+        SellerBaseInfoDto baseInfoDto = mapperFacade.map(takeoutSeller, SellerBaseInfoDto.class);
         return Result.ok().data(baseInfoDto);
     }
 

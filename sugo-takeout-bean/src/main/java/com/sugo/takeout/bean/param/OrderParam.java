@@ -6,7 +6,7 @@ import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.NotNull;
 
 @Data
-public class TakeoutOrderParam {
+public class OrderParam {
 
     /**
      * 收货地址id

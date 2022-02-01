@@ -11,7 +11,7 @@ import java.io.Serializable;
 
 
 @Data
-public class TakeoutAddressParam implements Serializable {
+public class AddressParam implements Serializable {
 
     /**
      * 地址id

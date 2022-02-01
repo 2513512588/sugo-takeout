@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Data
-public class TakeoutSellerAddParam implements Serializable {
+public class SellerAddParam implements Serializable {
 
     /**
      * 店铺类型id

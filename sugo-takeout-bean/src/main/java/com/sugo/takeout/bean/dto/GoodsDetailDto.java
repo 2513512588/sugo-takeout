@@ -17,7 +17,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TakeoutGoodsDetailDto implements Serializable {
+public class GoodsDetailDto implements Serializable {
     /**
      * 主键id
      */
@@ -92,6 +92,6 @@ public class TakeoutGoodsDetailDto implements Serializable {
     /**
      * 商品sku
      */
-    private List<TakeoutGoodsSkuDto> skus;
+    private List<GoodsSkuDto> skus;
 
 }

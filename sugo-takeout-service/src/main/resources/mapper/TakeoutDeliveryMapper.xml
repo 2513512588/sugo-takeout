@@ -10,14 +10,14 @@
             <result property="riderId" column="rider_id" jdbcType="INTEGER"/>
             <result property="sellerId" column="seller_id" jdbcType="INTEGER"/>
             <result property="status" column="status" jdbcType="TINYINT"/>
-            <result property="gmtUpdate" column="gmt_update" jdbcType="TIMESTAMP"/>
             <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         id,order_code,rider_id,
-        seller_id,status,gmt_update,gmt_create
+        seller_id,status,gmt_create
     </sql>
+
     <select id="getAvgDeliveryTimeBySellerList" resultType="java.lang.Long">
         select ifnull(
             (select TIMESTAMPDIFF(minute, gmt_create, gmt_update) from takeout_delivery where status = 4 and seller_id =
@@ -31,11 +31,16 @@
             0
         )
     </select>
+
+
     <select id="getAvgDeliveryTimeBySeller" resultType="java.lang.Long">
-        select ifnull(TIMESTAMPDIFF(minute, gmt_create, gmt_update), 0) from takeout_delivery where status = 4 and seller_id = #{sellerId}
+        select TIMESTAMPDIFF(minute,
+            (select gmt_create from takeout_delivery where status = 1 and seller_id = #{sellerId}),
+            (select gmt_create from takeout_delivery where status = 4 and seller_id = #{sellerId})
+        )
     </select>
 
     <select id="getAcceptOrderTime" resultType="java.time.LocalDateTime">
-        select gmt_create from takeout_delivery where order_code = #{orderCode}
+        select gmt_create from takeout_delivery where order_code = #{orderCode} and status = 1
     </select>
 </mapper>

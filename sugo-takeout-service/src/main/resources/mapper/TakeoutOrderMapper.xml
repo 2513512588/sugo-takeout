@@ -75,16 +75,16 @@
     </select>
 
 
-    <resultMap id="UnionSellerAndOrderItem" type="com.sugo.takeout.bean.dto.TakeoutOrderListDto" >
+    <resultMap id="UnionSellerAndOrderItem" type="com.sugo.takeout.bean.dto.OrderListDto" >
         <result property="code" column="code" />
         <collection property="orderItemList" column="code" javaType="java.util.List"
-                    ofType="com.sugo.takeout.bean.vo.TakeoutOrderGoodsItemVo" select="com.sugo.takeout.mapper.TakeoutOrderItemMapper.findByCode" />
+                    ofType="com.sugo.takeout.bean.vo.OrderGoodsItemVo" select="com.sugo.takeout.mapper.TakeoutOrderItemMapper.findByCode" />
     </resultMap>
 
-    <resultMap id="UnionSellerAndOrderItemAndRider" type="com.sugo.takeout.bean.dto.TakeoutOrderDetailDto" >
+    <resultMap id="UnionSellerAndOrderItemAndRider" type="com.sugo.takeout.bean.dto.OrderDetailDto" >
         <result property="code" column="code" />
         <collection property="orderItemList" column="code" javaType="java.util.List"
-                    ofType="com.sugo.takeout.bean.vo.TakeoutOrderGoodsItemVo" select="com.sugo.takeout.mapper.TakeoutOrderItemMapper.findByCode" />
+                    ofType="com.sugo.takeout.bean.vo.OrderGoodsItemVo" select="com.sugo.takeout.mapper.TakeoutOrderItemMapper.findByCode" />
     </resultMap>
 
     <select id="list" resultMap="UnionSellerAndOrderItem">
@@ -139,6 +139,37 @@
                     </when>
                 </choose>
         )
+    </select>
+
+
+    <resultMap id="UniGoodsAndRiderMap" type="com.sugo.takeout.bean.dto.SellerOrderDto" >
+        <result property="code" column="code" />
+        <collection property="deliveryInfoList" column="code" javaType="java.util.List" ofType="com.sugo.takeout.bean.vo.SellerOrderDeliveryVo"
+                     select="com.sugo.takeout.mapper.TakeoutRiderMapper.findByOrderCode"
+        />
+        <collection property="goodsItemList" column="code" javaType="java.util.List" ofType="com.sugo.takeout.bean.vo.OrderGoodsItemVo"
+                    select="com.sugo.takeout.mapper.TakeoutOrderItemMapper.findByCode" />
+    </resultMap>
+
+    <select id="getSellerOrderList" resultMap="UniGoodsAndRiderMap">
+        select code, arrive_time, consignee, phone consigneePhone, concat(addr_name, '-', addr_detail, '(', addr_house_number, ')') consigneeAddr
+        from takeout_order where seller_id = #{sellerId}
+        <if test="status != null" >
+            <choose>
+                <when test="status == 1">
+                    and exists( select id from takeout_delivery where status &lt; 4 and order_code = code)
+                </when>
+                <when test="status == 2">
+                    and status = 1
+                </when>
+                <when test="status == 3">
+                    and status = 5
+                </when>
+                <when test="status == 4">
+                    and exists( select id from takeout_delivery where status = 1 and order_code = code)
+                </when>
+            </choose>
+        </if>
     </select>
 
 

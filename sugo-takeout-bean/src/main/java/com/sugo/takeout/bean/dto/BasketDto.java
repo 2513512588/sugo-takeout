@@ -1,7 +1,7 @@
 package com.sugo.takeout.bean.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.sugo.takeout.bean.vo.TakeoutBasketGoodsItemVo;
+import com.sugo.takeout.bean.vo.BasketGoodsItemVo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,7 +19,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class TakeoutBasketDto implements Serializable {
+public class BasketDto implements Serializable {
     /**
      * 主键id
      */
@@ -28,7 +28,7 @@ public class TakeoutBasketDto implements Serializable {
     /**
      * 商品信息
      */
-    private TakeoutBasketGoodsItemVo goods;
+    private BasketGoodsItemVo goods;
 
     /**
      * 商品id

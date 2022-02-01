@@ -5,7 +5,7 @@ import com.sugo.takeout.bean.model.Wallet;
 
 
 /**
- * @Entity com.takeout.smartcity.entity.Wallet
+ * @Entity com.sugo.takeout.model.Wallet
  */
 public interface WalletMapper extends BaseMapper<Wallet> {
 
