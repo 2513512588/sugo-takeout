@@ -122,7 +122,7 @@ public class SellerDetailDto {
     /**
      * 配送时间
      */
-    private Long avgDeliveryTime;
+    private Double avgDeliveryTime;
 
     /**
      * 商家位置

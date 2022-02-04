@@ -34,5 +34,5 @@ public class SellerAdditionalDto implements Serializable {
     /**
      * 配送时间
      */
-    private Long avgDeliveryTime;
+    private Double avgDeliveryTime;
 }

@@ -34,7 +34,7 @@ public class TakeoutSellerServiceImpl extends ServiceImpl<TakeoutSellerMapper, T
         detail.setMonthOrderNum(avgMonthOrderNumBySeller);
         Double avgScoreBySeller = takeoutGoodsEvaluateService.getAvgScoreBySeller(id);
         detail.setScore(avgScoreBySeller);
-        Long avgDeliveryTimeBySeller = takeoutDeliveryService.getAvgDeliveryTimeBySeller(id);
+        double avgDeliveryTimeBySeller = takeoutDeliveryService.getAvgDeliveryTimeBySeller(id);
         if (StringUtils.isEmpty(avgDeliveryTimeBySeller)){
             avgDeliveryTimeBySeller = 0L;
         }

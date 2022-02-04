@@ -2,11 +2,12 @@ package com.sugo.takeout.service.impl;
 
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sugo.takeout.bean.dto.*;
+import com.sugo.takeout.bean.enums.DeliveryStatus;
+import com.sugo.takeout.bean.enums.OrderStatus;
 import com.sugo.takeout.bean.model.*;
 import com.sugo.takeout.bean.vo.BasketGoodsItemVo;
 import com.sugo.takeout.bean.enums.GoodsStatus;
@@ -15,7 +16,6 @@ import com.sugo.takeout.common.exception.SugoException;
 import com.sugo.takeout.common.util.RedisUtil;
 import com.sugo.takeout.common.util.StringUtil;
 import com.sugo.takeout.mapper.TakeoutCouponMapper;
-import com.sugo.takeout.mapper.TakeoutDeliveryMapper;
 import com.sugo.takeout.mapper.TakeoutOrderMapper;
 import com.sugo.takeout.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,16 +43,17 @@ public class TakeoutOrderServiceImpl extends ServiceImpl<TakeoutOrderMapper, Tak
     private final TakeoutOrderItemService takeoutOrderItemService;
     private final TakeoutActivityService takeoutActivityService;
     private final TakeoutCouponMapper takeoutCouponMapper;
-    private final TakeoutDeliveryMapper takeoutDeliveryMapper;
+    private final TakeoutDeliveryService takeoutDeliveryService;
 
-    public TakeoutOrderServiceImpl(TakeoutBasketService takeoutBasketService, TakeoutAddressService takeoutAddressService, MapService mapService, TakeoutOrderItemService takeoutOrderItemService, TakeoutActivityService takeoutActivityService, TakeoutCouponMapper takeoutCouponMapper, TakeoutDeliveryMapper takeoutDeliveryMapper) {
+    @SuppressWarnings("all")
+    public TakeoutOrderServiceImpl(TakeoutBasketService takeoutBasketService, TakeoutAddressService takeoutAddressService, MapService mapService, TakeoutOrderItemService takeoutOrderItemService, TakeoutActivityService takeoutActivityService, TakeoutCouponMapper takeoutCouponMapper, TakeoutDeliveryService takeoutDeliveryService) {
         this.takeoutBasketService = takeoutBasketService;
         this.takeoutAddressService = takeoutAddressService;
         this.mapService = mapService;
         this.takeoutOrderItemService = takeoutOrderItemService;
         this.takeoutActivityService = takeoutActivityService;
         this.takeoutCouponMapper = takeoutCouponMapper;
-        this.takeoutDeliveryMapper = takeoutDeliveryMapper;
+        this.takeoutDeliveryService = takeoutDeliveryService;
     }
 
     @Autowired
@@ -222,12 +223,11 @@ public class TakeoutOrderServiceImpl extends ServiceImpl<TakeoutOrderMapper, Tak
     @Transactional(rollbackFor = SugoException.class)
     @Override
     public void receiveOrder(Integer riderId, String orderCode) {
-        QueryWrapper<TakeoutOrder> queryWrapper = new QueryWrapper<>();
-        queryWrapper.select("seller_id");
-        queryWrapper.eq("code", orderCode);
-        TakeoutOrder takeoutOrder = baseMapper.selectOne(queryWrapper);
-        int insert = takeoutDeliveryMapper.insert(TakeoutDelivery.builder().orderCode(orderCode).sellerId(takeoutOrder.getSellerId()).riderId(riderId).build());
-        if (insert != 1){
+        TakeoutDelivery takeoutDelivery = takeoutDeliveryService.getLastDeliveryByOrderCode(orderCode);
+        takeoutDelivery.setRiderStatus(DeliveryStatus.RECEIVED_ORDER.getStatus());
+        takeoutDelivery.setRiderId(riderId);
+        boolean insert = takeoutDeliveryService.save(takeoutDelivery);
+        if (!insert){
             throw new SugoException("接单失败！");
         }
         int update = baseMapper.receiveOrder(riderId, orderCode);
@@ -257,6 +257,22 @@ public class TakeoutOrderServiceImpl extends ServiceImpl<TakeoutOrderMapper, Tak
     @Override
     public IPage<SellerOrderDto> getSellerOrderList(Page<TakeoutOrder> page, Integer sellerId, Integer status) {
         return baseMapper.getSellerOrderList(page, sellerId, status);
+    }
+
+    @Override
+    public void paySucess(String code) {
+        int update = baseMapper.updateOrderStatus(code, OrderStatus.PAID.getStatus());
+        if (update == 1){
+            TakeoutDelivery takeoutDelivery = new TakeoutDelivery();
+            takeoutDelivery.setOrderCode(code);
+            boolean save = takeoutDeliveryService.save(takeoutDelivery);
+            if (!save){
+                //todo 系统异常处理 支付成功呀 物流没有添加成功
+                throw new SugoException("系统异常");
+            }
+        }else {
+            throw new SugoException("订单已支付成功！");
+        }
     }
 
 }

@@ -39,6 +39,8 @@ public interface TakeoutOrderMapper extends BaseMapper<TakeoutOrder> {
     IPage<AcceptedRiderOrderDto> getAcceptedRiderOrderList(Page<?> page, @Param("riderId") Integer riderId, @Param("status") @Nullable Integer status);
 
     IPage<SellerOrderDto> getSellerOrderList(Page<TakeoutOrder> page, @Param("sellerId") Integer sellerId, @Param("status") Integer status);
+
+    int updateOrderStatus(@Param("code") String code, @Param("status") int status);
 }
 
 

@@ -6,13 +6,22 @@ import lombok.Getter;
 public enum DeliveryStatus {
 
     /**
-     * 骑手已接单
+     * 等待商家出餐
      */
-    RECEIVED_ORDER(1, "骑手已接单"),
+    WAITING_FOR_MEALS(1, "等待商家出餐"),
     /**
      * 商家已出餐
      */
     MEALS_HAVE_BEEN_SERVED(2, "商家已出餐"),
+
+    /**
+     * 骑手已接单
+     */
+    WAITING_FOR_RIDER_RECEIVE_ORDER(1, "等待骑手接单"),
+    /**
+     * 骑手已接单
+     */
+    RECEIVED_ORDER(2, "骑手已接单"),
     /**
      * 骑手已取餐
      */

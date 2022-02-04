@@ -357,7 +357,9 @@
 			}
 		},
 		onReachBottom() {
-			this.loadMore()
+			if(this.status === 'loadmore'){
+				this.loadMore()
+			}
 		},
 		async onPullDownRefresh() {
 			this.pageInfo.pageNum = 1

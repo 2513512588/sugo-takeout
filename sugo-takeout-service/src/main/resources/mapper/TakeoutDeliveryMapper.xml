@@ -8,39 +8,58 @@
             <id property="id" column="id" jdbcType="INTEGER"/>
             <result property="orderCode" column="order_code" jdbcType="INTEGER"/>
             <result property="riderId" column="rider_id" jdbcType="INTEGER"/>
-            <result property="sellerId" column="seller_id" jdbcType="INTEGER"/>
-            <result property="status" column="status" jdbcType="TINYINT"/>
+            <result property="sellerStatus" column="seller_status" jdbcType="TINYINT"/>
+            <result property="riderStatus" column="rider_status" jdbcType="TINYINT"/>
             <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         id,order_code,rider_id,
-        seller_id,status,gmt_create
+        seller_status,rider_status,gmt_create
     </sql>
 
-    <select id="getAvgDeliveryTimeBySellerList" resultType="java.lang.Long">
-        select ifnull(
-            (select TIMESTAMPDIFF(minute, gmt_create, gmt_update) from takeout_delivery where status = 4 and seller_id =
-                takeout_seller.id)
-        , 0) from takeout_seller
-        where takeout_seller.id in
-        (
+
+    <select id="getLastDeliveryByOrderCode" resultMap="BaseResultMap">
+        select order_code,rider_id,
+        seller_status,rider_status from takeout_delivery
+        where order_code =
+        <choose>
+            <when test="sellerId != null">
+                ifnull((select code from takeout_order where code = #{orderCode} and seller_id = #{sellerId}), -1)
+            </when>
+            <otherwise>
+                #{orderCode}
+            </otherwise>
+        </choose>
+        <if test="riderId != null" >
+            and rider_id = #{riderId}
+        </if>
+        order by id desc limit 0,1
+    </select>
+
+    <select id="getAvgDeliveryTimeBySellerList" resultType="java.util.Map">
+        SELECT seller_id, ifnull(avg(TIMESTAMPDIFF(minute, a.gmt_create, b.gmt_create)), 0) as diffTime
+        from takeout_delivery a inner join takeout_delivery b ON a.order_code = b.order_code
+        right join takeout_order on a.order_code = takeout_order.code
+        where seller_id in (
             <foreach collection="sellerIds" separator="," close="," item="item">
                 #{item}
             </foreach>
             0
         )
+        group by seller_id
     </select>
 
-
-    <select id="getAvgDeliveryTimeBySeller" resultType="java.lang.Long">
-        select TIMESTAMPDIFF(minute,
-            (select gmt_create from takeout_delivery where status = 1 and seller_id = #{sellerId}),
-            (select gmt_create from takeout_delivery where status = 4 and seller_id = #{sellerId})
-        )
+    <select id="getAvgDeliveryTimeBySeller" resultType="java.lang.Double">
+        SELECT ifnull(avg(TIMESTAMPDIFF(minute, a.gmt_create, b.gmt_create)), 0) as diffTime
+        from takeout_delivery a inner join takeout_delivery b on a.order_code = b.order_code
+        where a.order_code in
+              (select code from takeout_order where seller_id = #{sellerId})
+              and a.rider_status = 4 and b.rider_status = 1
     </select>
 
     <select id="getAcceptOrderTime" resultType="java.time.LocalDateTime">
-        select gmt_create from takeout_delivery where order_code = #{orderCode} and status = 1
+        select gmt_create from takeout_delivery where order_code = #{orderCode} and rider_status = 1
     </select>
+
 </mapper>

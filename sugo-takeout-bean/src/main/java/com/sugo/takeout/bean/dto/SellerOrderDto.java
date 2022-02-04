@@ -44,5 +44,9 @@ public class SellerOrderDto {
      */
     private List<SellerOrderDeliveryVo> deliveryInfoList;
 
+    /**
+     * 订单状态
+     */
+    private Integer status;
 
 }

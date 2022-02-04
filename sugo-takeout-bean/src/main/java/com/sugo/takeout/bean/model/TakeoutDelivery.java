@@ -43,9 +43,14 @@ public class TakeoutDelivery implements Serializable {
     private Integer sellerId;
 
     /**
-     * 订单状态 1 骑手已接单 2 商家已出餐 3骑手已取餐 4 已送达
+     * 商家状态 1 商家待出餐 2 商家已出餐
      */
-    private Integer status;
+    private Integer sellerStatus;
+
+    /**
+     * 骑手状态 1 待骑手接单 2 骑手已接单 3 骑手已取餐 4 已送达
+     */
+    private Integer riderStatus;
 
     /**
      * 创建时间

@@ -59,7 +59,10 @@
                   select id sellerId, avatar logo,
                          name sellerName,
                          (select count(*) from takeout_order where takeout_seller.status = 1 and seller_id = takeout_seller.id) quantityToBePaid,
-                         (select count(*) from takeout_delivery where takeout_delivery.status = 1 and seller_id = takeout_seller.id) numberOfMealsToBeServed,
+                         (select count(*) from takeout_delivery as temp where
+                                  temp.seller_status = 1 and order_code
+                                  in (select code from takeout_order where seller_id = takeout_seller.id)
+                                  and id = (select max(id) from takeout_delivery where order_code = temp.order_code)) numberOfMealsToBeServed,
                          (select count(*) from takeout_order where takeout_order.status = 5 and seller_id = takeout_seller.id) refundQuantity,
                          (select ifnull(avg(score), 0) from takeout_goods_evaluate where seller_id = takeout_seller.id) score,
                          (select ifnull(sum(total), 0) from takeout_order where takeout_order.status in (2, 3, 5, 6) and seller_id = takeout_seller.id) amount,

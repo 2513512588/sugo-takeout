@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 /**
- * @Entity com.sugo.takeout.bean.model.domain.TakeoutCoupon
+ * @Entity com.sugo.takeout.bean.model.TakeoutCoupon
  */
 public interface TakeoutCouponMapper extends BaseMapper<TakeoutCoupon> {
 

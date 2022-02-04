@@ -105,10 +105,8 @@ public class TakeoutOrderController {
         Map<String, String[]> parameterMap = request.getParameterMap();
         boolean notify = paymentService.notify(parameterMap);
         if (notify){
-            TakeoutOrder takeoutOrder = new TakeoutOrder();
-            takeoutOrder.setStatus(2);
             String code = request.getParameter("out_trade_no");
-            takeoutOrderService.update(takeoutOrder, new QueryWrapper<>(TakeoutOrder.builder().code(code).build()));
+            takeoutOrderService.paySucess(code);
             RedisUtil.del(code);
         }
         return notify ? "success" : "fail";

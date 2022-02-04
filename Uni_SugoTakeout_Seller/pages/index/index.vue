@@ -49,6 +49,7 @@
 			</u-grid>
 			<u-gap height="4px"></u-gap>
 		</view>
+		
 	</view>
 </template>
 
@@ -137,19 +138,12 @@
 						url: item.url
 					})
 				}
-			}
-		},
-		onLoad() {
-			// uni.removeStorageSync('token')
-			if (!uni.getStorageSync('token')) {
-				uni.navigateTo({
-					url: '/pages/login/login'
+			},
+			async loadData(){
+				let res = await this.$q({
+					url: '/seller/takeout/total-data',
+					needToken: true
 				})
-			}
-			this.$q({
-				url: '/seller/takeout/total-data',
-				needToken: true
-			}).then(res =>{
 				this.seller = res.data
 				this.storeData[0].value = this.seller.quantityToBePaid
 				this.storeData[1].value = this.seller.numberOfMealsToBeServed
@@ -163,12 +157,22 @@
 				this.yesterdayStoreData[0].value = this.seller.estimatedIncome
 				this.yesterdayStoreData[1].value = this.seller.effectiveOrderQuantity
 				this.yesterdayStoreData[2].value = this.seller.numberOfVisitors
-			})
+			}
+		},
+		onLoad() {
+			// uni.removeStorageSync('token')
+			if (!uni.getStorageSync('token')) {
+				uni.navigateTo({
+					url: '/pages/login/login'
+				})
+			}
+			this.loadData()
 		},
 		onShow() {
 			
 		},
-		onPullDownRefresh() {
+		async onPullDownRefresh() {
+			await this.loadData()
 			uni.stopPullDownRefresh()
 		}
 	}

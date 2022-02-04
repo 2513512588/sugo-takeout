@@ -45,6 +45,11 @@
     <update id="receiveOrder">
         update takeout_order set rider_id = #{riderId} where code = #{orderCode} and rider_id is null
     </update>
+
+    <update id="updateOrderStatus">
+        update takeout_order set status = #{status} where status != #{status} and code = #{code}
+    </update>
+
     <select id="getAvgCostBySeller" resultType="java.lang.Double">
         select ifnull(avg(total), 0) from takeout_order where seller_id = #{sellerId} and status = 2
     </select>
@@ -152,12 +157,13 @@
     </resultMap>
 
     <select id="getSellerOrderList" resultMap="UniGoodsAndRiderMap">
-        select code, arrive_time, consignee, phone consigneePhone, concat(addr_name, '-', addr_detail, '(', addr_house_number, ')') consigneeAddr
+        select code, arrive_time, consignee, phone consigneePhone, status, concat(addr_name, '-', addr_detail, '(', addr_house_number, ')') consigneeAddr
         from takeout_order where seller_id = #{sellerId}
         <if test="status != null" >
             <choose>
                 <when test="status == 1">
-                    and exists( select id from takeout_delivery where status &lt; 4 and order_code = code)
+                    and exists( select id from takeout_delivery where rider_status &lt; 4 and order_code = code and id = (select max(id) from takeout_delivery where order_code = code))
+                    and status = 2
                 </when>
                 <when test="status == 2">
                     and status = 1
@@ -166,7 +172,8 @@
                     and status = 5
                 </when>
                 <when test="status == 4">
-                    and exists( select id from takeout_delivery where status = 1 and order_code = code)
+                    and exists( select id from takeout_delivery where seller_status = 1 and order_code = code and id = (select max(id) from takeout_delivery where order_code = code))
+                    and status = 2
                 </when>
             </choose>
         </if>

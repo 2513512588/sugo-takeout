@@ -40,6 +40,7 @@ public class TakeoutSellerListener {
 
         String join = StringUtils.join(takeoutSellerList.stream().map(TakeoutSeller::getLocation).collect(Collectors.toList()), "|");
 
+        // sellerIds
         List<Integer> collect = takeoutSellerList.stream().map(TakeoutSeller::getId).collect(Collectors.toList());
 
         if (collect.size() > 0){
@@ -53,7 +54,7 @@ public class TakeoutSellerListener {
             List<Integer> avgMonthOrderNumList = takeoutOrderService.getAvgMonthOrderNumBySellerList(collect);
 
             //计算平均配送时间
-            List<Long> avgDeliveryTimeBySellerList = takeoutDeliveryService.getAvgDeliveryTimeBySellerList(collect);
+            Map<Integer, Double> avgDeliveryTimeBySellerList = takeoutDeliveryService.getAvgDeliveryTimeBySellerList(collect);
             log.debug("avgDeliveryTimeBySellerList => {}", avgDeliveryTimeBySellerList);
             //计算距离
             Map<Integer, SellerAdditionalDto> additionalData = sellerEvent.getAdditionalData();
@@ -64,7 +65,7 @@ public class TakeoutSellerListener {
                 additionalDto.setAvgCost(avgCostList.get(i));
                 additionalDto.setAvgScore(avgScoreList.get(i));
                 additionalDto.setMonthOrderNum(avgMonthOrderNumList.get(i));
-                additionalDto.setAvgDeliveryTime(avgDeliveryTimeBySellerList.get(i));
+                additionalDto.setAvgDeliveryTime(avgDeliveryTimeBySellerList.get(collect.get(i)));
                 additionalData.put(takeoutSellerList.get(i).getId(), additionalDto);
             }
         }

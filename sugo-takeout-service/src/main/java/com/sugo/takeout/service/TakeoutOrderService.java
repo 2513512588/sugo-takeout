@@ -90,4 +90,10 @@ public interface TakeoutOrderService extends IService<TakeoutOrder> {
      * @return 商家订单列表
      */
     IPage<SellerOrderDto> getSellerOrderList(Page<TakeoutOrder> page, Integer sellerId, Integer status);
+
+    /**
+     * 订单支付成功处理
+     * @param code 订单编号
+     */
+    void paySucess(String code);
 }

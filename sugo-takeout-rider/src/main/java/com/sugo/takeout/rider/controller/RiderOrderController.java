@@ -108,11 +108,11 @@ public class RiderOrderController {
         Long distance = mapService.routematrixOne(location, s);
         // 距离小于300 米可以取货
         if (distance > 300){
-            QueryWrapper<TakeoutDelivery> wrapper = new QueryWrapper<>(TakeoutDelivery.builder().orderCode(orderCode).riderId(riderId).build());
-            TakeoutDelivery takeoutDelivery = takeoutDeliveryService.getOne(wrapper);
-            if (takeoutDelivery.getStatus() == DeliveryStatus.MEALS_HAVE_BEEN_SERVED.getStatus()){
-                return Result.auto(takeoutDeliveryService.update(TakeoutDelivery.builder().status(DeliveryStatus.MEAL_TAKEN.getStatus()).build(), wrapper));
-            }else if (takeoutDelivery.getStatus() == DeliveryStatus.RECEIVED_ORDER.getStatus()){
+            TakeoutDelivery takeoutDelivery = takeoutDeliveryService.getLastDeliveryByOrderCodeAndRiderId(orderCode, riderId);
+            if (takeoutDelivery.getSellerStatus() == DeliveryStatus.MEALS_HAVE_BEEN_SERVED.getStatus()){
+                takeoutDelivery.setRiderStatus(DeliveryStatus.MEAL_TAKEN.getStatus());
+                return Result.auto(takeoutDeliveryService.save(takeoutDelivery));
+            }else if (takeoutDelivery.getRiderStatus() == DeliveryStatus.RECEIVED_ORDER.getStatus()){
                 return Result.error().message("等待商家出餐！");
             }else {
                 return Result.error().message("订单状态错误！");
@@ -135,10 +135,10 @@ public class RiderOrderController {
         Long distance = mapService.routematrixOne(location, s);
         // 距离小于300 米可以点击送达
         if (distance > 300){
-            QueryWrapper<TakeoutDelivery> wrapper = new QueryWrapper<>(TakeoutDelivery.builder().orderCode(orderCode).riderId(riderId).build());
-            TakeoutDelivery takeoutDelivery = takeoutDeliveryService.getOne(wrapper);
-            if (takeoutDelivery.getStatus() == DeliveryStatus.MEAL_TAKEN.getStatus()){
-                return Result.auto(takeoutDeliveryService.update(TakeoutDelivery.builder().status(DeliveryStatus.DELIVERED.getStatus()).build(), wrapper));
+            TakeoutDelivery takeoutDelivery = takeoutDeliveryService.getLastDeliveryByOrderCodeAndRiderId(orderCode, riderId);
+            if (takeoutDelivery.getRiderStatus() == DeliveryStatus.MEAL_TAKEN.getStatus()){
+                takeoutDelivery.setRiderStatus(DeliveryStatus.DELIVERED.getStatus());
+                return Result.auto(takeoutDeliveryService.save(takeoutDelivery));
             }else {
                 return Result.error().message("订单状态错误！");
             }
