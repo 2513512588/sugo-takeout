@@ -3,10 +3,7 @@ package com.sugo.takeout.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.sugo.takeout.bean.dto.AcceptedRiderOrderDto;
-import com.sugo.takeout.bean.dto.OrderDetailDto;
-import com.sugo.takeout.bean.dto.OrderListDto;
-import com.sugo.takeout.bean.dto.SellerOrderDto;
+import com.sugo.takeout.bean.dto.*;
 import com.sugo.takeout.bean.model.TakeoutAddress;
 import com.sugo.takeout.bean.model.TakeoutCoupon;
 import com.sugo.takeout.bean.model.TakeoutOrder;
@@ -96,4 +93,11 @@ public interface TakeoutOrderService extends IService<TakeoutOrder> {
      * @param code 订单编号
      */
     void paySucess(String code);
+
+    /**
+     * 获取骑手统计订单数据
+     * @param riderId 骑手id
+     * @return 统计数据
+     */
+    RiderOrderDataDto getTotalData(Integer riderId);
 }

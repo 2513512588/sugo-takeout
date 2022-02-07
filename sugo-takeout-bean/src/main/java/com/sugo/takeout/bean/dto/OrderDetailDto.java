@@ -53,16 +53,6 @@ public class OrderDetailDto {
     private String sellerPhone;
 
     /**
-     * 开始配送时间
-     */
-    private LocalTime deliveryTimeStart;
-
-    /**
-     * 结束配送时间
-     */
-    private LocalTime deliveryTimeEnd;
-
-    /**
      * 订单总金额
      */
     private Double total;
@@ -135,7 +125,7 @@ public class OrderDetailDto {
     /**
      * 接单骑手姓名
      */
-    private Integer riderName;
+    private String riderName;
 
     /**
      * 餐具数量
@@ -147,4 +137,9 @@ public class OrderDetailDto {
      * 订单支付方式 1 电子钱包 2 支付宝 3 微信
      */
     private Integer paymentType;
+
+    /**
+     * 预计到达时间
+     */
+    private LocalTime arriveTime;
 }

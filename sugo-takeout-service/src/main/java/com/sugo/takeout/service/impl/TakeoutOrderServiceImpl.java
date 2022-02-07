@@ -112,7 +112,7 @@ public class TakeoutOrderServiceImpl extends ServiceImpl<TakeoutOrderMapper, Tak
         String code = String.valueOf(snowflake.nextId());
         String addrLocation = StringUtil.formatLatLngStr(takeoutAddress.getLat() + "," + takeoutAddress.getLng());
         String sellerLocation = StringUtil.formatSellerLocation(takeoutSeller.getLocation());
-        Long distance = mapService.routematrixOne(addrLocation, sellerLocation);
+        Long distance = mapService.routeMatrixDistance(addrLocation, sellerLocation);
         double deliveryFee = takeoutAddressService.getDeliveryFee(distance);
         long deliveryTime = takeoutAddressService.getDeliveryTime(distance);
 
@@ -223,7 +223,7 @@ public class TakeoutOrderServiceImpl extends ServiceImpl<TakeoutOrderMapper, Tak
     @Transactional(rollbackFor = SugoException.class)
     @Override
     public void receiveOrder(Integer riderId, String orderCode) {
-        TakeoutDelivery takeoutDelivery = takeoutDeliveryService.getLastDeliveryByOrderCode(orderCode);
+        TakeoutDelivery takeoutDelivery = takeoutDeliveryService.getUpdateDeliveryObjByOrderCode(orderCode);
         takeoutDelivery.setRiderStatus(DeliveryStatus.RECEIVED_ORDER.getStatus());
         takeoutDelivery.setRiderId(riderId);
         boolean insert = takeoutDeliveryService.save(takeoutDelivery);
@@ -273,6 +273,11 @@ public class TakeoutOrderServiceImpl extends ServiceImpl<TakeoutOrderMapper, Tak
         }else {
             throw new SugoException("订单已支付成功！");
         }
+    }
+
+    @Override
+    public RiderOrderDataDto getTotalData(Integer riderId) {
+        return baseMapper.getTotalData(riderId);
     }
 
 }

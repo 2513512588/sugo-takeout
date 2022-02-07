@@ -22,8 +22,8 @@ public class TakeoutDeliveryServiceImpl extends ServiceImpl<TakeoutDeliveryMappe
     implements TakeoutDeliveryService {
 
     @Override
-    public TakeoutDelivery getLastDeliveryByOrderCodeAndRiderId(String orderCode, Integer riderId) {
-        TakeoutDelivery takeoutDelivery = baseMapper.getLastDeliveryByOrderCode(orderCode, riderId, null);
+    public TakeoutDelivery getUpdateDeliveryObjByOrderCodeAndRiderId(String orderCode, Integer riderId) {
+        TakeoutDelivery takeoutDelivery = baseMapper.getUpdateDeliveryObj(orderCode, riderId, null);
         if (takeoutDelivery == null){
             throw new SugoException("订单物流信息不存在!");
         }
@@ -31,8 +31,8 @@ public class TakeoutDeliveryServiceImpl extends ServiceImpl<TakeoutDeliveryMappe
     }
 
     @Override
-    public TakeoutDelivery getLastDeliveryByOrderCodeAndSellerId(String orderCode, Integer sellerId) {
-        TakeoutDelivery takeoutDelivery = baseMapper.getLastDeliveryByOrderCode(orderCode, null, sellerId);
+    public TakeoutDelivery getUpdateDeliveryObjByOrderCodeAndSellerId(String orderCode, Integer sellerId) {
+        TakeoutDelivery takeoutDelivery = baseMapper.getUpdateDeliveryObj(orderCode, null, sellerId);
         if (takeoutDelivery == null){
             throw new SugoException("订单物流信息不存在!");
         }
@@ -40,8 +40,17 @@ public class TakeoutDeliveryServiceImpl extends ServiceImpl<TakeoutDeliveryMappe
     }
 
     @Override
-    public TakeoutDelivery getLastDeliveryByOrderCode(String orderCode) {
-        return baseMapper.getLastDeliveryByOrderCode(orderCode, null, null);
+    public TakeoutDelivery getLastDeliveryByOrderCodeAndUserId(String orderCode, Integer userId) {
+        TakeoutDelivery takeoutDelivery = baseMapper.getLastDeliveryByOrderCodeAndUserId(orderCode, userId);
+        if (takeoutDelivery == null){
+            throw new SugoException("订单物流信息不存在!");
+        }
+        return takeoutDelivery;
+    }
+
+    @Override
+    public TakeoutDelivery getUpdateDeliveryObjByOrderCode(String orderCode) {
+        return baseMapper.getUpdateDeliveryObj(orderCode, null, null);
     }
 
     @Override
@@ -62,7 +71,7 @@ public class TakeoutDeliveryServiceImpl extends ServiceImpl<TakeoutDeliveryMappe
     @Override
     public boolean eatOut(String orderCode, Integer sellerId) {
         try {
-            TakeoutDelivery takeoutDelivery = getLastDeliveryByOrderCodeAndSellerId(orderCode, sellerId);
+            TakeoutDelivery takeoutDelivery = getUpdateDeliveryObjByOrderCodeAndSellerId(orderCode, sellerId);
             takeoutDelivery.setSellerStatus(DeliveryStatus.MEALS_HAVE_BEEN_SERVED.getStatus());
             return baseMapper.insert(takeoutDelivery) == 1;
         }catch (DuplicateKeyException e){

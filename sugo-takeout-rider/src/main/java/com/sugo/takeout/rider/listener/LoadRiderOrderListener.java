@@ -2,6 +2,7 @@ package com.sugo.takeout.rider.listener;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.sugo.takeout.bean.enums.OrderStatus;
+import com.sugo.takeout.bean.enums.RedisKey;
 import com.sugo.takeout.bean.model.TakeoutOrder;
 import com.sugo.takeout.common.util.RedisUtil;
 import com.sugo.takeout.rider.bo.NewRiderOrderBo;
@@ -45,6 +46,6 @@ public class LoadRiderOrderListener implements ApplicationRunner {
             applicationContext.publishEvent(new RiderOrderEvent(orderBos, order));
         }
         Map<String, NewRiderOrderBo> collect = orderBos.stream().collect(Collectors.toMap(item -> item.getTakeoutOrder().getCode(), item -> item));
-        RedisUtil.putH("riderOrder", collect);
+        RedisUtil.putH(RedisKey.RIDER_ORDER.getName(), collect);
     }
 }

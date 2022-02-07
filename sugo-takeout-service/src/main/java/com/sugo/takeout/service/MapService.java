@@ -22,8 +22,12 @@ public interface MapService {
 
     /**
      * 计算两地距离
+     * @param origin 开始坐标
+     * @param destination 目的坐标
+     * @return 距离（米/公里） 时间（分钟/小时）
      */
-    String routematrix(String origin, String destination);
+    List<long []> routeMatrix(String origin, String destination);
+    long [] routeMatrixOne(String origin, String destination);
 
     /**
      * 获取两地的距离
@@ -31,14 +35,14 @@ public interface MapService {
      * @param destination 目的坐标
      * @return distance 距离（米）
      */
-    Long routematrixOne(String origin, String destination);
+    Long routeMatrixDistance(String origin, String destination);
 
     /**
-     *
+     * 批量获取两地的距离
      * @param origin 开始坐标
      * @param destination 目的坐标
      * @return distanceList
      */
-    List<Long> routematrixList(String origin, String destination);
+    List<Long> routeMatrixDistanceList(String origin, String destination);
 
 }

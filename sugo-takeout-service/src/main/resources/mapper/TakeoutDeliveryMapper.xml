@@ -19,7 +19,7 @@
     </sql>
 
 
-    <select id="getLastDeliveryByOrderCode" resultMap="BaseResultMap">
+    <select id="getUpdateDeliveryObj" resultMap="BaseResultMap">
         select order_code,rider_id,
         seller_status,rider_status from takeout_delivery
         where order_code =
@@ -36,6 +36,17 @@
         </if>
         order by id desc limit 0,1
     </select>
+
+    <select id="getLastDeliveryByOrderCodeAndUserId" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List" />
+        from takeout_delivery
+        where order_code = #{orderCode}
+        <if test="userId != null">
+            and exists(select id from takeout_order where code = #{orderCode} and user_id = #{userId})
+        </if>
+        order by id desc limit 0,1
+    </select>
+
 
     <select id="getAvgDeliveryTimeBySellerList" resultType="java.util.Map">
         SELECT seller_id, ifnull(avg(TIMESTAMPDIFF(minute, a.gmt_create, b.gmt_create)), 0) as diffTime

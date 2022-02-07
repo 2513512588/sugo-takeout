@@ -116,7 +116,7 @@ public class TakeoutOrder implements Serializable {
     private LocalDateTime gmtCreate;
 
     /**
-     * 订单状态 1 待支付 2 已支付  3 完成 4 退款取消 5 退款中 6 已评价 7 订单超时取消
+     * 订单状态 1 待支付 2 已支付  3 确定收货完成 4 退款取消 5 退款中 6 已评价 7 订单超时取消
      */
     private Integer status;
 

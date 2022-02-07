@@ -96,6 +96,11 @@
 			
 		},
 		onShow() {
+			if(!uni.getStorageSync('token')){
+				uni.navigateTo({
+					url: '/pages/login/login'
+				})
+			}
 			this.$q({
 				url: '/api/commons/user/getInfo',
 				needToken: true

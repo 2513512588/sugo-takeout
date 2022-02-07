@@ -23,7 +23,9 @@ public interface TakeoutDeliveryMapper extends BaseMapper<TakeoutDelivery> {
 
     LocalDateTime getAcceptOrderTime(@Param("orderCode") String orderCode);
 
-    TakeoutDelivery getLastDeliveryByOrderCode(@Param("orderCode") String orderCode, @Nullable @Param("riderId") Integer riderId, @Nullable @Param("sellerId") Integer sellerId);
+    TakeoutDelivery getUpdateDeliveryObj(@Param("orderCode") String orderCode, @Nullable @Param("riderId") Integer riderId, @Nullable @Param("sellerId") Integer sellerId);
+
+    TakeoutDelivery getLastDeliveryByOrderCodeAndUserId(@Param("orderCode") String orderCode, @Nullable @Param("userId") Integer userId);
 
 }
 

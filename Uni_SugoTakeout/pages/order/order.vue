@@ -11,43 +11,39 @@
 					<view class="u-flex">
 						<u-text :text="item.sellerName" color="#333" size="16" bold suffixIcon="arrow-right"
 							iconStyle="font-weight: bold; font-size: 13px"></u-text>
-						<u-text :text="orderStatus[item.status]" color="#999" size="13"></u-text>
+						<u-text v-if="item.status !== 2" :text="orderStatus[item.status]" color="#999" size="13"></u-text>
+						<u-text v-else-if="item.status === 2 && item.delivery.sellerStatus === 1" text="待商家出餐" color="#999" size="13"></u-text>
+						<u-text v-else-if="item.status === 2 && item.delivery.sellerStatus === 2" :text="riderStatus[item.delivery.riderStatus]" color="#999" size="13"></u-text>
 					</view>
 				</navigator>
 				<u-divider></u-divider>
 				<u-gap height="3"></u-gap>
 				<view class="goods-wrap" @click="goDetail(item.code)">
-					<view>
+					<view class="goods-items-wrap">
 						<view v-for="(goods,index) in item.orderItemList" :key="goods.id">
 							<view class="goods-header">
 								<image style="width: 80px; height: 80px; border-radius: 5px;"
 									:src="goods.cover" mode="aspectFill"></image>
-								<p>
-									<u-text :text="goods.name" color="#999" size="13"></u-text>
+								<view class="goods-info-wrap">
+									<u-text :text="goods.name" color="#999" size="13" lines="1" ></u-text>
 									<u-text :text="'x' + goods.quantity" color="#999" size="13"></u-text>
-								</p>
+								</view>
 							</view>
 							<u-gap height="4"></u-gap>
 						</view>
 					</view>
 					<u-text :text="'共'+ (item.orderItemList.length) +'件'"
-						color="#999" size="13" align="center" style="word-wrap: break-word; width:13px;"></u-text>
+						color="#999" size="13" align="right" style="white-space: nowrap;"></u-text>
 				</view>
 				<u-gap height="10"></u-gap>
 				<view class="order-bottom-info">
-					<u-row justify="space-between">
-						<u-col span="8">
-							<u-text :text="'下单时间：' + item.createTime"
-								color="#666" size="13"></u-text>
-						</u-col>
-						<u-col span="4">
-							<p style="display: flex; align-items: center; justify-content: flex-end;">
-								<u-text text="合计" size="13" color="#666" style="white-space: nowrap;"></u-text>
-								<u-icon name="rmb" color="#333" :label="item.total" size="13" labelSize="18"
-									labelColor="#000"></u-icon>
-							</p>
-						</u-col>
-					</u-row>
+					<view class="u-flex u-flex-row-end">
+						<u-text text="合计" size="13" color="#666" style="white-space: nowrap;"></u-text>
+						<u-text color="#000" :text="item.total" size="18" 
+							mode="price"></u-text>
+					</view>
+					<u-text :text="'下单时间：' + item.createTime"
+						color="#666" size="13"></u-text>
 					<u-gap height="2"></u-gap>
 					<u-text :text="'订单号：' + item.code" size="13" color="#666"></u-text>
 				</view>
@@ -64,6 +60,9 @@
 					</u-col>
 					<u-col span="2" v-if="item.status === 3">
 						<u-button type="warning" @click="evaluate(item.code)">评价</u-button>
+					</u-col>
+					<u-col span="3" v-if="item.status === 2 && item.delivery.riderStatus === 4" >
+						<u-button type="warning" style="width: 82px;" @click="confirmReceiving(item.code)">确定收货</u-button>
 					</u-col>
 					<u-col span="2" v-if="item.status === 1">
 						<navigator :url="'/pages/order/pay?orderNo={0}'.format(item.code)">
@@ -84,6 +83,8 @@
 		</view>
 
 		<u-loadmore v-show="loadingStatus === 2 && orderList.length > 0" :status="status" @loadmore="loadMore"></u-loadmore>
+	
+		<u-gap height="8px"></u-gap>
 	</view>
 </template>
 
@@ -111,12 +112,18 @@
 					},
 				],
 				orderStatus: {
-					1: '待支付',
+					1: '订单已提交',
 					2: '已支付',
-					3: '完成',
-					4: '取消',
+					3: '待评价',
+					4: '已取消',
 					5: '退款中',
-					6: '已评价'
+					6: '已完成'
+				},
+				riderStatus: {
+					1: '待骑手接单',
+					2: '待骑手取餐',
+					3: '配送中',
+					4: '已送达'
 				},
 				originData: [],
 				orderList: [],
@@ -162,6 +169,9 @@
 				uni.navigateTo({
 					url: '/pages/takeout/feedback'
 				})
+			},
+			confirmReceiving(code){
+				
 			},
 			deleteOrder(code) {
 				uni.showModal({
@@ -249,6 +259,10 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+		
+		.goods-items-wrap{
+			width: 80%;
+		}
 	}
 
 	.goods-header {
@@ -256,7 +270,8 @@
 		align-items: center;
 		justify-content: flex-start;
 
-		p {
+		.goods-info-wrap {
+			width: 60%;
 			margin-left: 8px;
 		}
 	}

@@ -26,6 +26,6 @@
     <select id="findByOrderCode" resultType="com.sugo.takeout.bean.vo.SellerOrderDeliveryVo">
         select rider_id, real_name riderName, phone riderPhone, takeout_delivery.seller_status, takeout_delivery.rider_status, gmt_create currentTime from takeout_delivery
         left join takeout_rider on takeout_delivery.rider_id = takeout_rider.id
-        where order_code = #{code} order by currentTime desc
+        where order_code = #{code} order by currentTime
     </select>
 </mapper>

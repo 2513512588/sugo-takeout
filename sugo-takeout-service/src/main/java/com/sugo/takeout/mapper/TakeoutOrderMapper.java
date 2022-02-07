@@ -3,10 +3,7 @@ package com.sugo.takeout.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.sugo.takeout.bean.dto.AcceptedRiderOrderDto;
-import com.sugo.takeout.bean.dto.OrderDetailDto;
-import com.sugo.takeout.bean.dto.OrderListDto;
-import com.sugo.takeout.bean.dto.SellerOrderDto;
+import com.sugo.takeout.bean.dto.*;
 import com.sugo.takeout.bean.model.TakeoutOrder;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.lang.Nullable;
@@ -41,6 +38,8 @@ public interface TakeoutOrderMapper extends BaseMapper<TakeoutOrder> {
     IPage<SellerOrderDto> getSellerOrderList(Page<TakeoutOrder> page, @Param("sellerId") Integer sellerId, @Param("status") Integer status);
 
     int updateOrderStatus(@Param("code") String code, @Param("status") int status);
+
+    RiderOrderDataDto getTotalData(@Param("riderId") Integer riderId);
 }
 
 

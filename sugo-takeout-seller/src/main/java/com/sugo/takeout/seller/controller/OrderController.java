@@ -36,7 +36,7 @@ public class OrderController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "status", value = "1 进行中（已出餐之后） 2 新订单（待支付）3 退款中 4 待出餐")
     })
-    @ApiOperation("获取商家订单")
+    @ApiOperation("获取商家待处理订单")
     @GetMapping("/list")
     public Result orderList(@ParsePage Page<TakeoutOrder> page,
                             @ParseUser(Role.ROLE_TAKEOUT_SELLER) Integer sellerId,
@@ -44,6 +44,8 @@ public class OrderController {
         IPage<SellerOrderDto> iPage = takeoutOrderService.getSellerOrderList(page, sellerId, status);
         return Result.ok().pageList(iPage);
     }
+
+
 
     @ApiOperation("商家出餐")
     @GetMapping("/eat-out/{orderCode}")

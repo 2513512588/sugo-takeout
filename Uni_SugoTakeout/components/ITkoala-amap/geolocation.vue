@@ -1,6 +1,18 @@
 <template>
 	<view class="amap-container">
-		<view :currentPosition="currentPosition" :change:currentPosition="amap.updateEcharts" id="amap"></view>
+		<view id="amap" :currentPosition="currentPosition" :change:currentPosition="amap.updateEcharts"
+			:style="customStyle"></view>
+
+		<view style="display: none;" id="infoWindow">
+			<view class="infoWindow-wrap">
+				<view class="infoWindow-content">
+					<text class="infoWindow-text">当前点击的对象的index值为：</text>
+				</view>
+				<view class="sharp">
+					<image src="/static/ITkoala-amap/sharp.png" mode="widthFix"></image>
+				</view>
+			</view>
+		</view>
 	</view>
 </template>
 
@@ -11,7 +23,18 @@
 				type: Object,
 				default () {
 					return {
-
+						lat: 39.90,
+						lng: 116.40
+					}
+				}
+			},
+			customStyle: {
+				type: Object,
+				default () {
+					return {
+						width: '100%',
+						height: '100vh',
+						transform: 'translateY(calc(-50% + 60px))'
 					}
 				}
 			}
@@ -23,7 +46,9 @@
 
 		},
 		methods: {
-
+			ready() {
+				this.$emit('ready')
+			}
 		}
 	}
 </script>
@@ -54,34 +79,37 @@
 				this.map = new AMap.Map('amap', {
 					resizeEnable: true
 				})
+				this.$ownerInstance.callMethod('ready')
 			},
 			updateEcharts(newValue, oldValue, ownerInstance, instance) {
+
 				// 创建一个 Marker 实例：
 				this.map.setCenter([newValue.lng, newValue.lat])
-				this.map.setZoom(17)
+				this.map.setZoom(16)
 
 				let option = {
 					position: Object.assign(newValue, {
 						Q: newValue.lat,
 						R: newValue.lng
-					}),
+					})
 				}
 				if (this.marker) {
 					this.marker.setPosition(option.position);
 				} else {
-					this.marker = new AMap.Marker(option)
+					let thisMarker = new AMap.Marker(option)
+					this.marker = thisMarker
 					// 将创建的点标记添加到已有的地图实例：
-					this.map.add(this.marker)
+					this.map.add(thisMarker)
 				}
-			},
+
+				// this.markers.forEach(item =>{
+				// 	this.map.remove(item)
+				// })
+			}
 		}
 	}
 </script>
 
 <style lang="scss" scoped>
-	#amap {
-		width: 100%;
-		height: 100vh;
-		transform: translateY(calc(-50% + 60px));
-	}
+
 </style>

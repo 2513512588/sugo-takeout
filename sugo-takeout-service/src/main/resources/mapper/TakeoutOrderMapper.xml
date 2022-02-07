@@ -80,8 +80,11 @@
     </select>
 
 
-    <resultMap id="UnionSellerAndOrderItem" type="com.sugo.takeout.bean.dto.OrderListDto" >
+    <resultMap id="UnionSellerAndOrderItemAndDelivery" type="com.sugo.takeout.bean.dto.OrderListDto" >
         <result property="code" column="code" />
+        <association property="delivery" javaType="com.sugo.takeout.bean.model.TakeoutDelivery" column="{orderCode=code,userId=user_id}"
+            select="com.sugo.takeout.mapper.TakeoutDeliveryMapper.getLastDeliveryByOrderCodeAndUserId"
+        />
         <collection property="orderItemList" column="code" javaType="java.util.List"
                     ofType="com.sugo.takeout.bean.vo.OrderGoodsItemVo" select="com.sugo.takeout.mapper.TakeoutOrderItemMapper.findByCode" />
     </resultMap>
@@ -92,9 +95,9 @@
                     ofType="com.sugo.takeout.bean.vo.OrderGoodsItemVo" select="com.sugo.takeout.mapper.TakeoutOrderItemMapper.findByCode" />
     </resultMap>
 
-    <select id="list" resultMap="UnionSellerAndOrderItem">
+    <select id="list" resultMap="UnionSellerAndOrderItemAndDelivery">
         select `code`, gmt_create createTime, name sellerName, ts.id sellerId, delivery_time_start deliveryTimeStart, delivery_time_end deliveryTimeEnd,
-        total, takeout_order.status
+        total, takeout_order.status, takeout_order.user_id
         from takeout_order left join takeout_seller ts on takeout_order.seller_id = ts.id
         where takeout_order.user_id = #{userId} and is_deleted = 0
         <if test="statuses != null and statuses.length > 0" >
@@ -107,10 +110,10 @@
     </select>
 
     <select id="getDetail" resultMap="UnionSellerAndOrderItemAndRider">
-        select `code`, gmt_create createTime, name sellerName, ts.id sellerId, delivery_time_start deliveryTimeStart, delivery_time_end deliveryTimeEnd,
+        select `code`, gmt_create createTime, name sellerName, ts.id sellerId,
                total, takeout_order.status, ts.phone sellerPhone, delivery_fee deliveryFee, packing_fee, coupon_discount,
                activity_discount, consignee, takeout_order.phone consigneePhone, consignee_sex, addr_name, addr_detail, addr_house_number, remark,
-               rider_id, tableware_num, real_name riderName, avatar sellerLogo, pay_time, payment_type
+               rider_id, tableware_num, real_name riderName, avatar sellerLogo, pay_time, payment_type, arrive_time arriveTime
         from takeout_order left join takeout_seller ts on takeout_order.seller_id = ts.id
         left join takeout_rider tr on takeout_order.rider_id = tr.id
         where takeout_order.code = #{orderCode} and takeout_order.user_id = #{userId} and is_deleted = 0
@@ -133,19 +136,26 @@
                takeout_order.phone consigneePhone, arrive_time arriveTime
                from takeout_order
         left join takeout_seller ts on takeout_order.seller_id = ts.id
-        where takeout_order.code in (
+        where exists(
             select order_code from takeout_delivery where rider_id = #{riderId}
-                <choose>
-                    <when test="status == 1">
-                        and status &lt; 3
-                    </when>
-                    <when test="status == 2">
-                        and status = 3
-                    </when>
-                </choose>
+            <choose>
+                <when test="status == 1">
+                    and rider_status = 2  and id = (select max(id) from takeout_delivery where order_code = takeout_order.code)
+                </when>
+                <when test="status == 2">
+                    and rider_status = 3 and id = (select max(id) from takeout_delivery where order_code = takeout_order.code)
+                </when>
+            </choose>
         )
     </select>
 
+
+    <select id="getTotalData" resultType="com.sugo.takeout.bean.dto.RiderOrderDataDto">
+        select (SELECT COUNT(*) FROM takeout_delivery WHERE rider_status=2 AND id IN (
+            SELECT MAX(id) FROM takeout_delivery WHERE rider_id=#{riderId} GROUP BY order_code)) as numberOfMealsToBeTaken,
+                ( SELECT COUNT(*) FROM takeout_delivery WHERE rider_status=3 AND id IN (
+                    SELECT MAX(id) FROM takeout_delivery WHERE rider_id=#{riderId} GROUP BY order_code)) as numberOfInDistribution
+    </select>
 
     <resultMap id="UniGoodsAndRiderMap" type="com.sugo.takeout.bean.dto.SellerOrderDto" >
         <result property="code" column="code" />

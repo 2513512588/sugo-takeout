@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+@SuppressWarnings("all")
 public class RedisUtil {
 
     @SuppressWarnings("unchecked")
@@ -102,6 +103,11 @@ public class RedisUtil {
         return (List<T>) REDIS_TEMPLATE.opsForHash().values(name);
     }
 
+    @SuppressWarnings("unchecked")
+    public static <T> T getHValue(String name, Object key) {
+        return (T) REDIS_TEMPLATE.opsForHash().get(name, key);
+    }
+
     /**
      * 普通缓存放入
      *
@@ -119,7 +125,7 @@ public class RedisUtil {
         }
     }
 
-    public static boolean putH(String name, String key, Object value) {
+    public static boolean putH(String name, Object key, Object value) {
         try {
             REDIS_TEMPLATE.opsForHash().put(name, key, value);
             return true;

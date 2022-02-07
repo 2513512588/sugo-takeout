@@ -58,7 +58,7 @@ public class TakeoutSellerListener {
             log.debug("avgDeliveryTimeBySellerList => {}", avgDeliveryTimeBySellerList);
             //计算距离
             Map<Integer, SellerAdditionalDto> additionalData = sellerEvent.getAdditionalData();
-            List<Long> longs = mapService.routematrixList(sellerEvent.getCurrentLocation(), join);
+            List<Long> longs = mapService.routeMatrixDistanceList(sellerEvent.getCurrentLocation(), join);
             for (int i = 0; i < longs.size(); i++) {
                 SellerAdditionalDto additionalDto = new SellerAdditionalDto();
                 additionalDto.setDistance(longs.get(i));

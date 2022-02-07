@@ -3,6 +3,7 @@ package com.sugo.takeout.api.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sugo.takeout.bean.dto.OrderDetailDto;
+import com.sugo.takeout.bean.enums.OrderStatus;
 import com.sugo.takeout.bean.enums.SellerStatus;
 import com.sugo.takeout.bean.model.TakeoutAddress;
 import com.sugo.takeout.bean.model.TakeoutCoupon;
@@ -13,6 +14,7 @@ import com.sugo.takeout.common.aspect.annotation.ParsePage;
 import com.sugo.takeout.common.config.payment.AlipayConfig;
 import com.sugo.takeout.common.util.RedisUtil;
 import com.sugo.takeout.common.util.Result;
+import com.sugo.takeout.common.util.StringUtil;
 import com.sugo.takeout.security.annotation.ParseUser;
 import com.sugo.takeout.service.*;
 import io.swagger.annotations.Api;
@@ -120,6 +122,32 @@ public class TakeoutOrderController {
         return Result.ok().pageList(takeoutOrderService.getList(page, userId, status));
     }
 
+
+    @ApiOperation("获取订单的商家位置信息和收货地址位置信息")
+    @GetMapping("/map/info")
+    public Result mapInfo(@RequestParam String code){
+        QueryWrapper<TakeoutOrder> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("code", code);
+        queryWrapper.select("addr_lat", "addr_lng", "seller_id", "status");
+        TakeoutOrder takeoutOrder = takeoutOrderService.getOne(queryWrapper);
+        if (takeoutOrder != null){
+            if (takeoutOrder.getStatus() == OrderStatus.PAID.getStatus()){
+                QueryWrapper<TakeoutSeller> queryWrapper1 = new QueryWrapper<>();
+                queryWrapper1.eq("id", takeoutOrder.getSellerId());
+                queryWrapper1.select("location", "name", "avatar");
+                TakeoutSeller takeoutSeller = takeoutSellerService.getOne(queryWrapper1);
+                String location = StringUtil.parseSellerLocation(takeoutSeller.getLocation());
+                return Result.ok().data("sellerLocation", location.split(","))
+                                  .data("customLocation", new String[]{takeoutOrder.getAddrLat(), takeoutOrder.getAddrLng()})
+                                  .data("sellerName", takeoutSeller.getName())
+                                  .data("sellerLogo", takeoutSeller.getAvatar());
+            }else {
+                return Result.error().message("订单状态不正确");
+            }
+        }else {
+            return Result.error().message("订单不存在");
+        }
+    }
 
 
 }

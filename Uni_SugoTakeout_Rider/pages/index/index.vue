@@ -178,7 +178,8 @@
 				},
 				status: 'loadmore',
 				// 1 未加载 2 已加载
-				loadStatus: 1
+				loadStatus: 1,
+				socket: false
 			}
 		},
 		onLoad() {
@@ -195,6 +196,7 @@
 					console.log(e);
 				}
 			})
+			this.loadTotalData()
 		},
 		onShow() {
 			// uni.removeStorageSync('token')
@@ -213,6 +215,7 @@
 					uni.showToast({
 						title: '抢单成功'
 					})
+					this.loadData()
 				}).catch(err => {
 					uni.showToast({
 						icon: 'none',
@@ -242,7 +245,6 @@
 						},
 						needToken: true
 					})
-					this.list[this.current].badge.value = res.data.total
 				}
 				this.originDataList[this.current].push(...res.data.rows)
 				this.orderList = this.originDataList[this.current]
@@ -289,6 +291,7 @@
 								title: res.message
 							})
 							this.originDataList[this.current].splice(index, 1)
+							this.loadData()
 						})
 					},
 					fail: (e) => {
@@ -312,6 +315,7 @@
 								title: res.message
 							})
 							this.originDataList[this.current].splice(index, 1)
+							this.loadData()
 						})
 					},
 					fail: (e) => {
@@ -354,6 +358,42 @@
 				// 		title: `目前导航暂只支持${packageName}`
 				// 	})
 				// }
+			},
+			async loadTotalData(){
+				this.$q({
+					url: '/rider/takeout/order/total-data',
+					needToken: true
+				}).then(res =>{
+					this.list[1].badge.value = res.data.numberOfMealsToBeTaken
+					this.list[2].badge.value = res.data.numberOfInDistribution
+					if(this.list[1].badge.value > 0 || this.list[2].badge.value > 0){
+						if(!this.socket){
+							this.$q({
+								url: '/rider/takeout/socket/register',
+								needToken: true
+							}).then(res =>{
+								uni.connectSocket({
+								    url: 'ws://' + this.$host + '/delivery/' + res.data, 
+								    success: ()=> {
+										this.socket = true
+										setInterval(() =>{
+											uni.getLocation({
+												success: (e) => {
+													uni.sendSocketMessage({
+														data: e.latitude + ',' + e.longitude
+													})
+												}
+											})
+										}, 2000)
+									},
+									fail: ()=>{
+										console.log('socket 连接失败');
+									}
+								})
+							})
+						}
+					}
+				})
 			}
 		},
 		onReachBottom() {
@@ -365,6 +405,7 @@
 			this.pageInfo.pageNum = 1
 			this.originDataList[this.current] = []
 			await this.loadData()
+			await this.loadTotalData()
 			uni.stopPullDownRefresh()
 		}
 	}

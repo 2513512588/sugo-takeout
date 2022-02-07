@@ -9,7 +9,7 @@
 		<u-cell-group >
 			<u-cell size="larger" title="支付设置" isLink></u-cell>
 		</u-cell-group>
-		<u-button class="logout-btn">退出账号</u-button>
+		<u-button class="logout-btn" @click="logout">退出账号</u-button>
 	</view>
 </template>
 
@@ -21,7 +21,12 @@
 			}
 		},
 		methods: {
-
+			logout(){
+				uni.clearStorageSync()
+				uni.switchTab({
+					url: '/pages/index/index'
+				})
+			}
 		}
 	}
 </script>

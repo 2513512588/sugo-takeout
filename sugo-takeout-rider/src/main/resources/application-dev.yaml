@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://120.26.60.197:3306/smart_city?characterEncoding=utf-8&serverTimezone=GMT%2b8&useSSL=false
-    username: smart_city
-    password: smartCity123
+    url: jdbc:mysql://localhost:3306/sugo_takeout?characterEncoding=utf-8&serverTimezone=GMT%2b8&useSSL=false
+    username: root
+    password: 960918
     type: com.zaxxer.hikari.HikariDataSource
     hikari:
       minimum-idle: 0
@@ -44,4 +44,4 @@ mybatis-plus:
       logic-delete-value: 1 # 逻辑已删除值(默认为 1)
       logic-not-delete-value: 0 # 逻辑未删除值(默认为 0)
 server:
-  port: 8080
+  port: 8082

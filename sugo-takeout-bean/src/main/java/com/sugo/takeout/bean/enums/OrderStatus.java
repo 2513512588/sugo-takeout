@@ -13,7 +13,7 @@ public enum OrderStatus {
      */
     TO_BE_PAID(1, "待支付"),
     PAID(2, "已支付"),
-    ORDER_COMPLETION(3, "完成"),
+    ORDER_COMPLETION(3, "确定收货完成"),
     REFUND_CANCELLATION(4, "退款取消"),
     REFUND_IN_PROGRESS(5, "退款中"),
     EVALUATED(6, "已评价"),

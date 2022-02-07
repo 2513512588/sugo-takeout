@@ -1,11 +1,16 @@
 
-const baseURL = 'http://192.168.1.40:8080'
+const baseURL = 'http://192.168.1.40:8090'
 
 const baseRequest = ops =>{
-	uni.showLoading({
-		mask: true,
-		title: 'loading...'
-	})
+	if(ops.loading === undefined){
+		ops.loading = true
+	}
+	if(ops.loading){
+		uni.showLoading({
+			mask: true,
+			title: 'loading...'
+		})
+	}
 	return new Promise((resolve, reject) =>{
 		uni.request({
 			...ops,

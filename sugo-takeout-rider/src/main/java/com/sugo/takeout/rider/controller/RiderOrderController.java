@@ -5,7 +5,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sugo.takeout.bean.dto.AcceptedRiderOrderDto;
+import com.sugo.takeout.bean.dto.RiderOrderDataDto;
 import com.sugo.takeout.bean.enums.DeliveryStatus;
+import com.sugo.takeout.bean.enums.RedisKey;
 import com.sugo.takeout.bean.model.TakeoutDelivery;
 import com.sugo.takeout.bean.model.TakeoutOrder;
 import com.sugo.takeout.bean.model.TakeoutSeller;
@@ -61,9 +63,9 @@ public class RiderOrderController {
     public Result list(@ParsePage Page<?> page,
                        @RequestParam String location){
         IPage<String> iPage = takeoutOrderService.getRiderOrderCodeList(page);
-        Collection<NewRiderOrderBo> values = RedisUtil.getHValues("riderOrder", Arrays.asList(iPage.getRecords().toArray()));
+        Collection<NewRiderOrderBo> values = RedisUtil.getHValues(RedisKey.RIDER_ORDER.getName(), Arrays.asList(iPage.getRecords().toArray()));
         for (NewRiderOrderBo newRiderOrderBo : values) {
-            List<Long> longs = mapService.routematrixList(StringUtil.formatLatLngStr(location), newRiderOrderBo.getOriginLatLng() + "|" + newRiderOrderBo.getTargetLatLng());
+            List<Long> longs = mapService.routeMatrixDistanceList(StringUtil.formatLatLngStr(location), newRiderOrderBo.getOriginLatLng() + "|" + newRiderOrderBo.getTargetLatLng());
             newRiderOrderBo.getTakeoutOrder().setOriginDistance(longs.get(0));
             newRiderOrderBo.getTakeoutOrder().setTargetDistance(longs.get(1));
         }
@@ -71,6 +73,9 @@ public class RiderOrderController {
         return Result.ok().pageList(iPage, newRiderOrderDtos);
     }
 
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "status", value = "订单状态 1 待取餐 2 配送中")
+    })
     @ApiOperation("获取已接订单列表")
     @GetMapping("/accepted/list")
     public Result list(@ParsePage Page<?> page,
@@ -80,13 +85,20 @@ public class RiderOrderController {
         return Result.ok().pageList(iPage);
     }
 
+    @ApiOperation("获取统计数据")
+    @GetMapping("/total-data")
+    public Result totalData(@ParseUser(value = Role.ROLE_TAKEOUT_RIDER) Integer riderId){
+        RiderOrderDataDto totalData = takeoutOrderService.getTotalData(riderId);
+        return Result.ok().data(totalData);
+    }
+
 
     @ApiOperation("骑手接单")
     @GetMapping("/receive/{orderCode}")
     public Result receive(@ParseUser(Role.ROLE_TAKEOUT_RIDER) Integer riderId,
                           @PathVariable String orderCode){
         takeoutOrderService.receiveOrder(riderId, orderCode);
-        RedisUtil.delHash("riderOrder", orderCode);
+        RedisUtil.delHash(RedisKey.RIDER_ORDER.getName(), orderCode);
         return Result.ok();
     }
 
@@ -105,10 +117,10 @@ public class RiderOrderController {
         queryWrapper1.select("location");
         TakeoutSeller takeoutSeller = takeoutSellerService.getOne(queryWrapper1);
         String s = StringUtil.formatSellerLocation(takeoutSeller.getLocation());
-        Long distance = mapService.routematrixOne(location, s);
+        Long distance = mapService.routeMatrixDistance(location, s);
         // 距离小于300 米可以取货
         if (distance > 300){
-            TakeoutDelivery takeoutDelivery = takeoutDeliveryService.getLastDeliveryByOrderCodeAndRiderId(orderCode, riderId);
+            TakeoutDelivery takeoutDelivery = takeoutDeliveryService.getUpdateDeliveryObjByOrderCodeAndRiderId(orderCode, riderId);
             if (takeoutDelivery.getSellerStatus() == DeliveryStatus.MEALS_HAVE_BEEN_SERVED.getStatus()){
                 takeoutDelivery.setRiderStatus(DeliveryStatus.MEAL_TAKEN.getStatus());
                 return Result.auto(takeoutDeliveryService.save(takeoutDelivery));
@@ -131,11 +143,11 @@ public class RiderOrderController {
         queryWrapper.eq("code", orderCode);
         queryWrapper.select("addr_lat", "addr_lng");
         TakeoutOrder takeoutOrder = takeoutOrderService.getOne(queryWrapper);
-        String s = StringUtil.formatSellerLocation(takeoutOrder.getAddrLat() + "," + takeoutOrder.getAddrLng());
-        Long distance = mapService.routematrixOne(location, s);
+        String s = StringUtil.formatLatLngStr(takeoutOrder.getAddrLat() + "," + takeoutOrder.getAddrLng());
+        Long distance = mapService.routeMatrixDistance(location, s);
         // 距离小于300 米可以点击送达
         if (distance > 300){
-            TakeoutDelivery takeoutDelivery = takeoutDeliveryService.getLastDeliveryByOrderCodeAndRiderId(orderCode, riderId);
+            TakeoutDelivery takeoutDelivery = takeoutDeliveryService.getUpdateDeliveryObjByOrderCodeAndRiderId(orderCode, riderId);
             if (takeoutDelivery.getRiderStatus() == DeliveryStatus.MEAL_TAKEN.getStatus()){
                 takeoutDelivery.setRiderStatus(DeliveryStatus.DELIVERED.getStatus());
                 return Result.auto(takeoutDeliveryService.save(takeoutDelivery));
@@ -146,6 +158,8 @@ public class RiderOrderController {
             return Result.error().message("当前位置离送货点较远无法送达");
         }
     }
+
+
 
 
 

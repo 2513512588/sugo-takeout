@@ -18,6 +18,7 @@ import request from './util/request.js'
 
 Vue.prototype.$q = request.baseRequest
 Vue.prototype.$url = request.baseURL
+Vue.prototype.$host = request.host
 
 String.prototype.format = function() {
 	if (arguments.length == 0)

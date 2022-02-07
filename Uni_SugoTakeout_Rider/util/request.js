@@ -1,5 +1,5 @@
-
-const baseURL = 'http://192.168.1.40:8080'
+const host = "192.168.1.40:8082"
+const baseURL = 'http://' + host
 
 const baseRequest = ops =>{
 	uni.showLoading({
@@ -51,6 +51,7 @@ const baseRequest = ops =>{
 }
 
 export default{
+	host,
 	baseURL,
 	baseRequest
 }

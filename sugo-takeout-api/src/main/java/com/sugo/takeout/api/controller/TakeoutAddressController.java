@@ -55,7 +55,7 @@ public class TakeoutAddressController {
         if (!CollectionUtils.isEmpty(list)){
             String location = StringUtil.formatLatLngStr(myLocation);
             List<String> collect = list.stream().map(item -> StringUtil.formatLatLngStr(item.getLat() + "," + item.getLng())).collect(Collectors.toList());
-            List<Long> longs = mapService.routematrixList(location, StringUtils.join(collect, "|"));
+            List<Long> longs = mapService.routeMatrixDistanceList(location, StringUtils.join(collect, "|"));
             log.debug("distances => {}", longs);
             Optional<Long> first = longs.stream().sorted().findFirst();
             if (first.isPresent()){
@@ -130,7 +130,7 @@ public class TakeoutAddressController {
         if (takeoutAddress != null && takeoutSeller != null){
             String addrLocation = StringUtil.formatLatLngStr(takeoutAddress.getLat() + "," + takeoutAddress.getLng());
             String sellerLocation = StringUtil.formatSellerLocation(takeoutSeller.getLocation());
-            Long distance = mapService.routematrixOne(addrLocation, sellerLocation);
+            Long distance = mapService.routeMatrixDistance(addrLocation, sellerLocation);
             return Result.ok().data("deliveryTime", takeoutAddressService.getDeliveryTime(distance))
                               .data("deliveryFee", takeoutAddressService.getDeliveryFee(distance));
         }else {

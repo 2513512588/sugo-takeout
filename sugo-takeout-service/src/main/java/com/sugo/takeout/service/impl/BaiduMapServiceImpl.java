@@ -18,6 +18,7 @@ import javax.annotation.Resource;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -61,39 +62,44 @@ public class BaiduMapServiceImpl implements MapService {
 
     @SneakyThrows
     @Override
-    public String routematrix(String origin, String destination) {
+    public List<long []> routeMatrix(String origin, String destination) {
         HttpGet get = new HttpGet(String.format("http://api.map.baidu.com/routematrix/v2/riding?output=json&origins=%s&destinations=%s&ak=%s", URLEncoder.encode(origin, "UTF-8"), URLEncoder.encode(destination, "UTF-8"), baiduMapProperties.getAk()));
         HttpResponse response = client.execute(get);
-        return EntityUtils.toString(response.getEntity());
-    }
-
-    @Override
-    public Long routematrixOne(String origin, String destination){
-        log.debug("destination => {}", destination);
-        log.debug("origin => {}", origin);
-        JSONObject response = JSONObject.parseObject(routematrix(origin, destination));
-        if (response.getIntValue("status") == 0){
-            return response.getJSONArray("result").getJSONObject(0).getJSONObject("distance").getLongValue("value");
-        }else {
-            throw new SugoException(response.getString("message") + "，经纬度异常，格式为（纬度,经度）");
-        }
-    }
-
-    @Override
-    public List<Long> routematrixList(String origin, String destination){
-        log.debug("destination => {}", destination);
-        log.debug("origin => {}", origin);
-        JSONObject response = JSONObject.parseObject(routematrix(origin, destination));
-        List<Long> resultList = new ArrayList<>();
-        if (response.getIntValue("status") == 0){
-            JSONArray result = response.getJSONArray("result");
-            for (int i = 0; i < result.size(); i++) {
-                long distance = result.getJSONObject(i).getJSONObject("distance").getLongValue("value");
-                resultList.add(distance);
+        String result = EntityUtils.toString(response.getEntity());
+        log.debug("result => {}", result);
+        JSONObject jsonObject = JSONObject.parseObject(result);
+        if (jsonObject.getIntValue("status") == 0){
+            JSONArray result1 = jsonObject.getJSONArray("result");
+            List<long []> list = new ArrayList<>();
+            for (int i = 0; i < result1.size(); i++) {
+                long distance = result1.getJSONObject(i).getJSONObject("distance").getLongValue("value");
+                long time = result1.getJSONObject(i).getJSONObject("duration").getLongValue("value");
+                time /= 60;
+                list.add(new long[]{distance, time});
             }
+            return list;
         }else {
-            throw new SugoException(response.getString("message") + ": 经纬度异常，格式为（纬度,经度）");
+            throw new SugoException(jsonObject.getString("message") + "，经纬度异常，格式为（纬度,经度）");
         }
-        return resultList;
+    }
+
+    @Override
+    public long[] routeMatrixOne(String origin, String destination) {
+        return routeMatrix(origin, destination).get(0);
+    }
+
+    @Override
+    public Long routeMatrixDistance(String origin, String destination){
+        log.debug("destination => {}", destination);
+        log.debug("origin => {}", origin);
+        return routeMatrix(origin, destination).get(0)[0];
+    }
+
+    @Override
+    public List<Long> routeMatrixDistanceList(String origin, String destination){
+        log.debug("destination => {}", destination);
+        log.debug("origin => {}", origin);
+        List<long[]> list = routeMatrix(origin, destination);
+        return list.stream().map(item -> item[0]).collect(Collectors.toList());
     }
 }

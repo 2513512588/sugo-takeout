@@ -1,6 +1,6 @@
 <template>
 	<view class="address-container">
-		<geolocation class="map" :currentPosition="location.currentPosition"></geolocation>
+		<geolocation @ready="mapReady" class="map" :currentPosition="location.currentPosition"></geolocation>
 		<view class="form-wrap">
 			<view class="card u-flex wrap" v-show="Object.keys(location).length > 0">
 				<view class="address-detail-wrap">
@@ -57,6 +57,7 @@
 		},
 		data() {
 			return {
+				addrId: '',
 				address: {
 					houseNumber: '',
 					consignee: '',
@@ -160,25 +161,30 @@
 						console.log(e);
 					}
 				})
+			},
+			mapReady(){
+				if(this.addrId){
+					if (this.addrId) {
+						this.$q({
+							url: '/api/takeout/address/detail/' + this.addrId,
+							needToken: true,
+						}).then(res => {
+							this.address = res.data
+							this.location = {
+								name: this.address.name,
+								detail: this.address.address,
+								currentPosition: {
+									lat: this.address.lat,
+									lng: this.address.lng
+								}
+							}
+						})
+					}
+				}
 			}
 		},
 		onLoad(options) {
-			if (options.id) {
-				this.$q({
-					url: '/api/takeout/address/detail/' + options.id,
-					needToken: true,
-				}).then(res => {
-					this.address = res.data
-					this.location = {
-						name: this.address.name,
-						detail: this.address.address,
-						currentPosition: {
-							lat: this.address.lat,
-							lng: this.address.lng
-						}
-					}
-				})
-			}
+			this.addrId = options.id
 		},
 		onNavigationBarButtonTap() {
 			

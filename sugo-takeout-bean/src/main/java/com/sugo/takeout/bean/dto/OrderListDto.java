@@ -1,5 +1,6 @@
 package com.sugo.takeout.bean.dto;
 
+import com.sugo.takeout.bean.model.TakeoutDelivery;
 import com.sugo.takeout.bean.vo.BasketGoodsItemVo;
 import lombok.Data;
 
@@ -54,5 +55,10 @@ public class OrderListDto {
      * 订单状态
      */
     private Integer status;
+
+    /**
+     * 当前物流状态
+     */
+    private TakeoutDelivery delivery;
 
 }
