@@ -1,22 +1,18 @@
-# todo
-## 1. 邮费计算
-## 2. 送达时间计算
-
 # 相关截图
 
 ## 一、移动端截图
 
 ### 1. 用户端
 
-![img.png](screenshot/img_3.png)
+<img alt="img.png" src="https://sugo-takeout.oss-cn-shenzhen.aliyuncs.com/screenshot/img_3.png" width="300"/>
 
-![img.png](screenshot/img_4.png)
+<img alt="img.png" src="https://sugo-takeout.oss-cn-shenzhen.aliyuncs.com/screenshot/img_4.png" width="300"/>
 
 
 ### 2. 骑手端
 
-![img.png](screenshot/img_2.png)
+<img alt="img.png" src="https://sugo-takeout.oss-cn-shenzhen.aliyuncs.com/screenshot/img_2.png" width="300"/>
 
 ### 3. 商家端
 
-![img_1.png](screenshot/img_1.png)
+<img alt="img.png" src="https://sugo-takeout.oss-cn-shenzhen.aliyuncs.com/screenshot/img_1.png" width="300"/>
