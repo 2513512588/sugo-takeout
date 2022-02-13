@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
  */
 @Data
 @Component
-@PropertySource("classpath:smart_city.properties")
+@PropertySource("classpath:sugo_takeout.properties")
 @ConfigurationProperties(prefix = "ali.oss")
 public class AliOssProperties {
 

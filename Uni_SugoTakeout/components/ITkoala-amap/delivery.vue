@@ -51,7 +51,9 @@
 						role: 1,
 						status: 1,
 						message: '骑手正在赶往商家',
-						logo: ''
+						logo: '',
+						distance: '',
+						duration: ''
 					}]
 				}
 			},

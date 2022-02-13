@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Data
 @Component
-@PropertySource("classpath:smart_city.properties")
+@PropertySource("classpath:sugo_takeout.properties")
 @ConfigurationProperties(prefix = "baidu.map")
 public class BaiduMapProperties {
 

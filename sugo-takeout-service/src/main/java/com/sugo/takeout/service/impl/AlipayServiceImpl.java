@@ -18,6 +18,7 @@ import com.sugo.takeout.service.PaymentService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -28,6 +29,9 @@ import java.util.Set;
  */
 @Service
 public class AlipayServiceImpl implements PaymentService {
+
+    @Resource
+    private AlipayConfig alipayConfig;
 
     /**
      * 订单名称
@@ -53,7 +57,7 @@ public class AlipayServiceImpl implements PaymentService {
             map.put(key, StringUtils.join(values, ","));
         }
         try {
-            return AlipaySignature.rsaCheckV1(map, AlipayConfig.ALIPAY_PUBLIC_KEY, AlipayConfig.CHARSET, AlipayConfig.SIGN_TYPE);
+            return AlipaySignature.rsaCheckV1(map, alipayConfig.alipayPublicKey, alipayConfig.charset, alipayConfig.signType);
         } catch (AlipayApiException e) {
             e.printStackTrace();
             throw new SugoException("异常的支付验证");
@@ -62,7 +66,7 @@ public class AlipayServiceImpl implements PaymentService {
 
     @Override
     public String create(String orderNo, String total, String returnUrl, int type) {
-        AlipayClient client = new DefaultAlipayClient(AlipayConfig.URL, AlipayConfig.APPID, AlipayConfig.RSA_PRIVATE_KEY, AlipayConfig.FORMAT, AlipayConfig.CHARSET, AlipayConfig.ALIPAY_PUBLIC_KEY, AlipayConfig.SIGN_TYPE);
+        AlipayClient client = new DefaultAlipayClient(alipayConfig.baseUrl, alipayConfig.appId, alipayConfig.rsaPrivateKey, alipayConfig.format, alipayConfig.charset, alipayConfig.alipayPublicKey, alipayConfig.signType);
         AlipayRequest<?> alipayRequest = null;
         //手机网站
         if (type == 1){
@@ -127,7 +131,7 @@ public class AlipayServiceImpl implements PaymentService {
         }
         assert alipayRequest != null;
         //异步通知地址
-        alipayRequest.setNotifyUrl(AlipayConfig.NOTIFY_URL);
+        alipayRequest.setNotifyUrl(alipayConfig.baseUrl + alipayConfig.notifyUrl);
         // form表单生产
         try {
             // 调用SDK生成表单 sdkExecute 生成支付链接 pageExecute生成支付的html代码

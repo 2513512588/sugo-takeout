@@ -1,0 +1,8 @@
+server:
+  port: 8081
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql:///:3306/smart_city?characterEncoding=utf-8&serverTimezone=GMT%2b8&useSSL=false
+    username: 数据库用户名
+    password: 数据库密码

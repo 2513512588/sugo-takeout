@@ -41,13 +41,15 @@ public class TakeoutOrderController {
     private final TakeoutCouponService takeoutCouponService;
     private final TakeoutAddressService takeoutAddressService;
     private final TakeoutSellerService takeoutSellerService;
+    private final AlipayConfig alipayConfig;
 
     @Autowired
-    public TakeoutOrderController(TakeoutOrderService takeoutOrderService, TakeoutCouponService takeoutCouponService, TakeoutAddressService takeoutAddressService, TakeoutSellerService takeoutSellerService) {
+    public TakeoutOrderController(TakeoutOrderService takeoutOrderService, TakeoutCouponService takeoutCouponService, TakeoutAddressService takeoutAddressService, TakeoutSellerService takeoutSellerService, AlipayConfig alipayConfig) {
         this.takeoutOrderService = takeoutOrderService;
         this.takeoutCouponService = takeoutCouponService;
         this.takeoutAddressService = takeoutAddressService;
         this.takeoutSellerService = takeoutSellerService;
+        this.alipayConfig = alipayConfig;
     }
 
     @Autowired
@@ -97,7 +99,7 @@ public class TakeoutOrderController {
         Object o = RedisUtil.get(orderCode);
         String payInfo = String.valueOf(o);
         System.out.println(payInfo);
-        return Result.ok().data("order", takeoutOrder).data("payInfo", payInfo).data("payURL", AlipayConfig.URL + "?" + payInfo);
+        return Result.ok().data("order", takeoutOrder).data("payInfo", payInfo).data("payURL", alipayConfig.baseUrl + "?" + payInfo);
     }
 
 
