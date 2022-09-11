@@ -75,6 +75,7 @@ public class AlipayServiceImpl implements PaymentService {
             AlipayTradeWapPayModel model = new AlipayTradeWapPayModel();
             //订单编号，不可重复
             model.setOutTradeNo(orderNo);
+
             //订单名称
             model.setSubject(ORDER_NAME);
             //订单金额
